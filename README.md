@@ -148,8 +148,8 @@ Credentials will be provided for these services by the instructor:
   - Download and import data
   ```
   cd /tmp
-  wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
-  wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
+  wget https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/labdata/sample_07.csv
+  wget https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/labdata/sample_08.csv
   ```
   - Create user dir for admin, sales1 and hr1
   ```
@@ -1117,7 +1117,7 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 - (Optional) - From the **the leader node host**, install SILK (banana) dashboard to visualize audits in Solr
 ```
 export host=$(curl -4 icanhazip.com)
-sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
+sudo wget https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/extras/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 # access banana dashboard at http://SolrLeaderNodeIP:6083/solr/banana/index.html
 ```
@@ -2106,7 +2106,7 @@ logout
 - *On the host running Mysql*: change user to root and download a sample csv and login to Mysql
 ```
 sudo su - 
-wget https://raw.githubusercontent.com/abajwa-hw/single-view-demo/master/data/PII_data_small.csv
+wget https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/labdata/PII_data_small.csv
 mysql -u root -pBadPass#1
 ```
 
@@ -2605,7 +2605,7 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 - Automation to install views (does not support Ambari running on HTTPS)
 ```
 sudo su
-git clone https://github.com/seanorama/ambari-bootstrap
+git clone https://github.com/HortonworksUniversity/ambari-bootstrap
 cd ambari-bootstrap/extras/
 export ambari_user=hadoopadmin
 export ambari_pass=BadPass#1
@@ -2660,7 +2660,7 @@ sudo yum -y install lucidworks-hdpsearch
 - Install Ambari service for Solr
 ```
 VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-sudo git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
+sudo git clone https://github.com/HortonworksUniversity/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
 sudo ambari-server restart
 ```
 - Login to Ambari as hadoopadmin and wait for all the services to turn green
