@@ -1,6 +1,6 @@
 # Contents
 
-- [Lab 1](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-1)
+- [Lab 1](./security-advanced#lab-1)
   - Access cluster
   - Install Knox
   - Security w/o kerberos
