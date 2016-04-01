@@ -57,7 +57,7 @@ Credentials will be provided for these services by the instructor:
 
 ### To connect using Putty from Windows laptop
 
-- Download ppk from [here](https://github.com/seanorama/masterclass/raw/master/security-advanced/training-keypair.ppk)
+- Download ppk from [here](https://github.com/HortonworksUniversity/Security_Labs/raw/master/training-keypair.ppk)
 - Use putty to connect to your node using the ppk key:
   - Connection > SSH > Auth > Private key for authentication > Browse... > Select training-keypair.ppk
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/putty.png)

@@ -235,7 +235,7 @@ if [ -e '/dev/xvdb' ]; then
 fi
 
 export host_count=$((ref_additional_instance_count + 1))
-curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/setup.sh | bash
+curl -sSL https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/setup.sh | bash
 
 if [ "${resource}" = "AmbariNode" ]; then
     echo ${ref_wait_ambari}

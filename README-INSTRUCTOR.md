@@ -32,7 +32,7 @@ For managing multiple clusters (each takes variables for naming & the number of 
 1. Get this repo:
 
    ```
-git clone https://github.com/seanorama/masterclass
+git clone https://github.com/HortonworksUniversity/Security_Labs
 cd masterclass/generic
    ```
 
@@ -74,7 +74,7 @@ export cfn_parameters='
   {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER SOLR AMBARI_METRICS HBASE"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"2"},
-  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/setup.sh | bash"},
+  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/setup.sh | bash"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"}]
 '
