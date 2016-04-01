@@ -4,42 +4,42 @@
   - Access cluster
   - Install Knox
   - Security w/o kerberos
-- [Lab 2](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-2)
+- [Lab 2](https://github.com/HortonworksUniversity/Security_Labs#lab-2)
   - AD overview
   - Configure Name Resolution & AD Certificate
   - Setup Access to Active Directory Server
   - Enable Active Directory Authentication for Ambari
-- [Lab 3](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-3)
+- [Lab 3](https://github.com/HortonworksUniversity/Security_Labs#lab-3)
   - Kerborize cluster
   - Setup AD/Operating System Integration using SSSD - AD KDC
-- [Lab 4](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-4)
+- [Lab 4](https://github.com/HortonworksUniversity/Security_Labs#lab-4)
   - Ambari Server Security
     - Kerberos for Ambari
     - Ambari server as non-root
     - Ambari Encrypt Database and LDAP Passwords
     - SSL For Ambari server
     - SPNEGO
-- [Lab 5](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-5)
+- [Lab 5](https://github.com/HortonworksUniversity/Security_Labs#lab-5)
   - Ranger install pre-reqs
   - Ranger install
-- [Lab 6](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-6)
+- [Lab 6](https://github.com/HortonworksUniversity/Security_Labs#lab-6)
   - Ranger KMS install
   - Add a KMS on another node
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
-- [Lab 7](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-7)
+- [Lab 7](https://github.com/HortonworksUniversity/Security_Labs#lab-7)
   - Secured Hadoop exercises
     - HDFS
     - Hive
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
-- [Lab 8](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-8)
+- [Lab 8](https://github.com/HortonworksUniversity/Security_Labs#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
     - WebHDFS
     - Hive
-- [Lab 9](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-9---optional)
+- [Lab 9](https://github.com/HortonworksUniversity/Security_Labs#lab-9---optional)
   - Configure Ambari views for kerberos
 
 ---------------
@@ -60,14 +60,14 @@ Credentials will be provided for these services by the instructor:
 - Download ppk from [here](https://github.com/seanorama/masterclass/raw/master/security-advanced/training-keypair.ppk)
 - Use putty to connect to your node using the ppk key:
   - Connection > SSH > Auth > Private key for authentication > Browse... > Select training-keypair.ppk
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/putty.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/putty.png)
 
 - Make sure to click "Save" on the session page before logging in
 
 ### To connect from Linux/MacOSX laptop
 
 - SSH into Ambari node of your cluster using below steps:
-  - Right click [this pem key](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/training-keypair.pem)  > Save link as > save to Downloads folder
+  - Right click [this pem key](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/training-keypair.pem)  > Save link as > save to Downloads folder
   - Copy pem key to ~/.ssh dir and correct permissions
   ```
   cp ~/Downloads/training-keypair.pem ~/.ssh/
@@ -127,15 +127,15 @@ Credentials will be provided for these services by the instructor:
   
   - From Ambari how do I check the cluster name?
     - It is displayed on the top left of the Ambari dashboard, next to the Ambari logo. If the name appears truncated, you can hover over it to produce a helptext dialog with the full name
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/clustername.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/clustername.png)
   
   - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager or Hive) is installed?
     - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-RM-public-host.png)  
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-RM-public-host.png)  
 
   - From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager or Hive) is installed?
     - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-YARN-internal-host.png)  
   
   - In future labs you may need to provide private or public hostname of nodes running a particular component (e.g. YARN RM or Mysql or HiveServer)
   
@@ -250,7 +250,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 - Use the 'Add Service' Wizard to install Knox (if not already installed) on any node in the cluster
   - When prompted for the `Knox Master Secret`, set it to `knox`
   - Do *not* use password with special characters (like #, $ etc) here as it seems beeline has problems with it
-   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-Knox-install.png)
+   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 
 - We will use Knox further in a later exercise.
@@ -260,12 +260,12 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 - Ensure Tez is installed on all nodes where Pig clients are installed. This is done to ensure Pig service checks do not fail later on.
  - Ambari > Pig > click the 'Pig clients' link
  - This tell us which nodes have Pig clients installed
-   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-pig-nodes.png)
+   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-pig-nodes.png)
  - For each node that has Pig installed:
    - Click on the hyperlink of the node name to view that shows all the services running on that particular node
    - Click '+Add' and select 'Tez client' > Confirm add 
      - If 'Tez client'does not appear in the list, it is already installed on this host, so you can skip this host
-   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-host-add-tez.png)   
+   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-host-add-tez.png)   
 
 -----------------------------
 
@@ -277,16 +277,16 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
   - CorpUsers OU, which contains:
     - business users and groups (e.g. it1, hr1, legal1) and 
     - hadoopadmin: Admin user (for AD, Ambari, ...)
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-corpusers.png)
   
   - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-serviceusers.png)
   
   - HadoopServices OU: hadoop service principals (will be created by Ambari)
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-hadoopservices.png)  
   
   - HadoopNodes OU: list of nodes registered with AD
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-hadoopnodes.png)
 
 - In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
   - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
@@ -312,7 +312,7 @@ echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
 2. Add your CA certificate (if using self-signed & not already configured)
   - In this case we have pre-exported the CA cert from our AD and made available for download. 
    ```
-cert_url=https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/extras/ca.crt
+cert_url=https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/extras/ca.crt
 sudo yum -y install openldap-clients ca-certificates
 sudo curl -sSL "${cert_url}" -o /etc/pki/ca-trust/source/anchors/hortonworks-net.crt
 
@@ -380,7 +380,7 @@ EOF
   ```
   sudo ambari-server setup-ldap
   ```
-   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-setup-LDAP.png)
+   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-setup-LDAP.png)
 
 - Restart Ambari server. When you do this, the agent will likely go down so restart it as well.
   ```
@@ -395,7 +395,7 @@ EOF
   ```
 
   - This should show a summary of what objects were created
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-run-LDAPsync.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-run-LDAPsync.png)
   
 - Give 'hadoop-admin' admin permissions in Ambari to allow the user to manage the cluster
   - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
@@ -404,7 +404,7 @@ EOF
     - Click 'Manage Ambari'
     - Under 'Users', select 'hadoopadmin'
     - Change 'Ambari Admin' to Yes 
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-make-user-admin.png)    
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-make-user-admin.png)    
     
 - Sign out and then log back into Ambari, this time as 'hadoopadmin' and verify the user has rights to monitor/manage the cluster
 
@@ -417,10 +417,10 @@ EOF
 ### Run Ambari Kerberos Wizard against Active Directory environment
 
 - Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos > Enable kerberos > proceed). 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-start-kerberos-wizard.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-start-kerberos-wizard.png)
 
 - Select "Existing Active Directory" and check all the boxes
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-1.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-1.png)
   
 - Enter the below details:
 
@@ -435,23 +435,23 @@ EOF
     - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
     - Admin password: `BadPass#1`
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-2.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-2.png)
   - Notice that the "Save admin credentials" checkbox is grayed out. We will enable that later.
   - Sometimes the "Test Connection" button may fail (usually related to AWS issues), but if you previously ran the "Configure name resolution & certificate to Active Directory" steps *on all nodes*, you can proceed.
   
 - Now click Next on all the following screens to proceed with all the default values  
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-3.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-3.png)
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-4.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-4.png)
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-5.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-5.png)
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-6.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-6.png)
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-7.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-7.png)
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-8.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-8.png)
 
   - Note if the wizard fails after completing more than 90% of "Start and test services" phase, you can just click "Complete" and manually start any unstarted services (e.g. WebHCat or HBase master)
 
@@ -698,7 +698,7 @@ Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-
 ```
 # run on Ambari node to start security setup guide
 cd /etc/security/keytabs/
-sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
+sudo wget https://github.com/HortonworksUniversity/Security_Labs/raw/master/extras/ambari.keytab
 sudo chown ambari:hadoop ambari.keytab
 sudo chmod 400 ambari.keytab
 ```
@@ -797,7 +797,7 @@ Ambari Server 'setup' completed successfully.
 hadoop.proxyuser.ambari.groups=*
 hadoop.proxyuser.ambari.hosts=* 
 ```
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-proxyuser.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-proxyuser.png)
 
 - Save and restart HDFS
   - Ambari will show that other components need restarting too but you can proceed without restarting those for now to save time (we will restart those later)
@@ -946,9 +946,9 @@ sudo ambari-server start
 
 - Note that the browser will not trust the new self signed ambari certificate. You will need to trust that cert first.
   - If Firefox, you can do this by clicking on 'i understand the risk' > 'Add Exception...'
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/firefox-untrusted.png)  
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/firefox-untrusted.png)  
   - If Chome, you can do this by clicking on 'Advanced' > 'Proceed to xxxxxx'
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/chrome-untrusted.png)  
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/chrome-untrusted.png)  
 
 
 
@@ -999,7 +999,7 @@ sudo chmod 440 /etc/security/http_secret
 - Restart all services that require restart (HDFS, Mapreduce, YARN)
 
 
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-restart-services.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-restart-services.png)
 
 - Now when you try to open any of the web UIs like below you will get `401: Authentication required`
   - HDFS: Namenode UI
@@ -1009,7 +1009,7 @@ sudo chmod 440 /etc/security/http_secret
 
 ### Ambari views 
 
-Ambari views setup on secure cluster will be covered in later lab ([here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari))
+Ambari views setup on secure cluster will be covered in later lab ([here](https://github.com/HortonworksUniversity/Security_Labs#other-security-features-for-ambari))
 
 ------------------
 
@@ -1052,7 +1052,7 @@ exit
 
 ##### Install SolrCloud from HDPSearch for Audits (if not already installed)
 
-This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#install-solrcloud)
+This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/HortonworksUniversity/Security_Labs#install-solrcloud)
 
 
 ###### Setup Solr for Ranger audit 
@@ -1112,7 +1112,7 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 - Now you should access Solr webui http://PublicIPofAnySolrNode:6083/solr
   - Click the Cloud > Graph tab to find the leader host i.e. the dark dot (172.30.0.181 in below example)
     - Usually the leader node is the one where the collection was created from
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-cloud.png)   
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-cloud.png)   
 
 - (Optional) - From the **the leader node host**, install SILK (banana) dashboard to visualize audits in Solr
 ```
@@ -1126,11 +1126,11 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 - At this point you should be able to: 
   - Access Solr webui for ranger_audits collection at http://SolrLeaderNodeIP:6083/solr/#/ranger_audits_shard1_replica1. 
     - This is currently empty but will be where Ranger audits will get stored
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-dashboard-collection.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-dashboard-collection.png)
   - access banana dashboard (if installed earlier) at http://SolrLeaderNodeIP:6083/solr/banana/index.html 
     - This is currently empty but will be where Ranger audits will get visualized
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Banana-empty.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-empty.png)
 
 ## Ranger install
 
@@ -1150,77 +1150,77 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
   - Ranger DB Host = FQDN of host where Mysql is running (e.g. ip-172-30-0-242.us-west-2.compute.internal)
   - Enter passwords: BadPass#1
   - Click 'Test Connection' button
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-1.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-2.png)
 
 2. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
   - Common configs subtab
     - Enter password: BadPass#1
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.png)
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.5.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.5.png)
 
 3. Ranger User info tab 
   - User configs subtab
     - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
     - User Search Filter = `(objectcategory=person)`
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-4.png)
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-5.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-4.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-5.png)
 
 4. Ranger User info tab 
   - Group configs subtab
     - No changes needed
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-6.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
   - Enable all plugins
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-7.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-7.png)
 
 6. Ranger Audits tab 
   - SolrCloud = ON
   - enter password: BadPass#1
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-8.png)
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-8.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-9.png)
 
 7.Advanced tab
   - No changes needed (skipping configuring Ranger authentication against AD for now)
-![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
 
 - Do *NOT* click Next just yet. Now configure components so Ranger can use `rangeradmin@LAB.HORTONWORKS.NET` principal to query HDFS, YARN, Hive, Hbase, Knox. We will do this by clicking the tabs for each of these services and modifying Ranger specific properties. 
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-install-configure-components.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-install-configure-components.png)
 
   - HDFS > Advanced > Advanced ranger-hdfs-plugin-properties:
     - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for HDFS = rangeradmin
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-plugin-config.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-plugin-config.png)
     
   - YARN > Advanced > Advanced ranger-yarn-plugin-properties:
     - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for YARN = rangeradmin
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-YARN-plugin-config.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-YARN-plugin-config.png)
     
 
   - HIVE > Advanced > Advanced ranger-hive-plugin-properties:
     - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for HIVE = rangeradmin
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-plugin-config.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-plugin-config.png)
     
 
   - HBASE > Advanced > Advanced ranger-hbase-plugin-properties:
     - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for HBASE = rangeradmin
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-plugin-config.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HBASE-plugin-config.png)
     
 
   - KNOX > Advanced > Advanced ranger-knox-plugin-properties:
     - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for KNOX = rangeradmin
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KNOX-plugin-config.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KNOX-plugin-config.png)
 
 - Click Next > Proceed Anyway to proceed
     
@@ -1228,7 +1228,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
   - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Notice that you can now save the admin credentials. Check this box too
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-configureidentities.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-configureidentities.png)
   
 - Click Next > Deploy to install Ranger
 
@@ -1260,18 +1260,18 @@ sudo service ambari-agent restart
 
 - Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/admin
 - Confirm that repos for HDFS, YARN, Hive, HBase, Knox appear under 'Access Manager tab'
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-AccessManager.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-AccessManager.png)
 
 - Confirm that audits appear under 'Audit' > 'Access' tab
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audits.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audits.png)
 
   - If audits do not show up here, you may need to restart Solr from Ambari
   
 - Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins' tab 
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-plugins.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-plugins.png)
 
 - Confirm users/group sync from AD into Ranger are working by clicking 'Settings' > 'Users/Groups tab' in Ranger UI and noticing AD users/groups are present
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-groups.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-groups.png)
 
 - Confirm HDFS audits working by querying the audits dir in HDFS:
 ```
@@ -1285,7 +1285,7 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 - Confirm Banana dashboard has start to show HDFS audits
 http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Banana-audits.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
 
 ------------------
 
@@ -1320,10 +1320,10 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - db_root_password = BadPass#1
   - Note that from Ambari 2.2.1.0 onwards, the location of above configs has changed: 
     - The DB host and passwords would need to be specified under the new Ambari > Ranger KMS > Settings tab 
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig1.png) 
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig2.png) 
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig1.png) 
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
     - The repository config username/password would still need to be modified under "Advanced kms-properties"  
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig3.png) 
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig3.png) 
     
     - the remaining below configurations would be performed the same way (regardless of your Ambari version)
     
@@ -1346,13 +1346,13 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
       - hadoop.kms.proxyuser.keyadmin.groups=*
       - hadoop.kms.proxyuser.keyadmin.hosts=*
       - hadoop.kms.proxyuser.keyadmin.users=*      
-        ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-proxy.png) 
+        ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-proxy.png) 
   - Advanced ranger-kms-audit:
     - Under xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
       - `xasecure.audit.destination.hdfs.dir` = `hdfs://YOUR_NN_INTERNAL_HOSTNAME:8020/ranger/audit`
     - Under xasecure.audit.destination.solr.zookeepers, copy the value of ranger.audit.solr.zookeepers (this is the value you noted down before starting the KMS install)
       - `xasecure.audit.destination.solr.zookeepers`=`YOUR_ZK_QUORUM/ranger_audits`
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-config-audit.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-config-audit.png)
 
 - Click Next > Proceed Anyway to proceed with the wizard
 
@@ -1386,12 +1386,12 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 
 - (Optional) Add another KMS:
   - Ambari > Ranger KMS > Service Actions > Add Ranger KMS Server > Pick any host
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-add-KMS.png) 
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-add-KMS.png) 
   - After it is installed, you can start it by:
     - Ambari > Ranger KMS > Service Actions > Start
     
   - Once started you will see multiple KMS Servers running in Ambari:  
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-multiple-KMS.png) 
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-multiple-KMS.png) 
 
 ## Ranger KMS/Data encryption exercise
 
@@ -1403,27 +1403,27 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
       - First name = namenode
       - Role: User
       - Group: hadoop-admins
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-add-nn.png) 
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-add-nn.png) 
     - Similarly, create a user: HTTP  
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-HTTP.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-HTTP.png)
     - Similarly, create a user: hive  
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-hive.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-hive.png)
 
   
   - Now lets add hadoopadmin to 'global policy' for HDFS to allow the user global access on HDFS
     - Access Manager > HDFS > (clustername)_hadoop 
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-policy.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-policy.png)
     - This will open the list of HDFS policies
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-edit-policy.png)
     - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy-add-hadoopadmin.png)
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-edit-policy-add-hadoopadmin.png)
   
   - Now "Add a new policy" for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
     - name: kms audits
     - resource path: /ranger/audit
     - user: HTTP
     - Permissions: Read Write Execute
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-policy-kms-audit.png) 
+    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-policy-kms-audit.png) 
 
   - You can follow similar steps to add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
@@ -1432,10 +1432,10 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-permissions.png)
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-permissions.png)
     - Click 'Audit' (second row from bottom) to change users who have access to Audit screen
     - Under 'Select User', add 'keyadmin' user
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-permissions-audits.png)
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-permissions-audits.png)
     - Save
   
     
@@ -1444,7 +1444,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 - Login to Ranger as keyadmin/keyadmin
 - Confirm the KMS repo was setup correctly
   - Under Service Manager > KMS > Click the Edit icon (next to the trash icon) to edit the KMS repo
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-edit-repo.png) 
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-repo.png) 
   - Click 'Test connection' 
   - if it fails re-enter below fields and re-try:
     - Username: keyadmin@LAB.HORTONWORKS.NET
@@ -1456,7 +1456,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - Select KMS service > pick your kms > Add new Key
     - if an error is thrown, go back and test connection as described in previous step
   - Create a key called `testkey` > Save
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-createkey.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-createkey.png)
 
 - Similarly, create another key called `testkey2`
   - Select Encryption > Key Manager
@@ -1466,13 +1466,13 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 - Add user `hadoopadmin` and `nn` and `hive` to default KMS key policy
   - Click Access Manager tab
   - Click Service Manager > KMS > (clustername)_kms link
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy.png)
 
   - Edit the default policy
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-edit-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-policy.png)
   
   - Under 'Select User', Add `hadoopadmin`, `nn` and `hive` users and click Save
-   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy-add-nn.png)
+   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy-add-nn.png)
   
     - Note that for simplicity we are giving the hadoop users more permissions than they need. At minimum:
       - `nn` user  needs `GetMetaData` and `GenerateEEK` privilege
@@ -1550,7 +1550,7 @@ sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 ```
 
 - Check the Ranger > Audit page and notice that the request from hadoopadmin was allowed but the request from sales1 was denied
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-audit.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-audit.png)
 
 - Now lets test deleting and copying files between EZs - ([Reference doc](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/copy-to-from-encr-zone.html))
 ```
@@ -1682,20 +1682,20 @@ hdfs dfs -ls /sales
   - User: `sales1`
   
 - Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-denied.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HDFS-denied.png)
 
 - To create an HDFS Policy in Ranger, follow below steps:
   - On the 'Access Manager' tab click HDFS > (clustername)_hadoop
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-policy.png)
   - This will open the list of HDFS policies
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-edit-policy.png)
   - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `/sales` dir:
     - Policy Name: `sales dir`
     - Resource Path: `/sales`
     - Group: `sales`
     - Permissions : `Execute Read Write`
     - Add
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-create-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-create-policy.png)
 
 - Wait 30s for policy to take effect
   
@@ -1709,7 +1709,7 @@ hdfs dfs -ls /sales
   - User: sales1
   
 - Notice that Ranger captured the access attempt and since this time there is a policy to allow the access, it was `Allowed`
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-allowed.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HDFS-allowed.png)  
 
   - You can also see the details that were captured for each request:
     - Policy that allowed the access
@@ -1724,7 +1724,7 @@ hdfs dfs -ls /sales
     - Event count
     
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-policy-details.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-policy-details.png)  
 
 - Now let's check whether non-sales users can access the directory
 
@@ -1758,7 +1758,7 @@ hdfs dfs -ls /sales
   - initial request by sales1 user was denied 
   - subsequent request by sales1 user was allowed (once the policy was created)
   - request by hr1 user was denied
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-summary.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HDFS-summary.png)  
 
 - Logout as hr1
 ```
@@ -1835,13 +1835,13 @@ beeline> select code, description from sample_07;
   - User: `sales1`
   
 - Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-denied.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-denied.png)
 
 - To create an HIVE Policy in Ranger, follow below steps:
   - On the 'Access Manager' tab click HIVE > (clustername)_hive
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-policy.png)
   - This will open the list of HIVE policies
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-edit-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-edit-policy.png)
   - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code` and `description` columns in `sample_07` dir:
     - Policy Name: `sample_07`
     - Hive Database: `default`
@@ -1850,7 +1850,7 @@ beeline> select code, description from sample_07;
     - Group: `sales`
     - Permissions : `select`
     - Add
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy.png)
   
 - Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
   -  This was done using the rangeradmin principal we provided during Ranger install
@@ -1871,7 +1871,7 @@ beeline> select code, description from sample_07;
   - User: sales1
   
 - Notice that Ranger captured the access attempt and since this time there is a policy to allow the access, it was `Allowed`
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-allowed.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-allowed.png)  
 
   - You can also see the details that were captured for each request:
     - Policy that allowed the access
@@ -1886,7 +1886,7 @@ beeline> select code, description from sample_07;
     - Event count
     
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-policy-details.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-policy-details.png)  
 
 - Exit beeline
 ```
@@ -1922,7 +1922,7 @@ beeline> select code, description from sample_07;
   
 - Here you can see the request by sales1 was allowed but hr1 was denied
 
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-summary.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-summary.png)  
 
 - Exit beeline
 ```
@@ -1990,13 +1990,13 @@ hbase> create 'sales', 'cf'
   - User: `sales1`
   
 - Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-denied.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HBASE-denied.png)
 
 - To create an HBASE Policy in Ranger, follow below steps:
   - On the 'Access Manager' tab click HBASE > (clustername)_hbase
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HBASE-policy.png)
   - This will open the list of HBASE policies
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-edit-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HBASE-edit-policy.png)
   - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `sales` table in HBase:
     - Policy Name: `sales`
     - Hbase Table: `sales`
@@ -2005,7 +2005,7 @@ hbase> create 'sales', 'cf'
     - Group : `sales`    
     - Permissions : `Admin` `Create` `Read` `Write`
     - Add
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-create-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HBASE-create-policy.png)
   
 - Wait 30s for policy to take effect
   
@@ -2019,7 +2019,7 @@ hbase> create 'sales', 'cf'
   - User: sales1
   
 - Notice that Ranger captured the access attempt and since this time there is a policy to allow the access, it was `Allowed`
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-allowed.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HBASE-allowed.png)  
 
   - You can also see the details that were captured for each request:
     - Policy that allowed the access
@@ -2034,7 +2034,7 @@ hbase> create 'sales', 'cf'
     - Event count
     
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-policy-details.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HBASE-policy-details.png)  
 
 - Exit hbase shell
 ```
@@ -2074,7 +2074,7 @@ hbase> create 'sales', 'cf'
 
 - Here you can see the request by sales1 was allowed but hr1 was denied
 
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-summary.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HBASE-summary.png)  
 
 - Exit hbase shell
 ```
@@ -2092,7 +2092,7 @@ logout
 
 - At this point your Silk/Banana audit dashboard should show audit data from multiple Hadoop components e.g. http://54.68.246.157:6083/solr/banana/index.html#/dashboard
 
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-banana.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-banana.png)  
 
 
 #### (Optional) Use Sqoop to import 
@@ -2134,14 +2134,14 @@ logout
 - Create Ranger policy to allow `sales` group `all permissions` on `persons` table in Hive
   - Access Manager > Hive > (cluster)_hive > Add new policy
   - Create new policy as below and click Add:
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy-persons.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy-persons.png)  
   - Log out of Ranger
   
 - Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. the key used to encrypt Hive warehouse directories)
   - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/keyadmin
   - Access Manager > KMS > (cluster)_KMS > Add new policy
   - Create new policy as below and click Add:
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-create-policy-testkey.png)  
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-create-policy-testkey.png)  
   - Log out of Ranger and re-login as admin/admin
 
 - Login as sales1
@@ -2185,7 +2185,7 @@ beeline> select * from persons;
 - Ranger audit should show the request was allowed:
   - Under Ranger > Audit > query for
     - Service type: HIVE
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-audit-persons.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-audit-persons.png)
 
 
 ##### Drop Encrypted Hive tables 
@@ -2416,7 +2416,7 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
   - Permission: check Allow
   - Add
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-knox-webhdfs-policy.png)
 
 #### WebHDFS over Knox exercises 
 
@@ -2443,7 +2443,7 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
 - Check in Ranger Audits to confirm the requests were audited:
   - Ranger > Audit > Service type: KNOX
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-audit.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-knox-webhdfs-audit.png)
 
 
 - Other things to access WebHDFS with Knox
@@ -2476,7 +2476,7 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     curl -ik -u sales1:BadPass#1 -X GET https://localhost:8443/gateway/default/webhdfs/v1/tmp/testfile.txt?op=OPEN
     ```
       - Look at value of Location header. This will contain a long url 
-      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-location.png)
+      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/knox-location.png)
             
     - Access contents of file /tmp/testfile.txt by passing the value from the above Location header
     ```
@@ -2505,9 +2505,9 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     - Open the URL via browser
     - Login as sales1/BadPass#1
     
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser1.png)
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser2.png)
-     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser3.png)
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/knox-webhdfs-browser1.png)
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/knox-webhdfs-browser2.png)
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/knox-webhdfs-browser3.png)
       
 
 - We have shown how you can use Knox to avoid the end user from having to know about internal details of cluster
@@ -2540,7 +2540,7 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
   - Permission: check Allow
   - Add
 
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-hive-policy.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-knox-hive-policy.png)
 
 
 ##### Use Hive for Knox
@@ -2581,7 +2581,7 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 
 - Check in Ranger Audits to confirm the requests were audited:
   - Ranger > Audit > Service type: KNOX
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-KNOX-hive-summary.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-KNOX-hive-summary.png)
 
 
 - This shows how Knox helps end users access Hive securely over HTTPS using Ranger to set authorization policies and for audits
@@ -2619,15 +2619,15 @@ source ambari_functions.sh
 
 - Access the views:
   - Files view
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Files-view.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Files-view.png)
   - Hive view
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Hive-view.png)
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Hive-view-viz.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Hive-view.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Hive-view-viz.png)
   - Pig view
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Pig-view.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Pig-view.png)
   - Tez view
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Tez-view.png)  
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Tez-view-viz.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Tez-view.png)  
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Tez-view-viz.png)
     
 
 ###### Enable users to log into Ambari views
@@ -2666,7 +2666,7 @@ sudo ambari-server restart
 - Login to Ambari as hadoopadmin and wait for all the services to turn green
 - Install Solr by starting the 'Add service' wizard (using 'Actions' dropdown) and choosing Solr. Pick the defaults in the wizard except:
   - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-placement.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-placement.png)
   
   - On the screen to Customize the Solr service
     - under 'Advanced solr-config':
@@ -2675,7 +2675,7 @@ sudo ambari-server restart
       - set `solr.znode` to `/ranger_audits`
     - under 'Advanced solr-env':
       - set `solr.port` to `6083`
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-configs.png)  
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-configs.png)  
 
 - Under Configure Identities page, you will have to enter your AD admin credentials:
   - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
