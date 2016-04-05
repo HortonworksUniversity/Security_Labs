@@ -236,7 +236,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 
 ##### Web UI access on unsecured cluster
 
-- From Ambari notice you can open the WeUIs without any authentication
+- From Ambari notice you can open the WebUIs without any authentication
   - HDFS > Quicklinks > NameNode UI
   - Madreduce > Quicklinks > JobHistory UI
   - YARN > Quicklinks > ResourceManager UI
