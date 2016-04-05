@@ -1283,7 +1283,7 @@ sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
 
-- Confirm Banana dashboard has start to show HDFS audits
+- Confirm Banana dashboard has started to show HDFS audits
 http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
@@ -1306,7 +1306,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - Find the internal hostname of host running *namenode* and note it down
     - From Ambari > HDFS > click the 'NameNode' hyperlink. The internal hostname should appear in upper left of the page.
   - Find the internal hostname of host running *Mysql* and note it down
-    - From Ambari > Mysql > click the 'Mysql Server' hyperlink. The internal hostname should appear in upper left of the page.
+    - From Ambari > Hive > Mysql > click the 'Mysql Server' hyperlink. The internal hostname should appear in upper left of the page.
 
   
 - Open Ambari > start 'Add service' wizard > select 'Ranger KMS'.
