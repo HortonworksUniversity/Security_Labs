@@ -902,6 +902,7 @@ Getting Private key
 ```
 sudo mkdir /etc/security/ssl
 sudo cp ambari.* /etc/security/ssl
+sudo chmod 400 /etc/security/ssl/*
 ```
 
 - Proceed onto next section to enable HTTPS for Ambari using the self signed certificate we created
