@@ -964,7 +964,7 @@ sudo dd if=/dev/urandom of=/etc/security/http_secret bs=1024 count=1
 sudo chown hdfs:hadoop /etc/security/http_secret
 sudo chmod 440 /etc/security/http_secret
 ```
-- Place file in Ambari resources dir so it gets pushes to all nodes
+- Place file in Ambari resources dir so it gets pushed to all nodes
 ```
 sudo cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
 sudo ambari-server restart
