@@ -428,7 +428,7 @@ EOF
     - KDC host: `ad01.lab.hortonworks.net`
     - Realm name: `LAB.HORTONWORKS.NET`
     - LDAP url: `ldaps://ad01.lab.hortonworks.net`
-    - Container `DN: ou=HadoopServices,dc=lab,dc=hortonworks,dc=net`
+    - Container DN: `ou=HadoopServices,dc=lab,dc=hortonworks,dc=net`
     - Domains: `us-west-2.compute.internal,.us-west-2.compute.internal`
 - Kadmin:
     - Kadmin host: `ad01.lab.hortonworks.net`
