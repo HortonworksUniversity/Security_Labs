@@ -638,7 +638,7 @@ hdfs groups
 yarn rmadmin -getGroups hr1
 ```
 
-- output should like below, indicating both OS-level and hadoop-level group mappings :
+- output should look like below, indicating both OS-level and hadoop-level group mappings :
 ```
 $ hdfs groups
 hr1@LAB.HORTONWORKS.NET : domain_users hr hadoop-users
