@@ -297,6 +297,8 @@ Use case: Customer has an existing cluster which they would like you to secure f
     - Protect sales HBase table - so only sales group has access to it
   - Install Knox and integrate with AD - for perimeter security and give clients access to APIs w/o dealing with kerberos
   - Enable Ambari views to work on secured cluster
+
+We will run through a series of labs and step by step, achieve all of the above goals
   
 ### AD overview
 
