@@ -1695,7 +1695,7 @@ hdfs dfs -ls /sales
   - Service Type: `HDFS`
   - User: `sales1`
   
-- Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
+- Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was "Denied"
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HDFS-denied.png)
 
 - To create an HDFS Policy in Ranger, follow below steps:
