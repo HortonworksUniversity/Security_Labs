@@ -2112,7 +2112,7 @@ logout
 #### (Optional) Use Sqoop to import 
 
 - If Sqoop is not already installed, install it via Ambari on same node where Mysql/Hive are installed:
-  - Admin > Stacks and Versions > Sqoop > Add service > select node where Mysql/Hive are installed and accept all defaults
+  - Admin > Stacks and Versions > Sqoop > Add service > select node where Mysql/Hive are installed and accept all defaults and finally click "Proceed Anyway"
   - You will be asked to enter admin principal/password:
     - `hadoopadmin@LAB.HORTONWORKS.NET`
     - BadPass#1
