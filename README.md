@@ -1396,6 +1396,12 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 
 ## Ranger KMS/Data encryption exercise
 
+- Before we can start exercising HDFS encryption, we will need to set:
+  - KMS policies for nn and hive service principals - in order to be able to create and copy files into encryption zones
+  - policy for HTTP service principal to write to /ranger/audits dir in HDFS - for KMS audits to HDFS to work
+
+- However, since Ranger does not recognize these users (we only sync'd the business users from AD), we will first need to manually create these users into Ranger (as local Ranger users)
+
 - Login to Ranger as admin/admin and create few users (nn, HTTP, hive) for Hadoop components we will need to create policies for:
   - create new user nn
     - Settings > Users/Groups > Add new user
