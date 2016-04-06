@@ -943,7 +943,8 @@ Adjusting ambari-server permissions and ownership...
 sudo ambari-server start
 ```
 
-- Now you can access Ambari on HTTPS on port 8444 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8444
+- Now you can access Ambari on **HTTPS** on port 8444 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8444
+  - If you were not able to access the Ambari UI, make sure you are trying to access *https* not *http*
 
 - Note that the browser will not trust the new self signed ambari certificate. You will need to trust that cert first.
   - If Firefox, you can do this by clicking on 'i understand the risk' > 'Add Exception...'
