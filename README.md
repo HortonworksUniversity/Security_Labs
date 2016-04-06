@@ -2662,15 +2662,17 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 
 ### Ambari views
 
-- Goal: In this lab we will setup Ambari views on kerborized cluster. Reference [doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_ambari_views_guide/content/ch_using_ambari_views.html)
- 
+- Goal: In this lab we will setup Ambari views on kerborized cluster. 
+
 - Change transport mode back to binary in Hive settings:
   - In Ambari, under Hive > Configs > set the below and restart Hive component.
     - hive.server2.transport.mode = binary
 
 - You may also need to change proxy user settings to be less restrictive
 
-- Automation to install views (does not support Ambari running on HTTPS)
+- Option 1: Manual setup following [doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.1.0/bk_ambari_views_guide/content/ch_using_ambari_views.html)
+ 
+- Option 2: Automated setup to install views
 ```
 sudo su
 git clone https://github.com/HortonworksUniversity/ambari-bootstrap
@@ -2703,9 +2705,12 @@ source ambari_functions.sh
 - In Ambari follow steps below:
   - On top right of page, click "Manage Ambari"
     - under 'Views': Navigate to Hive > Hive > Under 'Permissions' grant sales1 access to Hive view
-    - similarly you can give sales access to Files view   
+    - similarly you can give sales1 access to Files view   
+    - similarly you can give others users access to various views
 
 - At this point, you should be able to login to Ambari as sales1 user and navigate to the views
+
+- Test access as different users (hadoopadmin, sales1, hr1 etc). You can create Ranger policies as needed to grant access to particular groups to  particular resources
 
     
 -----------------
