@@ -2451,7 +2451,7 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
 
 #### HDFS Configuration for Knox
 
--  Tell Hadoop to allow our users to access Knox from any node of the cluster. Make the below change in Ambari > HDFS > Config > Custom core-site 
+-  Tell Hadoop to allow our users to access Knox from any node of the cluster. Modify the below properties under Ambari > HDFS > Config > Custom core-site  ('users' group should already part of the groups so just add the rest)
   - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
   - hadoop.proxyuser.knox.hosts=*
     - (better would be to put a comma separated list of the FQDNs of the hosts)
