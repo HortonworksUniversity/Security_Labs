@@ -1645,6 +1645,7 @@ In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbas
   - if it fails re-enter below fields and re-try:
     - Username: `rangeradmin@LAB.HORTONWORKS.NET`
     - Password: BadPass#1
+    - RPC Protection type: Authentication
   - Once the test passes, click Save  
   
    
@@ -1778,7 +1779,7 @@ logout
 
 - Goal: Setup Hive authorization policies to ensure sales users only have access to code, description columns in default.sample_07
 
-- Enble Hive on tez by setting below and restarting Hive 
+- Enable Hive on tez by setting below and restarting Hive 
   - Ambari > Hive > Configs  	
     - Execution Engine = Tez
 
