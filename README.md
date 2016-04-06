@@ -1453,14 +1453,14 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - Once the test passes, click Save  
   
 - Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
-  - Select Encryption > Key Manager
+  - Select Encryption > Key Management
   - Select KMS service > pick your kms > Add new Key
     - if an error is thrown, go back and test connection as described in previous step
   - Create a key called `testkey` > Save
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-createkey.png)
 
 - Similarly, create another key called `testkey2`
-  - Select Encryption > Key Manager
+  - Select Encryption > Key Management
   - Select KMS service > pick your kms > Add new Key
   - Create a key called `testkey2` > Save  
 
