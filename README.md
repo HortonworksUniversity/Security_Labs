@@ -5,6 +5,7 @@
   - Install Knox
   - Security w/o kerberos
 - [Lab 2](https://github.com/HortonworksUniversity/Security_Labs#lab-2)
+  - Review use case
   - AD overview
   - Configure Name Resolution & AD Certificate
   - Setup Access to Active Directory Server
@@ -272,9 +273,9 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 
 # Lab 2
 
-### Use case
+### Review use case
 
-Customer has an existing cluster which they would like you to secure for them
+Use case: Customer has an existing cluster which they would like you to secure for them
 
 - Current setup:
   - The customer has multiple organizational groups (i.e. sales, hr, legal) which contain business users (sales1, hr1, legal1 etc) and hadoopadmin
