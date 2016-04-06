@@ -22,9 +22,10 @@
 - [Lab 5](https://github.com/HortonworksUniversity/Security_Labs#lab-5)
   - Ranger install pre-reqs
   - Ranger install
-- [Lab 6](https://github.com/HortonworksUniversity/Security_Labs#lab-6)
+- [Lab 6a](https://github.com/HortonworksUniversity/Security_Labs#lab-6a)
   - Ranger KMS install
   - Add a KMS on another node
+- [Lab 6b](https://github.com/HortonworksUniversity/Security_Labs#lab-6b) 
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
 - [Lab 7](https://github.com/HortonworksUniversity/Security_Labs#lab-7)
@@ -1291,7 +1292,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ------------------
 
-# Lab 6
+# Lab 6a
 
 ## Ranger KMS/Data encryption setup
 
@@ -1394,6 +1395,10 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     
   - Once started you will see multiple KMS Servers running in Ambari:  
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-multiple-KMS.png) 
+
+------------------
+
+# Lab 6b
 
 ## Ranger KMS/Data encryption exercise
 
