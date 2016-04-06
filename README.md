@@ -2216,9 +2216,15 @@ beeline> drop table persons;
 message:Unable to drop default.persons because it is in an encryption zone and trash is enabled.  Use PURGE option to skip trash.
 ```
 
-- To drop a Hive table when Hives directories are located in EncryptionZone, you need to include `purge` as below:
+- To drop a Hive table (when Hive directories are located in EncryptionZone), you need to include `purge` as below:
 ```
 beeline> drop table persons purge;
+```
+
+- Destroy the ticket and logout as sales1
+```
+kdestroy
+logout
 ```
 
 - This completes the lab. You have now interacted with Hadoop components in secured mode and used Ranger to manage authorization policies and audits
