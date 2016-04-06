@@ -272,6 +272,31 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 
 # Lab 2
 
+### Use case
+
+Customer has an existing cluster which they would like you to secure for them
+
+- Current setup:
+  - The customer has multiple organizational groups (i.e. sales, hr, legal) which contain business users (sales1, hr1, legal1 etc) and hadoopadmin
+  - These groups and users are defined in Active Directory (AD) under its own Organizational Unit (OU) called CorpUsers 
+  - There are empty OUs created in AD to store hadoop principals/hadoop nodes (HadoopServices, HadoopNodes)
+  - Hadoopadmin user has administrative credentials with delegated control of "Create, delete, and manage user accounts" on above OUs
+  - Hadoop cluster running HDP has already been setup using Ambari (including HDFS, YARN, Hive, Hbase, Solr, Zookeeper)
+  
+- Goals:
+  - Integrate Ambari with AD - so that hadoopadmin can administer the cluster
+  - Integrate Hadoop nodes OS with AD - so business users are recognized and can submit Hadoop jobs
+  - Enable kerberos - to secured the cluster and enable authentication
+  - Install Ranger and enable Hadoop plugins - to allow admin to setup authorization policies and review audits across Hadoop components
+  - Install Ranger KMS and enable HDFS encryption - to be able to create encryption zones
+  - Encrypt Hive backing dirs - to protect hive tables
+  - Configure Ranger policies to:
+    - Protect /sales HDFS dir - so only sales group has access to it
+    - Protect sales hive table - so only sales group has access to it
+    - Protect sales HBase table - so only sales group has access to it
+  - Install Knox and integrate with AD - for perimeter security and give clients access to APIs w/o dealing with kerberos
+  - Enable Ambari views to work on secured cluster
+  
 ### AD overview
 
 - Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been pre-created to look something like the below:
@@ -1639,6 +1664,11 @@ sudo -u sales1 kdestroy
 ## Secured Hadoop exercises
 
 In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbase, Sqoop) running on a kerborized cluster and create Ranger appropriate authorization policies for access.
+
+- We will Configure Ranger policies to:
+  - Protect /sales HDFS dir - so only sales group has access to it
+  - Protect sales hive table - so only sales group has access to it
+  - Protect sales HBase table - so only sales group has access to it
 
 #### Access secured HDFS
 
