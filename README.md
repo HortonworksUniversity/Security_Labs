@@ -249,7 +249,8 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 ### Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard to install Knox (if not already installed) on any node in the cluster
+- Use the 'Add Service' Wizard to install Knox (if not already installed)
+  - Ideally you would install on a node where Ambari or Hive are not installed or one that has the least components enabled to spread the load
   - When prompted for the `Knox Master Secret`, set it to `knox`
   - Do *not* use password with special characters (like #, $ etc) here as it seems beeline has problems with it
    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-Knox-install.png)
@@ -2620,7 +2621,7 @@ openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox
     ```
     - On node where beeline will be run from (e.g. Hive node):
       - copy over the /tmp/knox.crt
-        - easiest option is to just open it in `vi` and paste the contents over:
+        - easiest option is to just open it in `vi` and copy/paste the contents over:
         `vi /tmp/knox.crt`
       - trust the certificate by running the command below      
     ```
