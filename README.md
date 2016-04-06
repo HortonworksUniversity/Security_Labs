@@ -2487,7 +2487,16 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
   - This should return json object containing list of dirs/files located in root dir and their attributes
-  
+
+- To avoid passing password on command prompt you can pass in just the username (to avoid having the password captured in the shell history). In this case, you will be prompted for the password  
+```
+curl -ik -u sales1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+
+## enter BadPass#1
+```
+
+- For the remaining examples below, for simplicity, we are passing in the password on the command line, but feel free to remove the password and enter it in manually when prompted
+
 - Try the same request as hr1 and notice it fails with `Error 403 Forbidden` :
   - This is expected since in the policy above, we only allowed sales group to access WebHDFS over Knox
 ```
@@ -2611,12 +2620,13 @@ openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox
     ```
     - On node where beeline will be run from (e.g. Hive node):
       - copy over the /tmp/knox.crt
-      - trust the certificate
-      
+        - easiest option is to just open it in `vi` and paste the contents over:
+        `vi /tmp/knox.crt`
+      - trust the certificate by running the command below      
     ```
 sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
     ```
-    - Now connect via beeline:
+    - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below:
   
     ```
 beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
