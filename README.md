@@ -2514,7 +2514,7 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
   ```
   
   - B. Open file via WebHDFS
-    - List files under /tmp and pick a text file to open:
+    - Sample command to list files under /tmp:
     ```
     curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
     ```
