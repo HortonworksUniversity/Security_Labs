@@ -2078,6 +2078,9 @@ hbase shell
 hbase> describe 'sales'
 hbase> list 'default'
 ```
+
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-hbase-sales.png)
+
 - Try to create a table as hr1 and it fails with `org.apache.hadoop.hbase.security.AccessDeniedException: Insufficient permissions`
 ```
 hbase> create 'sales', 'cf'
