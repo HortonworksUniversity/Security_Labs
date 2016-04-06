@@ -2508,6 +2508,7 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     - When you ran the previous curl request it would have listed HTTP headers as part of output. One of the headers will be 'Set Cookie'
     - e.g. `Set-Cookie: JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly`
     - You can pass in the value from your setup and make the request without passing in credentials:
+      - Make sure you copy the JSESSIONID from a request that worked (i.e the one from sales1 not hr1)
   ```
   curl -ik --cookie "JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly" -X GET https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
   ```
