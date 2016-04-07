@@ -657,7 +657,7 @@ sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
 
 
-- kinit as a normal Hadoop user
+- kinit as an end user
 ```
 kinit hr1
 ```
