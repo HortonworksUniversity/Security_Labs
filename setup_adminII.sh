@@ -6,7 +6,7 @@ export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
 export ambari_server_custom_script=${ambari_server_custom_script:-~/ambari-bootstrap/ambari-extras.sh}
 export ambari_version="2.1.2.1"
-export ambari_stack_version=2.3
+export ambari_stack_version="2.3"
 cd
 
 yum makecache
