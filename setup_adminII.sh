@@ -57,16 +57,6 @@ cat << EOF > configuration-custom.json
         "hive.compactor.initiator.on": "true",
         "hive.compactor.worker.threads": "1"
     },
-    "solr-env": {
-        "solr.port": "6083"
-    },
-    "solr-config": {
-        "solr.port": "6083",
-        "solr.datadir": "/opt/ranger_audit_server",
-        "solr.download.location": "HDPSEARCH",
-        "solr.znode": "/ranger_audits",
-        "solr.cloudmode": "true"
-    }
   }
 }
 EOF
