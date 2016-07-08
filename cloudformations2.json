@@ -122,7 +122,7 @@
         },
         "AmbariVersion": {
             "AllowedPattern": "\\d\\.\\d\\.\\d\\.\\d",
-            "Default": "2.2.1.0",
+            "Default": "2.2.2.0",
             "Description": "Ambari Version",
             "Type": "String"
         },
@@ -138,7 +138,7 @@
                 "true",
                 "false"
             ],
-            "Default": "true",
+            "Default": "false",
             "Description": "Deploy cluster with Ambari? If false, then Ambari is installed without cluster deployment.",
             "Type": "String"
         },
