@@ -230,8 +230,8 @@ ktpass -out ambari.keytab -princ ambari@LAB.HORTONWORKS.NET -pass BadPass#1 -map
 ```
 
 1. To test the LDAP connection from a Linux node
-  ```
-  sudo yum install openldap-clients
-  ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldap-reader@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
-  ```
+```
+sudo yum install openldap-clients
+ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldap-reader@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
+```
 
