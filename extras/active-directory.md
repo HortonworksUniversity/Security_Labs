@@ -207,8 +207,8 @@ Import-Csv "Users.csv" | ForEach-Object {
 
 1. Give registersssd user permissions to join workstations to OU=HadoopNodes (needed to run 'adcli join' successfully)
   ```
-# CorpUsers > Properties > Security > Advanced > 
-#    Add > 'Select a principal' > registersssd > Check names > Ok > Select below checkboxes > OK
+# HadoopNodes > Properties > Security > Advanced > Permissions then:
+#    Add > 'Select a principal' > registersssd > Check names > Ok >. Set 'Applies to' to: 'This object and descendant objects. Select below checkboxes > OK
 #           Create Computer Objects
 #           Delete Computer Objects
 #    Add > 'Select a principal' > registersssd > Check names > Ok > Set 'Applies to' to: 'Descendant Computer Objects' > select below checkboxes > Ok > Apply
