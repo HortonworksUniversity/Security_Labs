@@ -145,6 +145,7 @@ openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cry
       - Expand the "Certificates" node under "Personal".
       - Select "All Tasks" -> "Import...", and import the the "p12".
       - Reboot the Active Directory server for it to load the certificate.
+   - Step by step instructions [here](https://www.trustico.com/install/import/iis7/iis7-pfx-installation.php)
 
 ****************************************
 
