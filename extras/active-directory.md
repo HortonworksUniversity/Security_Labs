@@ -202,7 +202,7 @@ Import-Csv "Users.csv" | ForEach-Object {
 }
 ```
 
-1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopServices`. In 'Active Directory Users and Computers' app:
+- Delegate OU permissions to `hadoopadmin` for `OU=HadoopServices`. In 'Active Directory Users and Computers' app:
   - right click HadoopServices 
   - Delegate Control
   - Next
@@ -214,7 +214,7 @@ Import-Csv "Users.csv" | ForEach-Object {
   - OK
 
 
-1. Give registersssd user permissions to join workstations to OU=HadoopNodes (needed to run 'adcli join' successfully). In 'Active Directory Users and Computers' app:
+- Give registersssd user permissions to join workstations to OU=HadoopNodes (needed to run 'adcli join' successfully). In 'Active Directory Users and Computers' app:
 - Click on View > Advanced features
 - Right Click on HadoopNodes
   - Properties
@@ -239,12 +239,12 @@ Import-Csv "Users.csv" | ForEach-Object {
 For more details see: https://jonconwayuk.wordpress.com/2011/10/20/minimum-permissions-required-for-account-to-join-workstations-to-the-domain-during-deployment/
 
 
-1. create principal for Ambari. This will be used later to kerborize Ambari before setting up views
+- create keytab for Ambari. This will be used later to kerborize Ambari before setting up views
 ```
 ktpass -out ambari.keytab -princ ambari@LAB.HORTONWORKS.NET -pass BadPass#1 -mapuser ambari@LAB.HORTONWORKS.NET -mapop set -crypto All -ptype KRB5_NT_PRINCIPAL
 ```
 
-1. To test the LDAP connection from a Linux node
+- To test the LDAP connection from a Linux node
 ```
 sudo yum install openldap-clients
 ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldap-reader@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
