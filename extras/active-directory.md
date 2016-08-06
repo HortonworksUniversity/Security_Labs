@@ -202,7 +202,16 @@ Import-Csv "Users.csv" | ForEach-Object {
 }
 ```
 
-1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopServices` (right click HadoopServices > Delegate Control > Add > hadoopadmin > checknames > OK >  "Create, delete, and manage user accounts" > OK)
+1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopServices`. In 'Active Directory Users and Computers' app:
+  - right click HadoopServices 
+  - Delegate Control
+  - Next
+  - Add
+  - hadoopadmin
+  - checknames
+  - OK 
+  - Select "Create, delete, and manage user accounts"
+  - OK
 
 
 1. Give registersssd user permissions to join workstations to OU=HadoopNodes (needed to run 'adcli join' successfully)
