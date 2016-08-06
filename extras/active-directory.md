@@ -215,28 +215,28 @@ Import-Csv "Users.csv" | ForEach-Object {
 
 
 - Give registersssd user permissions to join workstations to OU=HadoopNodes (needed to run 'adcli join' successfully). In 'Active Directory Users and Computers' app:
-- Click on View > Advanced features
-- Right Click on HadoopNodes
-  - Properties
-  - Security
-  - Advanced
-  - Permissions 
-- Add > 'Select a principal' > registersssd > Check names > Ok > 
-  - Set 'Applies to' to: 'This object and all descendant objects. Select below checkboxes > OK
-    - Create Computer Objects
-    - Delete Computer Objects
-- Add > 'Select a principal' > registersssd > Check names > Ok > 
-  - Set 'Applies to' to: 'Descendant Computer Objects' > select below checkboxes > Ok > Apply
-    - Read All Properties
-    - Write All Properties
-    - Read Permissions
-    - Modify Permissions
-    - Change Password
-    - Reset Password
-    - Validated write to DNS host name
-    - Validated write to service principle name
+  - Click on View > Advanced features
+  - Right Click on HadoopNodes
+    - Properties
+    - Security
+    - Advanced
+    - Permissions 
+  - Add > 'Select a principal' > registersssd > Check names > Ok > 
+    - Set 'Applies to' to: 'This object and all descendant objects. Select below checkboxes > OK
+      - Create Computer Objects
+      - Delete Computer Objects
+  - Add > 'Select a principal' > registersssd > Check names > Ok > 
+    - Set 'Applies to' to: 'Descendant Computer Objects' > select below checkboxes > Ok > Apply
+      - Read All Properties
+      - Write All Properties
+      - Read Permissions
+      - Modify Permissions
+      - Change Password
+      - Reset Password
+      - Validated write to DNS host name
+      - Validated write to service principle name
 
-For more details see: https://jonconwayuk.wordpress.com/2011/10/20/minimum-permissions-required-for-account-to-join-workstations-to-the-domain-during-deployment/
+For more details on steps above see reference material [here](https://jonconwayuk.wordpress.com/2011/10/20/minimum-permissions-required-for-account-to-join-workstations-to-the-domain-during-deployment/)
 
 
 - create keytab for Ambari. This will be used later to kerborize Ambari before setting up views
