@@ -249,10 +249,11 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 ### Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard to install Knox (if not already installed)
-  - Ideally you would install on a node where Ambari or Hive are not installed or one that has the least components enabled to spread the load
+- Use the 'Add Service' Wizard to install Knox *on a node other than the one running Ambari*
+  - **Make sure not to install Knox on same node as Ambari** (or if you must, change its port from 8443)
+    - Reason: in a later lab after we enable SSL for Ambari, it will run on port 8443
   - When prompted for the `Knox Master Secret`, set it to `knox`
-  - Do *not* use password with special characters (like #, $ etc) here as it seems beeline has problems with it
+  - Do *not* use password with special characters (like #, $ etc) here as seems beeline may have problem with it
    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 
@@ -944,8 +945,7 @@ sudo chmod 400 /etc/security/ssl/*
 sudo ambari-server stop
 ```
 
-- Setup HTTPS for Ambari and point it to port 8444
-  - We are changing it from default of 8443 to avoid potential clashes with Knox
+- Setup HTTPS for Ambari 
 ```
 # sudo ambari-server setup-security
 Using python  /usr/bin/python2
@@ -960,7 +960,7 @@ Choose one of the following options:
 ===========================================================================
 Enter choice, (1-5): 1
 Do you want to configure HTTPS [y/n] (y)? y
-SSL port [8443] ? 8444
+SSL port [8443] ? 8443
 Enter path to Certificate: /etc/security/ssl/ambari.crt
 Enter path to Private Key: /etc/security/ssl/ambari.key
 Please enter password for Private Key: BadPass#1
@@ -973,7 +973,7 @@ Adjusting ambari-server permissions and ownership...
 sudo ambari-server start
 ```
 
-- Now you can access Ambari on **HTTPS** on port 8444 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8444
+- Now you can access Ambari on **HTTPS** on port 8443 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8443
   - If you were not able to access the Ambari UI, make sure you are trying to access *https* not *http*
 
 - Note that the browser will not trust the new self signed ambari certificate. You will need to trust that cert first.
@@ -1272,15 +1272,15 @@ export SERVICE=RANGER
 export AMBARI_HOST=localhost
 export PASSWORD=BadPass#1
 
-output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8444/api/v1/clusters`
+output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
 CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
 
 #attempt to unregister the service
-curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X DELETE https://$AMBARI_HOST:8444/api/v1/clusters/$CLUSTER/services/$SERVICE
+curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X DELETE https://$AMBARI_HOST:8443/api/v1/clusters/$CLUSTER/services/$SERVICE
 
 #in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
-#curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' https://$AMBARI_HOST:8444/api/v1/clusters/$CLUSTER/services/$SERVICE
+#curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' https://$AMBARI_HOST:8443/api/v1/clusters/$CLUSTER/services/$SERVICE
 
 sudo service ambari-server restart
 
@@ -1536,7 +1536,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 export PASSWORD=BadPass#1
 
 #detect name of cluster
-output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8444/api/v1/clusters`
+output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
 cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
 echo $cluster
@@ -2679,7 +2679,7 @@ git clone https://github.com/HortonworksUniversity/ambari-bootstrap
 cd ambari-bootstrap/extras/
 export ambari_user=hadoopadmin
 export ambari_pass=BadPass#1
-export ambari_port=8444
+export ambari_port=8443
 export ambari_protocol=https
 
 source ambari_functions.sh
