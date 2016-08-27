@@ -617,6 +617,9 @@ sudo chmod 0600 /etc/sssd/sssd.conf
 sudo service sssd restart
 sudo authconfig --enablesssd --enablesssdauth --enablemkhomedir --enablelocauthorize --update
 
+sudo chkconfig messagebus on
+sudo service messagebus restart
+
 sudo chkconfig oddjobd on
 sudo service oddjobd restart
 sudo chkconfig sssd on
@@ -636,7 +639,7 @@ groups sales1
 
 - Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN by running the below commands
 
-- Restart HDFS service via Ambari. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
+- Restart HDFS and YARN service via Ambari. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
 - Execute the following on the Ambari node:
 ```
@@ -647,14 +650,14 @@ output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://loc
 cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
 #refresh user and group mappings
-sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
-sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
+sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 ```
 
 - Execute the following on the node where the YARN ResourceManager is installed:
 ```
-sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@LAB.HORTONWORKS.NET
-sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
+sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@LAB.HORTONWORKS.NET
+sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
 
 
