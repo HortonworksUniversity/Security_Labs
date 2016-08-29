@@ -65,6 +65,7 @@ Credentials will be provided for these services by the instructor:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/putty.png)
 
 - Make sure to click "Save" on the session page before logging in
+- When connecting, it will prompt you for username. Enter `centos`
 
 ### To connect from Linux/MacOSX laptop
 
@@ -249,7 +250,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 ### Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard to install Knox *on a node other than the one running Ambari*
+- Use the 'Add Service' Wizard (under 'Actions' dropdown, near bottom left of page) to install Knox *on a node other than the one running Ambari*
   - **Make sure not to install Knox on same node as Ambari** (or if you must, change its port from 8443)
     - Reason: in a later lab after we enable SSL for Ambari, it will run on port 8443
   - When prompted for the `Knox Master Secret`, set it to `knox`
