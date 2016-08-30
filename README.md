@@ -643,7 +643,7 @@ groups sales1
 
 - Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN by running the below commands
 
-- Restart HDFS service via Ambari. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
+- **Restart HDFS service via Ambari**. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
 - Execute the following on the Ambari node:
 ```
