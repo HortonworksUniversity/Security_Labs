@@ -1134,12 +1134,7 @@ sudo ./setup.sh
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 ```
 
-- if you installed Solr via Ambari, skip this step. Otherwise, run this on each Solr node to start the service in Cloud mode
-```
-sudo /opt/ranger_audit_server/scripts/start_solr.sh
-```
-
--  Create collection - only needs to be run from one of the Solr nodes
+-  Create collection - only needs to be run from one of the Solr nodes. Make sure Solr is running before doing this
 ```
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
    /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
