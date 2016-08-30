@@ -1048,7 +1048,7 @@ sudo chmod 440 /etc/security/http_secret
 
 ### Ambari views 
 
-Ambari views setup on secure cluster will be covered in later lab ([here](https://github.com/HortonworksUniversity/Security_Labs#other-security-features-for-ambari))
+Ambari views setup on secure cluster will be covered in later lab so we will skip this for now ([here](https://github.com/HortonworksUniversity/Security_Labs#other-security-features-for-ambari))
 
 ------------------
 
