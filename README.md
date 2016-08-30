@@ -575,7 +575,13 @@ sudo adcli join -v \
   --login-user="${ad_user}" \
   -v \
   --show-details
+ 
+## This will output a lot of text. In the middle you should see something like below:  
+## ! Couldn't find a computer container in the ou, creating computer account directly in: ou=HadoopNodes,dc=lab,dc=hortonworks,dc=net
+## * Calculated computer account: CN=IP-172-30-0-206,ou=HadoopNodes,dc=lab,dc=hortonworks,dc=net
+## * Created computer account: CN=IP-172-30-0-206,ou=HadoopNodes,dc=lab,dc=hortonworks,dc=net  
 ```
+
 
 ```
 #paste all the lines in this block together, in one shot
