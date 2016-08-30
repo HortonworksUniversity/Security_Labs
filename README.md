@@ -665,7 +665,7 @@ sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
 
 
-- kinit as an end user
+- kinit as an end user (password is BadPass#1)
 ```
 kinit hr1
 ```
