@@ -247,7 +247,9 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 - This should tell you why kerberos (and other security) is needed on Hadoop :)
 
 
-### Manually install missing components
+### Install missing components
+
+#### Install Knox via Ambari
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
 - Use the 'Add Service' Wizard (under 'Actions' dropdown, near bottom left of page) to install Knox *on a node other than the one running Ambari*
@@ -261,7 +263,9 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 - We will use Knox further in a later exercise.
   
 - After the install completed, Ambari will show that a number of services need to be restarted. Ignore this for now, we will restart them at a later stage.
-  
+
+#### Install Tez on Pig nodes
+
 - Ensure Tez is installed on all nodes where Pig clients are installed. This is done to ensure Pig service checks do not fail later on.
  - Ambari > Pig > click the 'Pig clients' link
  - This tell us which nodes have Pig clients installed
