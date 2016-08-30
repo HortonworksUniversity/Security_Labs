@@ -1098,8 +1098,8 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
 
-- Run on all nodes where Solr was installed. 
-  - (To check, you can either use amabri UI or check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
+- Run on all nodes where Solr was installed (most likely Solr is installed on all the nodes)
+  - (To confirm, you can either use amabri UI or check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
 ```
 export JAVA_HOME=/usr/java/default
 export host=$(curl -4 icanhazip.com)
