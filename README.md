@@ -65,6 +65,7 @@ Credentials will be provided for these services by the instructor:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/putty.png)
 
 - Make sure to click "Save" on the session page before logging in
+- When connecting, it will prompt you for username. Enter `centos`
 
 ### To connect from Linux/MacOSX laptop
 
@@ -249,10 +250,11 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 ### Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard to install Knox (if not already installed)
-  - Ideally you would install on a node where Ambari or Hive are not installed or one that has the least components enabled to spread the load
+- Use the 'Add Service' Wizard (under 'Actions' dropdown, near bottom left of page) to install Knox *on a node other than the one running Ambari*
+  - **Make sure not to install Knox on same node as Ambari** (or if you must, change its port from 8443)
+    - Reason: in a later lab after we enable SSL for Ambari, it will run on port 8443
   - When prompted for the `Knox Master Secret`, set it to `knox`
-  - Do *not* use password with special characters (like #, $ etc) here as it seems beeline has problems with it
+  - Do *not* use password with special characters (like #, $ etc) here as seems beeline may have problem with it
    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 
@@ -318,14 +320,14 @@ We will run through a series of labs and step by step, achieve all of the above 
   - HadoopNodes OU: list of nodes registered with AD
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-hadoopnodes.png)
 
-- In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
+- In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.2.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
   - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
   - Active Directory secure LDAP (LDAPS) connectivity has been configured.
   - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
   - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
 
 
-- For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/cc780336(v=ws.10).aspx) 
+- For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/hh831484(v=ws.11).aspx) 
 
 
 ### Configure name resolution & certificate to Active Directory
@@ -573,7 +575,13 @@ sudo adcli join -v \
   --login-user="${ad_user}" \
   -v \
   --show-details
+ 
+## This will output a lot of text. In the middle you should see something like below:  
+## ! Couldn't find a computer container in the ou, creating computer account directly in: ou=HadoopNodes,dc=lab,dc=hortonworks,dc=net
+## * Calculated computer account: CN=IP-172-30-0-206,ou=HadoopNodes,dc=lab,dc=hortonworks,dc=net
+## * Created computer account: CN=IP-172-30-0-206,ou=HadoopNodes,dc=lab,dc=hortonworks,dc=net  
 ```
+
 
 ```
 #paste all the lines in this block together, in one shot
@@ -635,7 +643,7 @@ groups sales1
 
 - Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN by running the below commands
 
-- Restart HDFS service via Ambari. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
+- **Restart HDFS service via Ambari**. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
 - Execute the following on the Ambari node:
 ```
@@ -657,7 +665,7 @@ sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
 
 
-- kinit as an end user
+- kinit as an end user (password is BadPass#1)
 ```
 kinit hr1
 ```
@@ -944,8 +952,7 @@ sudo chmod 400 /etc/security/ssl/*
 sudo ambari-server stop
 ```
 
-- Setup HTTPS for Ambari and point it to port 8444
-  - We are changing it from default of 8443 to avoid potential clashes with Knox
+- Setup HTTPS for Ambari 
 ```
 # sudo ambari-server setup-security
 Using python  /usr/bin/python2
@@ -960,7 +967,7 @@ Choose one of the following options:
 ===========================================================================
 Enter choice, (1-5): 1
 Do you want to configure HTTPS [y/n] (y)? y
-SSL port [8443] ? 8444
+SSL port [8443] ? 8443
 Enter path to Certificate: /etc/security/ssl/ambari.crt
 Enter path to Private Key: /etc/security/ssl/ambari.key
 Please enter password for Private Key: BadPass#1
@@ -973,7 +980,7 @@ Adjusting ambari-server permissions and ownership...
 sudo ambari-server start
 ```
 
-- Now you can access Ambari on **HTTPS** on port 8444 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8444
+- Now you can access Ambari on **HTTPS** on port 8443 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8443
   - If you were not able to access the Ambari UI, make sure you are trying to access *https* not *http*
 
 - Note that the browser will not trust the new self signed ambari certificate. You will need to trust that cert first.
@@ -1041,7 +1048,7 @@ sudo chmod 440 /etc/security/http_secret
 
 ### Ambari views 
 
-Ambari views setup on secure cluster will be covered in later lab ([here](https://github.com/HortonworksUniversity/Security_Labs#other-security-features-for-ambari))
+Ambari views setup on secure cluster will be covered in later lab so we will skip this for now ([here](https://github.com/HortonworksUniversity/Security_Labs#other-security-features-for-ambari))
 
 ------------------
 
@@ -1091,8 +1098,8 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
 
-- Run on all nodes where Solr was installed. 
-  - (To check, you can either use amabri UI or check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
+- Run on all nodes where Solr was installed (most likely Solr is installed on all the nodes)
+  - (To confirm, you can either use amabri UI or check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
 ```
 export JAVA_HOME=/usr/java/default
 export host=$(curl -4 icanhazip.com)
@@ -1127,12 +1134,7 @@ sudo ./setup.sh
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 ```
 
-- if you installed Solr via Ambari, skip this step. Otherwise, run this on each Solr node to start the service in Cloud mode
-```
-sudo /opt/ranger_audit_server/scripts/start_solr.sh
-```
-
--  Create collection - only needs to be run from one of the Solr nodes
+-  Create collection - only needs to be run from one of the Solr nodes. Make sure Solr is running before doing this
 ```
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
    /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
@@ -1272,15 +1274,15 @@ export SERVICE=RANGER
 export AMBARI_HOST=localhost
 export PASSWORD=BadPass#1
 
-output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8444/api/v1/clusters`
+output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
 CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
 
 #attempt to unregister the service
-curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X DELETE https://$AMBARI_HOST:8444/api/v1/clusters/$CLUSTER/services/$SERVICE
+curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X DELETE https://$AMBARI_HOST:8443/api/v1/clusters/$CLUSTER/services/$SERVICE
 
 #in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
-#curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' https://$AMBARI_HOST:8444/api/v1/clusters/$CLUSTER/services/$SERVICE
+#curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' https://$AMBARI_HOST:8443/api/v1/clusters/$CLUSTER/services/$SERVICE
 
 sudo service ambari-server restart
 
@@ -1536,7 +1538,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 export PASSWORD=BadPass#1
 
 #detect name of cluster
-output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8444/api/v1/clusters`
+output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
 cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
 echo $cluster
@@ -2679,7 +2681,7 @@ git clone https://github.com/HortonworksUniversity/ambari-bootstrap
 cd ambari-bootstrap/extras/
 export ambari_user=hadoopadmin
 export ambari_pass=BadPass#1
-export ambari_port=8444
+export ambari_port=8443
 export ambari_protocol=https
 
 source ambari_functions.sh

@@ -1,0 +1,881 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "CloudFormation template to Deploy Hortonworks Data Platform on VPC with a public subnet",
+    "Mappings": {
+        "AMAZONLINUX2015": {
+            "eu-west-1": {
+                "AMI": "ami-d1f482b1"
+            },
+            "us-east-1": {
+                "AMI": "ami-8fcee4e5"
+            },
+            "us-west-2": {
+                "AMI": "ami-63b25203"
+            }
+        },
+        "CENTOS7": {
+            "ap-northeast-1": {
+                "AMI": "ami-b80b6db8"
+            },
+            "ap-southeast-1": {
+                "AMI": "ami-2a7b6b78"
+            },
+            "ap-southeast-2": {
+                "AMI": "ami-d38dc6e9"
+            },
+            "eu-central-1": {
+                "AMI": "ami-e68f82fb"
+            },
+            "eu-west-1": {
+                "AMI": "ami-33734044"
+            },
+            "sa-east-1": {
+                "AMI": "ami-fd0197e0"
+            },
+            "us-east-1": {
+                "AMI": "ami-61bbf104"
+            },
+            "us-west-1": {
+                "AMI": "ami-f77fbeb3"
+            },
+            "us-west-2": {
+                "AMI": "ami-d440a6e7"
+            }
+        }
+    },
+    "Outputs": {
+        "AmbariSSH": {
+            "Description": "SSH to the Ambari Node",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "ssh centos@",
+                        {
+                            "Fn::GetAtt": [
+                                "AmbariNode",
+                                "PublicDnsName"
+                            ]
+                        }
+                    ]
+                ]
+            }
+        },
+        "AmbariServiceInstanceId": {
+            "Description": "The Ambari Servers Instance-Id",
+            "Value": {
+                "Ref": "AmbariNode"
+            }
+        },
+        "AmbariURL": {
+            "Description": "URL of Ambari UI",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "http://",
+                        {
+                            "Fn::GetAtt": [
+                                "AmbariNode",
+                                "PublicDnsName"
+                            ]
+                        },
+                        ":8080"
+                    ]
+                ]
+            }
+        },
+        "IIAN": {
+            "Description": "Instance ID of additional nodes",
+            "Value": {
+                "Ref": "AdditionalNodes"
+            }
+        },
+        "Region": {
+            "Description": "AWS Region",
+            "Value": {
+                "Ref": "AWS::Region"
+            }
+        }
+    },
+    "Parameters": {
+        "AdditionalInstanceCount": {
+            "Default": "0",
+            "Description": "Number of additional instances",
+            "MaxValue": "99",
+            "MinValue": "0",
+            "Type": "Number"
+        },
+        "AmbariPass": {
+            "AllowedPattern": "(?=^.{6,255}$)((?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*",
+            "Default": "BadPass#1",
+            "Description": "Password for Ambari Server. Must be at least 8 characters containing letters, numbers and symbols",
+            "MaxLength": 32,
+            "MinLength": 8,
+            "NoEcho": true,
+            "Type": "String"
+        },
+        "AmbariServices": {
+            "Default": "ACCUMULO AMBARI_METRICS FALCON FLUME HBASE HDFS HIVE KAFKA KNOX MAHOUT MAPREDUCE2 OOZIE PIG SLIDER SPARK SQOOP STORM TEZ YARN ZOOKEEPER",
+            "Description": "HDP Services to deploy",
+            "Type": "String"
+        },
+        "AmbariVersion": {
+            "AllowedPattern": "\\d\\.\\d\\.\\d\\.\\d",
+            "Default": "2.2.2.0",
+            "Description": "Ambari Version",
+            "Type": "String"
+        },
+        "BootDiskSize": {
+            "Default": "80",
+            "Description": "Size of boot disk.",
+            "MaxValue": 2000,
+            "MinValue": 10,
+            "Type": "Number"
+        },
+        "DeployCluster": {
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "Default": "false",
+            "Description": "Deploy cluster with Ambari? If false, then Ambari is installed without cluster deployment.",
+            "Type": "String"
+        },
+        "HDPStack": {
+            "AllowedPattern": "\\d\\.\\d",
+            "Default": "2.4",
+            "Description": "Password for Ambari Server. Must be at least 8 characters containing letters, numbers and symbols",
+            "Type": "String"
+        },
+        "InstanceType": {
+            "ConstraintDescription": "Must be a valid EC2 instance type.",
+            "Default": "m4.xlarge",
+            "Description": "Instance type",
+            "Type": "String"
+        },
+        "JavaProvider": {
+            "AllowedValues": [
+                "open",
+                "oracle"
+            ],
+            "ConstraintDescription": "open or oracle",
+            "Default": "open",
+            "Description": "Provider of Java packages: open or oracle",
+            "Type": "String"
+        },
+        "JavaVersion": {
+            "AllowedValues": [
+                "7",
+                "8"
+            ],
+            "ConstraintDescription": "7 or 8",
+            "Default": "8",
+            "Description": "Version number of Java",
+            "Type": "String"
+        },
+        "KeyName": {
+            "ConstraintDescription": "Can contain only ASCII characters.",
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "AWS::EC2::KeyPair::KeyName"
+        },
+        "PostCommand": {
+            "Default": "curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/generic/setup.sh | bash",
+            "Description": "Command to run during after nodes are deployed",
+            "Type": "String"
+        },
+        "SecurityGroups": {
+            "Description": "The Security Groups to launch the instance with",
+            "Type": "List<AWS::EC2::SecurityGroup::Id>"
+        },
+        "SubnetId": {
+            "Description": "SubnetId of an existing subnet (for the primary network) in your Virtual Private Cloud (VPC)access to the instance",
+            "Type": "AWS::EC2::Subnet::Id"
+        }
+    },
+    "Resources": {
+        "AdditionalNodeLaunchConfig": {
+            "Properties": {
+                "AssociatePublicIpAddress": "true",
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/sda1",
+                        "Ebs": {
+                            "VolumeSize": {
+                                "Ref": "BootDiskSize"
+                            },
+                            "VolumeType": "gp2"
+                        }
+                    },
+                    {
+                        "DeviceName": "/dev/sdb",
+                        "VirtualName": "ephemeral0"
+                    },
+                    {
+                        "DeviceName": "/dev/sdc",
+                        "VirtualName": "ephemeral1"
+                    },
+                    {
+                        "DeviceName": "/dev/sdd",
+                        "VirtualName": "ephemeral2"
+                    },
+                    {
+                        "DeviceName": "/dev/sde",
+                        "VirtualName": "ephemeral3"
+                    },
+                    {
+                        "DeviceName": "/dev/sdf",
+                        "VirtualName": "ephemeral4"
+                    },
+                    {
+                        "DeviceName": "/dev/sdg",
+                        "VirtualName": "ephemeral5"
+                    },
+                    {
+                        "DeviceName": "/dev/sdh",
+                        "VirtualName": "ephemeral6"
+                    },
+                    {
+                        "DeviceName": "/dev/sdi",
+                        "VirtualName": "ephemeral7"
+                    },
+                    {
+                        "DeviceName": "/dev/sdj",
+                        "VirtualName": "ephemeral8"
+                    },
+                    {
+                        "DeviceName": "/dev/sdk",
+                        "VirtualName": "ephemeral9"
+                    },
+                    {
+                        "DeviceName": "/dev/sdl",
+                        "VirtualName": "ephemeral10"
+                    },
+                    {
+                        "DeviceName": "/dev/sdm",
+                        "VirtualName": "ephemeral11"
+                    },
+                    {
+                        "DeviceName": "/dev/sdn",
+                        "VirtualName": "ephemeral12"
+                    },
+                    {
+                        "DeviceName": "/dev/sdo",
+                        "VirtualName": "ephemeral13"
+                    },
+                    {
+                        "DeviceName": "/dev/sdp",
+                        "VirtualName": "ephemeral14"
+                    },
+                    {
+                        "DeviceName": "/dev/sdq",
+                        "VirtualName": "ephemeral15"
+                    },
+                    {
+                        "DeviceName": "/dev/sdr",
+                        "VirtualName": "ephemeral16"
+                    },
+                    {
+                        "DeviceName": "/dev/sds",
+                        "VirtualName": "ephemeral17"
+                    },
+                    {
+                        "DeviceName": "/dev/sdt",
+                        "VirtualName": "ephemeral18"
+                    },
+                    {
+                        "DeviceName": "/dev/sdu",
+                        "VirtualName": "ephemeral19"
+                    },
+                    {
+                        "DeviceName": "/dev/sdv",
+                        "VirtualName": "ephemeral20"
+                    },
+                    {
+                        "DeviceName": "/dev/sdw",
+                        "VirtualName": "ephemeral21"
+                    },
+                    {
+                        "DeviceName": "/dev/sdx",
+                        "VirtualName": "ephemeral22"
+                    },
+                    {
+                        "DeviceName": "/dev/sdy",
+                        "VirtualName": "ephemeral23"
+                    }
+                ],
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "CENTOS7",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "SecurityGroups": {
+                    "Ref": "SecurityGroups"
+                },
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/usr/bin/env bash\n",
+                                "exec > >(tee /root/cloudformation.log|logger -t user-data -s 2>/dev/console) 2>&1\nset -o nounset\n",
+                                "set -o errexit\n",
+                                "set -o xtrace\n",
+                                "export region='",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "'\n",
+                                "export stack='",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "'\n",
+                                "export resource='",
+                                "AdditionalNodes",
+                                "'\n",
+                                "export ambari_server='",
+                                {
+                                    "Fn::GetAtt": [
+                                        "AmbariNode",
+                                        "PrivateDnsName"
+                                    ]
+                                },
+                                "'\n",
+                                "export ambari_version='",
+                                {
+                                    "Ref": "AmbariVersion"
+                                },
+                                "'\n",
+                                "export ambari_stack_version='",
+                                {
+                                    "Ref": "HDPStack"
+                                },
+                                "'\n",
+                                "export java_provider=",
+                                {
+                                    "Ref": "JavaProvider"
+                                },
+                                "\n",
+                                "export java_version=",
+                                {
+                                    "Ref": "JavaVersion"
+                                },
+                                "\n",
+                                "export install_ambari_agent=",
+                                "true",
+                                "\n",
+                                "export install_ambari_server=",
+                                "false",
+                                "\n",
+                                "export ref_wait_ambari='",
+                                {
+                                    "Ref": "waitHandleAmbari"
+                                },
+                                "'\n",
+                                "export ambari_services='",
+                                {
+                                    "Ref": "AmbariServices"
+                                },
+                                "'\n",
+                                "export post_command='",
+                                {
+                                    "Ref": "PostCommand"
+                                },
+                                "'\n",
+                                "export ambari_pass=",
+                                {
+                                    "Ref": "AmbariPass"
+                                },
+                                "\n",
+                                "export deploy=",
+                                {
+                                    "Ref": "DeployCluster"
+                                },
+                                "\n",
+                                "export ref_additional_instance_count=",
+                                {
+                                    "Ref": "AdditionalInstanceCount"
+                                },
+                                "\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## trap errors\n",
+                                "error_exit() {\n",
+                                "  local line_no=$1\n",
+                                "  local exit_code=$2\n",
+                                "  cfn-signal -e ${exit_code} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "  exit ${exit_code}\n",
+                                "}\n",
+                                "trap 'error_exit ${LINENO} ${?}' ERR\n",
+                                "\n",
+                                "export TERM=xterm\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## Install and Update CloudFormation\n",
+                                "yum install -y epel-release\n",
+                                "/usr/bin/easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
+                                "\n",
+                                "## Signal node is up\n",
+                                "cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## AWS specific system modifications\n",
+                                "\n",
+                                "printf 'Defaults !requiretty\n",
+                                "' > /etc/sudoers.d/888-dont-requiretty\n",
+                                "\n",
+                                "setenforce Permissive\n",
+                                "\n",
+                                "# ## swappiness to 0\n",
+                                "# sysctl -w vm.swappiness=0\n",
+                                "# mkdir -p /etc/sysctl.d\n",
+                                "# cat > /etc/sysctl.d/50-swappiness.conf <<-'EOF'\n",
+                                "# ## disable swapping\n",
+                                "# vm.swappiness=0\n",
+                                "# EOF\n",
+                                "\n",
+                                "cat >> ~/masterclass.env <<EOF\n",
+                                "export region=\"${region}\"\n",
+                                "export stack=\"${stack}\"\n",
+                                "export cluster_name=\"${stack}\"\n",
+                                "export resource=\"${resource}\"\n",
+                                "export ambari_server=\"${ambari_server}\"\n",
+                                "export ambari_version=\"${ambari_version}\"\n",
+                                "export ambari_stack_version=\"${ambari_stack_version}\"\n",
+                                "export java_provider=\"${java_provider}\"\n",
+                                "export java_version=\"${java_version}\"\n",
+                                "export install_ambari_agent=\"${install_ambari_agent}\"\n",
+                                "export install_ambari_server=\"${install_ambari_server}\"\n",
+                                "export ref_wait_ambari=\"${ref_wait_ambari}\"\n",
+                                "export ambari_services=\"${ambari_services}\"\n",
+                                "export post_command=\"${post_command}\"\n",
+                                "export ambari_pass=\"${ambari_pass}\"\n",
+                                "export deploy=\"${deploy}\"\n",
+                                "export ref_additional_instance_count=\"${ref_additional_instance_count}\"\n",
+                                "EOF\n",
+                                "chmod 600 ~/masterclass.env\n",
+                                "\n",
+                                "## Remove existing mount points\n",
+                                "if [ -e '/dev/xvdb' ]; then\n",
+                                "    sed '/^\\/dev\\/xvd[b-z]/d' -i /etc/fstab\n",
+                                "\n",
+                                "    ## Format ephemeral drives and create mounts\n",
+                                "    i=0\n",
+                                "    for disk in /dev/xvd[b-z]; do\n",
+                                "        mount=/grid/$(printf \"%0*d\n",
+                                "\" 2 $i)\n",
+                                "        umount ${disk} || true\n",
+                                "        mkdir -p ${mount}\n",
+                                "        echo \"${disk} ${mount} ext4 defaults,noatime,nodiratime 0 0\" >> /etc/fstab\n",
+                                "        nohup mkfs.ext4 -m 0 -T largefile4 ${disk} &\n",
+                                "        i=$((i+1))\n",
+                                "    done\n",
+                                "    wait\n",
+                                "\n",
+                                "    for disk in /dev/xvd[b-z]; do\n",
+                                "        tune2fs -c0 -i0 ${disk}\n",
+                                "        mount ${disk}\n",
+                                "    done\n",
+                                "fi\n",
+                                "\n",
+                                "export host_count=$((ref_additional_instance_count + 1))\n",
+                                "echo ${post_command}\n",
+                                "sh -c \"${post_command}\"\n",
+                                "\n",
+                                "if [ \"${resource}\" = \"AmbariNode\" ]; then\n",
+                                "    echo ${ref_wait_ambari}\n",
+                                "    cfn-signal -e ${?} --region ${region} --stack ${stack} -r \"Ambari tasks are done\" ${ref_wait_ambari}\n",
+                                "fi\n",
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::AutoScaling::LaunchConfiguration"
+        },
+        "AdditionalNodes": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Count": {
+                        "Ref": "AdditionalInstanceCount"
+                    },
+                    "Timeout": "PT30M"
+                }
+            },
+            "DependsOn": "AmbariNode",
+            "Properties": {
+                "DesiredCapacity": {
+                    "Ref": "AdditionalInstanceCount"
+                },
+                "LaunchConfigurationName": {
+                    "Ref": "AdditionalNodeLaunchConfig"
+                },
+                "MaxSize": {
+                    "Ref": "AdditionalInstanceCount"
+                },
+                "MinSize": 0,
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "PropagateAtLaunch": true,
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ],
+                "VPCZoneIdentifier": [
+                    {
+                        "Ref": "SubnetId"
+                    }
+                ]
+            },
+            "Type": "AWS::AutoScaling::AutoScalingGroup"
+        },
+        "AmbariNode": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Count": 1,
+                    "Timeout": "PT15M"
+                }
+            },
+            "Properties": {
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/sda1",
+                        "Ebs": {
+                            "VolumeSize": {
+                                "Ref": "BootDiskSize"
+                            },
+                            "VolumeType": "gp2"
+                        }
+                    },
+                    {
+                        "DeviceName": "/dev/sdb",
+                        "VirtualName": "ephemeral0"
+                    },
+                    {
+                        "DeviceName": "/dev/sdc",
+                        "VirtualName": "ephemeral1"
+                    },
+                    {
+                        "DeviceName": "/dev/sdd",
+                        "VirtualName": "ephemeral2"
+                    },
+                    {
+                        "DeviceName": "/dev/sde",
+                        "VirtualName": "ephemeral3"
+                    },
+                    {
+                        "DeviceName": "/dev/sdf",
+                        "VirtualName": "ephemeral4"
+                    },
+                    {
+                        "DeviceName": "/dev/sdg",
+                        "VirtualName": "ephemeral5"
+                    },
+                    {
+                        "DeviceName": "/dev/sdh",
+                        "VirtualName": "ephemeral6"
+                    },
+                    {
+                        "DeviceName": "/dev/sdi",
+                        "VirtualName": "ephemeral7"
+                    },
+                    {
+                        "DeviceName": "/dev/sdj",
+                        "VirtualName": "ephemeral8"
+                    },
+                    {
+                        "DeviceName": "/dev/sdk",
+                        "VirtualName": "ephemeral9"
+                    },
+                    {
+                        "DeviceName": "/dev/sdl",
+                        "VirtualName": "ephemeral10"
+                    },
+                    {
+                        "DeviceName": "/dev/sdm",
+                        "VirtualName": "ephemeral11"
+                    },
+                    {
+                        "DeviceName": "/dev/sdn",
+                        "VirtualName": "ephemeral12"
+                    },
+                    {
+                        "DeviceName": "/dev/sdo",
+                        "VirtualName": "ephemeral13"
+                    },
+                    {
+                        "DeviceName": "/dev/sdp",
+                        "VirtualName": "ephemeral14"
+                    },
+                    {
+                        "DeviceName": "/dev/sdq",
+                        "VirtualName": "ephemeral15"
+                    },
+                    {
+                        "DeviceName": "/dev/sdr",
+                        "VirtualName": "ephemeral16"
+                    },
+                    {
+                        "DeviceName": "/dev/sds",
+                        "VirtualName": "ephemeral17"
+                    },
+                    {
+                        "DeviceName": "/dev/sdt",
+                        "VirtualName": "ephemeral18"
+                    },
+                    {
+                        "DeviceName": "/dev/sdu",
+                        "VirtualName": "ephemeral19"
+                    },
+                    {
+                        "DeviceName": "/dev/sdv",
+                        "VirtualName": "ephemeral20"
+                    },
+                    {
+                        "DeviceName": "/dev/sdw",
+                        "VirtualName": "ephemeral21"
+                    },
+                    {
+                        "DeviceName": "/dev/sdx",
+                        "VirtualName": "ephemeral22"
+                    },
+                    {
+                        "DeviceName": "/dev/sdy",
+                        "VirtualName": "ephemeral23"
+                    }
+                ],
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "CENTOS7",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "SecurityGroupIds": {
+                    "Ref": "SecurityGroups"
+                },
+                "SubnetId": {
+                    "Ref": "SubnetId"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/usr/bin/env bash\n",
+                                "exec > >(tee /root/cloudformation.log|logger -t user-data -s 2>/dev/console) 2>&1\nset -o nounset\n",
+                                "set -o errexit\n",
+                                "set -o xtrace\n",
+                                "export region='",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "'\n",
+                                "export stack='",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "'\n",
+                                "export resource='",
+                                "AmbariNode",
+                                "'\n",
+                                "export ambari_server='",
+                                "127.0.0.1",
+                                "'\n",
+                                "export ambari_version='",
+                                {
+                                    "Ref": "AmbariVersion"
+                                },
+                                "'\n",
+                                "export ambari_stack_version='",
+                                {
+                                    "Ref": "HDPStack"
+                                },
+                                "'\n",
+                                "export java_provider=",
+                                {
+                                    "Ref": "JavaProvider"
+                                },
+                                "\n",
+                                "export java_version=",
+                                {
+                                    "Ref": "JavaVersion"
+                                },
+                                "\n",
+                                "export install_ambari_agent=",
+                                "true",
+                                "\n",
+                                "export install_ambari_server=",
+                                "true",
+                                "\n",
+                                "export ref_wait_ambari='",
+                                {
+                                    "Ref": "waitHandleAmbari"
+                                },
+                                "'\n",
+                                "export ambari_services='",
+                                {
+                                    "Ref": "AmbariServices"
+                                },
+                                "'\n",
+                                "export post_command='",
+                                {
+                                    "Ref": "PostCommand"
+                                },
+                                "'\n",
+                                "export ambari_pass=",
+                                {
+                                    "Ref": "AmbariPass"
+                                },
+                                "\n",
+                                "export deploy=",
+                                {
+                                    "Ref": "DeployCluster"
+                                },
+                                "\n",
+                                "export ref_additional_instance_count=",
+                                {
+                                    "Ref": "AdditionalInstanceCount"
+                                },
+                                "\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## trap errors\n",
+                                "error_exit() {\n",
+                                "  local line_no=$1\n",
+                                "  local exit_code=$2\n",
+                                "  cfn-signal -e ${exit_code} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "  exit ${exit_code}\n",
+                                "}\n",
+                                "trap 'error_exit ${LINENO} ${?}' ERR\n",
+                                "\n",
+                                "export TERM=xterm\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## Install and Update CloudFormation\n",
+                                "yum install -y epel-release\n",
+                                "/usr/bin/easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
+                                "\n",
+                                "## Signal node is up\n",
+                                "cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## AWS specific system modifications\n",
+                                "\n",
+                                "printf 'Defaults !requiretty\n",
+                                "' > /etc/sudoers.d/888-dont-requiretty\n",
+                                "\n",
+                                "setenforce Permissive\n",
+                                "\n",
+                                "# ## swappiness to 0\n",
+                                "# sysctl -w vm.swappiness=0\n",
+                                "# mkdir -p /etc/sysctl.d\n",
+                                "# cat > /etc/sysctl.d/50-swappiness.conf <<-'EOF'\n",
+                                "# ## disable swapping\n",
+                                "# vm.swappiness=0\n",
+                                "# EOF\n",
+                                "\n",
+                                "cat >> ~/masterclass.env <<EOF\n",
+                                "export region=\"${region}\"\n",
+                                "export stack=\"${stack}\"\n",
+                                "export cluster_name=\"${stack}\"\n",
+                                "export resource=\"${resource}\"\n",
+                                "export ambari_server=\"${ambari_server}\"\n",
+                                "export ambari_version=\"${ambari_version}\"\n",
+                                "export ambari_stack_version=\"${ambari_stack_version}\"\n",
+                                "export java_provider=\"${java_provider}\"\n",
+                                "export java_version=\"${java_version}\"\n",
+                                "export install_ambari_agent=\"${install_ambari_agent}\"\n",
+                                "export install_ambari_server=\"${install_ambari_server}\"\n",
+                                "export ref_wait_ambari=\"${ref_wait_ambari}\"\n",
+                                "export ambari_services=\"${ambari_services}\"\n",
+                                "export post_command=\"${post_command}\"\n",
+                                "export ambari_pass=\"${ambari_pass}\"\n",
+                                "export deploy=\"${deploy}\"\n",
+                                "export ref_additional_instance_count=\"${ref_additional_instance_count}\"\n",
+                                "EOF\n",
+                                "chmod 600 ~/masterclass.env\n",
+                                "\n",
+                                "## Remove existing mount points\n",
+                                "if [ -e '/dev/xvdb' ]; then\n",
+                                "    sed '/^\\/dev\\/xvd[b-z]/d' -i /etc/fstab\n",
+                                "\n",
+                                "    ## Format ephemeral drives and create mounts\n",
+                                "    i=0\n",
+                                "    for disk in /dev/xvd[b-z]; do\n",
+                                "        mount=/grid/$(printf \"%0*d\n",
+                                "\" 2 $i)\n",
+                                "        umount ${disk} || true\n",
+                                "        mkdir -p ${mount}\n",
+                                "        echo \"${disk} ${mount} ext4 defaults,noatime,nodiratime 0 0\" >> /etc/fstab\n",
+                                "        nohup mkfs.ext4 -m 0 -T largefile4 ${disk} &\n",
+                                "        i=$((i+1))\n",
+                                "    done\n",
+                                "    wait\n",
+                                "\n",
+                                "    for disk in /dev/xvd[b-z]; do\n",
+                                "        tune2fs -c0 -i0 ${disk}\n",
+                                "        mount ${disk}\n",
+                                "    done\n",
+                                "fi\n",
+                                "\n",
+                                "export host_count=$((ref_additional_instance_count + 1))\n",
+                                "echo ${post_command}\n",
+                                "sh -c \"${post_command}\"\n",
+                                "\n",
+                                "if [ \"${resource}\" = \"AmbariNode\" ]; then\n",
+                                "    echo ${ref_wait_ambari}\n",
+                                "    cfn-signal -e ${?} --region ${region} --stack ${stack} -r \"Ambari tasks are done\" ${ref_wait_ambari}\n",
+                                "fi\n",
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::EC2::Instance"
+        },
+        "waitConditionAmbari": {
+            "Properties": {
+                "Handle": {
+                    "Ref": "waitHandleAmbari"
+                },
+                "Timeout": "3600"
+            },
+            "Type": "AWS::CloudFormation::WaitCondition"
+        },
+        "waitHandleAmbari": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        }
+    }
+}
