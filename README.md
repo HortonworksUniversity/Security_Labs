@@ -1283,42 +1283,16 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 ## Ranger KMS/Data encryption exercise
 
 - Before we can start exercising HDFS encryption, we will need to set:
-  - KMS policies for nn and hive service principals - in order to be able to create and copy files into encryption zones
-  - policy for HTTP service principal to write to /ranger/audits dir in HDFS - for KMS audits to HDFS to work
+  - policy for hadoopadmin access to HDFS
+  - policy for hadoopadmin access to Hive  
+  - policy for hadoopadmin access to the KMS keys we created
 
-- However, since Ranger does not recognize these users (we only sync'd the business users from AD), we will first need to manually create these users into Ranger (as local Ranger users)
-
-- Login to Ranger as admin/admin and create few users (nn, HTTP, hive) for Hadoop components we will need to create policies for:
-  - create new user nn
-    - Settings > Users/Groups > Add new user
-      - username = nn
-      - password = BadPass#1
-      - First name = namenode
-      - Role: User
-      - Group: hadoop-admins
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-add-nn.png) 
-    - Similarly, create a user: HTTP  
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-HTTP.png)
-    - Similarly, create a user: hive  
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-hive.png)
-
-  
-  - Now lets add hadoopadmin to 'global policy' for HDFS to allow the user global access on HDFS
-    - Access Manager > HDFS > (clustername)_hadoop 
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-policy.png)
-    - This will open the list of HDFS policies
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-edit-policy.png)
-    - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-edit-policy-add-hadoopadmin.png)
-  
-  - Now "Add a new policy" for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
-    - name: kms audits
-    - resource path: /ranger/audit
-    - user: HTTP
-    - Permissions: Read Write Execute
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-policy-kms-audit.png) 
-
-  - You can follow similar steps to add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
+  - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
+    - Access Manager > HIVE > (clustername)_hive   
+    - This will open the list of HIVE policies
+    - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save 
+    
+  - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
     - This will open the list of HIVE policies
     - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save  
@@ -1338,12 +1312,8 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - Confirm the KMS repo was setup correctly
   - Under Service Manager > KMS > Click the Edit icon (next to the trash icon) to edit the KMS repo
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-repo.png) 
-  - Click 'Test connection' 
-  - if it fails re-enter below fields and re-try:
-    - Username: keyadmin@LAB.HORTONWORKS.NET
-    - Password: BadPass#1
-  - Once the test passes, click Save  
-  
+  - Click 'Test connection' and confirm it works
+
 - Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
   - Select Encryption > Key Management
   - Select KMS service > pick your kms > Add new Key
@@ -1356,7 +1326,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - Select KMS service > pick your kms > Add new Key
   - Create a key called `testkey2` > Save  
 
-- Add user `hadoopadmin` and `nn` and `hive` to default KMS key policy
+- Add user `hadoopadmin` to default KMS key policy
   - Click Access Manager tab
   - Click Service Manager > KMS > (clustername)_kms link
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy.png)
@@ -1364,10 +1334,10 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - Edit the default policy
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-policy.png)
   
-  - Under 'Select User', Add `hadoopadmin`, `nn` and `hive` users and click Save
+  - Under 'Select User', Add `hadoopadmin` user and click Save
    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy-add-nn.png)
   
-    - Note that for simplicity we are giving the hadoop users more permissions than they need. At minimum:
+    - Note that:
       - `nn` user  needs `GetMetaData` and `GenerateEEK` privilege
       - `hive` user needs `GetMetaData` and `DecryptEEK` privilege
 
@@ -1405,7 +1375,7 @@ sudo -u sales1 kinit
 ## enter BadPass#1
 
 #then kinit as hdfs using the headless keytab and the principal name
-sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "${cluster,,}"
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluster,,}"
 
 #as hadoopadmin list the keys and their metadata
 sudo -u hadoopadmin hadoop key list -metadata
@@ -1453,6 +1423,8 @@ sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
 
 #recall that to delete a file from EZ you need to specify the skipTrash option
 sudo -u hadoopadmin hdfs dfs -rm -skipTrash /zone_encr/test2.log
+
+#TODO: looks like -skiptrash no loner needed?
 
 #confirm that test2.log was deleted and that zone_encr only contains test1.log
 sudo -u hadoopadmin hdfs dfs -ls  /zone_encr/
