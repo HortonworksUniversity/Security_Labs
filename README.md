@@ -1217,39 +1217,22 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - In this section we will have to setup proxyusers. This is done to enable *impersonation* whereby a superuser can submit jobs or access hdfs on behalf of another user (e.g. because superuser has kerberos credentials but user joe doesn’t have any)
   - For more details on this, refer to the [doc](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html)
 
-- Before starting KMS install, find and note down the below 3 pieces of information. These will be used during KMS install
-  - Open Ambari > Ranger > Config > Filter for `ranger.audit.solr.zookeepers` and note down its value 
-    - it will be something like `ip-172-30-0-180.us-west-2.compute.internal:2181,ip-172-30-0-182.us-west-2.compute.internal:2181,ip-172-30-0-181.us-west-2.compute.internal:2181/ranger_audits`
-  - Find the internal hostname of host running *namenode* and note it down
-    - From Ambari > HDFS > click the 'NameNode' hyperlink. The internal hostname should appear in upper left of the page.
+- Before starting KMS install, find and note down the below piece of information. These will be used during KMS install
   - Find the internal hostname of host running *Mysql* and note it down
     - From Ambari > Hive > Mysql > click the 'Mysql Server' hyperlink. The internal hostname should appear in upper left of the page.
 
   
 - Open Ambari > start 'Add service' wizard > select 'Ranger KMS'.
 - Pick any node to install on
-- Keep the default configs except for below properties 
-  - Advanced kms-properties (for Ambari 2.2.0.0 and earlier)
-    - KMS_MASTER_KEY_PASSWORD = BadPass#1
-    - REPOSITORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
-    - REPOSITORY_CONFIG_PASSWORD = BadPass#1
-    - db_host = Internal FQDN of MySQL node e.g. ip-172-30-0-181.us-west-2.compute.internal
-    - db_password = BadPass#1
-    - db_root_password = BadPass#1
-  - Note that from Ambari 2.2.1.0 onwards, the location of above configs has changed: 
+- Keep the default configs except for below properties:
+
     - The DB host and passwords would need to be specified under the new Ambari > Ranger KMS > Settings tab 
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig1.png) 
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
     - The repository config username/password would still need to be modified under "Advanced kms-properties"  
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig3.png) 
     
-    - the remaining below configurations would be performed the same way (regardless of your Ambari version)
-    
-  - advanced kms-site:
-    - hadoop.kms.authentication.type=kerberos
-    - hadoop.kms.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
-    - hadoop.kms.authentication.kerberos.principal=*  
-    
+        
   - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):
       - hadoop.kms.proxyuser.hive.users=*
       - hadoop.kms.proxyuser.oozie.users=*
@@ -1265,12 +1248,6 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
       - hadoop.kms.proxyuser.keyadmin.hosts=*
       - hadoop.kms.proxyuser.keyadmin.users=*      
         ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-proxy.png) 
-  - Advanced ranger-kms-audit:
-    - Under xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
-      - `xasecure.audit.destination.hdfs.dir` = `hdfs://YOUR_NN_INTERNAL_HOSTNAME:8020/ranger/audit`
-    - Under xasecure.audit.destination.solr.zookeepers, copy the value of ranger.audit.solr.zookeepers (this is the value you noted down before starting the KMS install)
-      - `xasecure.audit.destination.solr.zookeepers`=`YOUR_ZK_QUORUM/ranger_audits`
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-config-audit.png)
 
 - Click Next > Proceed Anyway to proceed with the wizard
 
@@ -1283,21 +1260,12 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
         
 - Restart Ranger and RangerKMS via Ambari (hold off on restarting HDFS and other components for now)
 
-- On RangerKMS node, create symlink to core-site.xml
-```
-sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
-```
-
 - Confirm these properties got populated to kms://http@(kmshostname):9292/kms
   - HDFS > Configs > Advanced core-site:
     - hadoop.security.key.provider.path
   - HDFS > Configs > Advanced hdfs-site:
     - dfs.encryption.key.provider.uri  
     
-- Set the KMS proxy user
-  - HDFS > Configs > Custom core-site:
-    - hadoop.proxyuser.kms.groups=*   
-
 - Restart the services that require it e.g. HDFS, Mapreduce, YARN
 
 - Restart Ranger and RangerKMS services.
