@@ -1100,75 +1100,10 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 ###### Setup Solr for Ranger audit 
 
-- Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
+- Starting HDP 2.5, if you have deployed Logsearch/Ambari Infra services, you can just use the embedded Solr for Ranger audits.
+  - Just make sure Logsearch is installed/started and proceed
 
-- Run on all nodes where Solr was installed (most likely Solr is installed on all the nodes)
-  - (To confirm, you can either use amabri UI or check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
-```
-export JAVA_HOME=/usr/java/default
-export host=$(curl -4 icanhazip.com)
-
-sudo wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
-cd /usr/local
-sudo tar xvf solr_for_audit_setup_v3.tgz
-cd /usr/local/solr_for_audit_setup
-sudo mv install.properties install.properties.org
-
-sudo tee install.properties > /dev/null <<EOF
-#!/bin/bash
-JAVA_HOME=$JAVA_HOME
-SOLR_USER=solr
-SOLR_INSTALL=false
-SOLR_INSTALL_FOLDER=/opt/lucidworks-hdpsearch/solr
-SOLR_RANGER_HOME=/opt/ranger_audit_server
-SOLR_RANGER_PORT=6083
-SOLR_DEPLOYMENT=solrcloud
-SOLR_ZK=localhost:2181/ranger_audits
-SOLR_HOST_URL=http://$host:\${SOLR_RANGER_PORT}
-SOLR_SHARDS=1
-SOLR_REPLICATION=2
-SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
-SOLR_MAX_MEM=1g
-EOF
-sudo ./setup.sh
-```
-
-- create ZK dir - only needs to be run from one of the Solr nodes
-```
-sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
-```
-
--  Create collection - only needs to be run from one of the Solr nodes. Make sure Solr is running before doing this
-```
-sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
-   /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
-   
-sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
-
-```
-
-- Now you should access Solr webui http://PublicIPofAnySolrNode:6083/solr
-  - Click the Cloud > Graph tab to find the leader host i.e. the dark dot (172.30.0.181 in below example)
-    - Usually the leader node is the one where the collection was created from
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-cloud.png)   
-
-- (Optional) - From the **the leader node host**, install SILK (banana) dashboard to visualize audits in Solr
-```
-export host=$(curl -4 icanhazip.com)
-sudo wget https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/extras/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
-sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
-# access banana dashboard at http://SolrLeaderNodeIP:6083/solr/banana/index.html
-```
-  - if you are not able to see the dashboard, make sure you ran previous step on the *Solr leader node*
-
-- At this point you should be able to: 
-  - Access Solr webui for ranger_audits collection at http://SolrLeaderNodeIP:6083/solr/#/ranger_audits_shard1_replica1. 
-    - This is currently empty but will be where Ranger audits will get stored
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-dashboard-collection.png)
-  - access banana dashboard (if installed earlier) at http://SolrLeaderNodeIP:6083/solr/banana/index.html 
-    - This is currently empty but will be where Ranger audits will get visualized
-
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-empty.png)
+- **TODO**: add steps to install/configure Banana dashboard for Ranger Audits
 
 ## Ranger install
 
