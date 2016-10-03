@@ -565,7 +565,7 @@ sudo kinit ${ad_user}
 
 ```
 sudo yum makecache fast
-sudo yum -y -q install epel-release ## epel is required for adcli
+##sudo yum -y -q install epel-release ## epel is required for adcli   --Erik Maxwell - epel not required in RHEL 7 for adcli
 sudo yum -y -q install sssd oddjob-mkhomedir authconfig sssd-krb5 sssd-ad sssd-tools
 sudo yum -y -q install adcli
 ```
