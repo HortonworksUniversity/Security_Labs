@@ -658,7 +658,7 @@ output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://loc
 cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
 #refresh user and group mappings
-sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
+sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-"${cluster,,}"
 sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 ```
 
@@ -1560,7 +1560,7 @@ sudo -u sales1 kinit
 ## enter BadPass#1
 
 #then kinit as hdfs using the headless keytab and the principal name
-sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "${cluster,,}"
 
 #as hadoopadmin list the keys and their metadata
 sudo -u hadoopadmin hadoop key list -metadata
