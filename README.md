@@ -1461,10 +1461,6 @@ sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /apps/hive-old/warehouse
     - hive.exec.scratchdir = /apps/hive/tmp
   - Restart Hive
   
-- Configure Tez for EZ (this is a bug that should be fixed in next release)    
-  - Ambari > Tez > Configs > Custom tez-site 
-   - tez.dag.recovery.enabled  = false
-  - Restart Tez
 
 - Make sure that the permissions for /apps/hive/tmp are set to 1777
 ```
