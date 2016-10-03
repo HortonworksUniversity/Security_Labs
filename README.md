@@ -1039,7 +1039,7 @@ sudo chmod 440 /etc/security/http_secret
   ```
 - Save configs
 
-- Restart all services that require restart (HDFS, Mapreduce, YARN, HBase)
+- Restart all services that require restart (HDFS, Mapreduce, YARN, HBase). You can use the 'Actions' > 'Restart All Required' button to restart all the services in one shot
 
 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-restart-services.png)
