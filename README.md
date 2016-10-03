@@ -1159,42 +1159,6 @@ This should already be installed on your cluster. If not, refer to appendix [her
   - No changes needed (skipping configuring Ranger authentication against AD for now)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
 
-- Do *NOT* click Next just yet. Now configure components so Ranger can use `rangeradmin@LAB.HORTONWORKS.NET` principal to query HDFS, YARN, Hive, Hbase, Knox. We will do this by clicking the tabs for each of these services and modifying Ranger specific properties. 
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-install-configure-components.png)
-
-  - HDFS > Advanced > Advanced ranger-hdfs-plugin-properties:
-    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
-    - Ranger repository config password = BadPass#1
-    - Policy user for HDFS = rangeradmin
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HDFS-plugin-config.png)
-    
-  - YARN > Advanced > Advanced ranger-yarn-plugin-properties:
-    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
-    - Ranger repository config password = BadPass#1
-    - Policy user for YARN = rangeradmin
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-YARN-plugin-config.png)
-    
-
-  - HIVE > Advanced > Advanced ranger-hive-plugin-properties:
-    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
-    - Ranger repository config password = BadPass#1
-    - Policy user for HIVE = rangeradmin
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-plugin-config.png)
-    
-
-  - HBASE > Advanced > Advanced ranger-hbase-plugin-properties:
-    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
-    - Ranger repository config password = BadPass#1
-    - Policy user for HBASE = rangeradmin
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HBASE-plugin-config.png)
-    
-
-  - KNOX > Advanced > Advanced ranger-knox-plugin-properties:
-    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
-    - Ranger repository config password = BadPass#1
-    - Policy user for KNOX = rangeradmin
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KNOX-plugin-config.png)
-
 - Click Next > Proceed Anyway to proceed
     
 - On Configure Identities page, you will have to enter your AD admin credentials:
@@ -1207,27 +1171,8 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 - Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
 
-- (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), run below from Ambari node to delete the service so you can try again:
-```
-export SERVICE=RANGER
-export AMBARI_HOST=localhost
-export PASSWORD=BadPass#1
+- (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), delete Ranger service from Ambari and retry.
 
-output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
-CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
-
-
-#attempt to unregister the service
-curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X DELETE https://$AMBARI_HOST:8443/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
-#curl -u admin:$PASSWORD -k -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' https://$AMBARI_HOST:8443/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-sudo service ambari-server restart
-
-#restart agents on all nodes
-sudo service ambari-agent restart
-```
 
 ##### Check Ranger
 
