@@ -1151,7 +1151,6 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 6. Ranger Audits tab 
   - SolrCloud = ON
-  - enter password: BadPass#1
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-8.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-9.png)
 
@@ -1161,7 +1160,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 - Click Next > Proceed Anyway to proceed
     
-- On Configure Identities page, you will have to enter your AD admin credentials:
+- If prompted, on Configure Identities page, you may have to enter your AD admin credentials:
   - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Notice that you can now save the admin credentials. Check this box too
@@ -1251,22 +1250,20 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 - Click Next > Proceed Anyway to proceed with the wizard
 
-- On Configure Identities page, you will have to enter your AD admin credentials:
+- If prompted, on Configure Identities page, you may have to enter your AD admin credentials:
   - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Check the "Save admin credentials" checkbox
   
 - Click Next > Deploy to install RangerKMS
         
-- Restart Ranger and RangerKMS via Ambari (hold off on restarting HDFS and other components for now)
-
 - Confirm these properties got populated to kms://http@(kmshostname):9292/kms
   - HDFS > Configs > Advanced core-site:
     - hadoop.security.key.provider.path
   - HDFS > Configs > Advanced hdfs-site:
     - dfs.encryption.key.provider.uri  
     
-- Restart the services that require it e.g. HDFS, Mapreduce, YARN
+- Restart the services that require it e.g. HDFS, Mapreduce, YARN via Actions > Restart All Required
 
 - Restart Ranger and RangerKMS services.
 
