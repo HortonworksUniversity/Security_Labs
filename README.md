@@ -731,58 +731,12 @@ Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-
 
 ### Kerberos for Ambari
 
-- Setup kerberos for Ambari
-  - Required to configure Ambari views for kerberos
+For Ambari Views to access the cluster, Ambari must be configured to use Kerberos to access the cluster. The Kerberos wizard handles this configuration for you (as of Ambari 2.4).
 
-- Run below on Ambari node
+For those configurations to take affect, execute the following on the Ambari Server:
 
-- Download keytab
-```
-# run on Ambari node to start security setup guide
-cd /etc/security/keytabs/
-sudo wget https://github.com/HortonworksUniversity/Security_Labs/raw/master/extras/ambari.keytab
-sudo chown ambari:hadoop ambari.keytab
-sudo chmod 400 ambari.keytab
-```
-
-- Confirm the keytab can be used to successfully kinit as ambari
-```
-sudo kinit -kVt /etc/security/keytabs/ambari.keytab ambari
-```
-
-- Stop Ambari and start security setup guide
-```
-sudo ambari-server stop
-sudo ambari-server setup-security
-```
-- Enter below when prompted (sample output shown below):
-  - choice: `3`
-  - principal: `ambari@LAB.HORTONWORKS.NET`
-  - keytab path: `/etc/security/keytabs/ambari.keytab`
-  
-- Sample output:  
-```
-Using python  /usr/bin/python2.7
-Security setup options...
-===========================================================================
-Choose one of the following options:
-  [1] Enable HTTPS for Ambari server.
-  [2] Encrypt passwords stored in ambari.properties file.
-  [3] Setup Ambari kerberos JAAS configuration.
-  [4] Setup truststore.
-  [5] Import certificate to truststore.
-===========================================================================
-Enter choice, (1-5): 3
-Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons...
-Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
-Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
-Ambari Server 'setup-security' completed successfully.
-```
-
-- Restart Ambari to changes to take affect
 ```
 sudo ambari-server restart
-sudo ambari-agent restart
 ```
 
 ### Ambari server as non-root
