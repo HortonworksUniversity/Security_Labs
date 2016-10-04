@@ -1298,6 +1298,11 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - Access Manager > HIVE > (clustername)_hive   
     - This will open the list of HIVE policies
     - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save  
+  - Add policy for keyadmin to be able to access /ranger/audit/kms
+    - Access Manager > HDFS > (clustername)_hdfs   
+    - This will open the list of HDFS policies
+    - Create a new policy for keyadmin to be able to access /ranger/audit/kms and Save 
+    - **TODO**: add screenshot  
   
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
@@ -2006,7 +2011,13 @@ logout
 - Create Ranger policy to allow `sales` group `all permissions` on `persons` table in Hive
   - Access Manager > Hive > (cluster)_hive > Add new policy
   - Create new policy as below and click Add:
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy-persons.png)  
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy-persons.png) 
+
+- Create Ranger policy to allow `sales` group `all permissions` on `/ranger/audit/kms` dir in HDFS
+  - Access Manager > HDFS > (cluster)_hdfs > Add new policy
+  - Create new policy as below and click Add:
+  **TODO: add screenshot**
+
   - Log out of Ranger
   
 - Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. the key used to encrypt Hive warehouse directories)
