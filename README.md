@@ -497,17 +497,17 @@ EOF
 ls -la /etc/security/keytabs/
 ```
 
-- Run a `klist -kt`  one of the service keytab files to see the principal name it is for. Sample output below (*executed on host running Namenode*):
+- Run a `klist -ekt`  one of the service keytab files to see the principal name it is for. Sample output below (*executed on host running Namenode*):
 ```
-$ sudo klist -kt /etc/security/keytabs/nn.service.keytab
+$ sudo klist -ekt /etc/security/keytabs/nn.service.keytab
 Keytab name: FILE:/etc/security/keytabs/nn.service.keytab
 KVNO Timestamp           Principal
 ---- ------------------- ------------------------------------------------------
-   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
+   0 10/03/2016 22:20:12 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET (des3-cbc-sha1)
+   0 10/03/2016 22:20:12 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET (arcfour-hmac)
+   0 10/03/2016 22:20:12 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET (des-cbc-md5)
+   0 10/03/2016 22:20:12 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET (aes128-cts-hmac-sha1-96)
+   0 10/03/2016 22:20:12 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET (aes256-cts-hmac-sha1-96)
 ```
 
 - Notice how the service keytabs are divided into the below 3 parts. The instance here is the FQDN of the node so these keytabs are *host specific*.
@@ -517,22 +517,21 @@ KVNO Timestamp           Principal
 
 - Run a `klist -kt`  on one of the headless keytab files to see the principal name it is for. Sample output below (*executed on host running Namenode*):
 ```
-$ sudo klist -kt /etc/security/keytabs/hdfs.headless.keytab
+$ sudo klist -ekt /etc/security/keytabs/hdfs.headless.keytab
 Keytab name: FILE:/etc/security/keytabs/hdfs.headless.keytab
 KVNO Timestamp           Principal
 ---- ------------------- ------------------------------------------------------
-   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
-   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
+   0 10/03/2016 22:20:12 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET (des3-cbc-sha1)
+   0 10/03/2016 22:20:12 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET (arcfour-hmac)
+   0 10/03/2016 22:20:12 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET (des-cbc-md5)
+   0 10/03/2016 22:20:12 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET (aes128-cts-hmac-sha1-96)
+   0 10/03/2016 22:20:12 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET (aes256-cts-hmac-sha1-96)
 ```
 
 - Notice how the headless keytabs are divided into the below 3 parts. These keytabs are *cluster specific* (i.e one per cluster)
 ```
 {name of entity}-{cluster}@{REALM}. 
 ```
-
 
 ### Setup AD/OS integration via SSSD
 
@@ -1148,12 +1147,12 @@ This should already be installed on your cluster. If not, refer to appendix [her
 ```
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
-- **TODO: fix this for kerberized Solr in 2.5** Confirm Solr audits working by querying Solr REST API *from any solr node*
+- Confirm Solr audits working by querying Solr REST API *from any solr node*
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
 
-- **TODO: fix this for 2.5** Confirm Banana dashboard has started to show HDFS audits
+- Confirm Banana dashboard has started to show HDFS audits
 http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
