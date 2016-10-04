@@ -2338,12 +2338,10 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
   - C. Use groovy scripts to access WebHDFS
     - Edit the groovy script to set:
       - gateway = "https://localhost:8443/gateway/default"
-      - username = "sales1"
-      - password = "BadPass#1"
     ```
     sudo vi /usr/hdp/current/knox-server/samples/ExampleWebHdfsLs.groovy
     ```
-    - Run the script
+    - Run the script and enter credentials when prompted username: sales1 and password: BadPass#1
     ```
     sudo java -jar /usr/hdp/current/knox-server/bin/shell.jar /usr/hdp/current/knox-server/samples/ExampleWebHdfsLs.groovy
     ```
