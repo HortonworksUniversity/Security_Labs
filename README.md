@@ -727,62 +727,16 @@ logout
 
 ## Security options for Ambari
 
-Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/ch_amb_sec_guide.html)
+Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-2.4.1.0/bk_ambari-security/content/ch_amb_sec_guide.html)
 
 ### Kerberos for Ambari
 
-- Setup kerberos for Ambari
-  - Required to configure Ambari views for kerberos
+For Ambari Views to access the cluster, Ambari must be configured to use Kerberos to access the cluster. The Kerberos wizard handles this configuration for you (as of Ambari 2.4).
 
-- Run below on Ambari node
+For those configurations to take affect, execute the following on the Ambari Server:
 
-- Download keytab
-```
-# run on Ambari node to start security setup guide
-cd /etc/security/keytabs/
-sudo wget https://github.com/HortonworksUniversity/Security_Labs/raw/master/extras/ambari.keytab
-sudo chown ambari:hadoop ambari.keytab
-sudo chmod 400 ambari.keytab
-```
-
-- Confirm the keytab can be used to successfully kinit as ambari
-```
-sudo kinit -kVt /etc/security/keytabs/ambari.keytab ambari
-```
-
-- Stop Ambari and start security setup guide
-```
-sudo ambari-server stop
-sudo ambari-server setup-security
-```
-- Enter below when prompted (sample output shown below):
-  - choice: `3`
-  - principal: `ambari@LAB.HORTONWORKS.NET`
-  - keytab path: `/etc/security/keytabs/ambari.keytab`
-  
-- Sample output:  
-```
-Using python  /usr/bin/python2.7
-Security setup options...
-===========================================================================
-Choose one of the following options:
-  [1] Enable HTTPS for Ambari server.
-  [2] Encrypt passwords stored in ambari.properties file.
-  [3] Setup Ambari kerberos JAAS configuration.
-  [4] Setup truststore.
-  [5] Import certificate to truststore.
-===========================================================================
-Enter choice, (1-5): 3
-Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons...
-Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
-Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
-Ambari Server 'setup-security' completed successfully.
-```
-
-- Restart Ambari to changes to take affect
 ```
 sudo ambari-server restart
-sudo ambari-agent restart
 ```
 
 ### Ambari server as non-root
@@ -1223,14 +1177,13 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   
 - Open Ambari > start 'Add service' wizard > select 'Ranger KMS'.
 - Pick any node to install on
-- Keep the default configs except for 
-  - under Ambari > Ranger KMS > Settings tab :
-    - Ranger KMS DB host: <FQDN of Mysql>
-    - Ranger KMS DB password: `BadPass#1` 
-    - DBA password: `BadPass#1`
-    - KMS master secret password: `BadPass#1`
+- Keep the default configs except for below properties:
+
+    - The DB host and passwords would need to be specified under the new Ambari > Ranger KMS > Settings tab 
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig1.png) 
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
+    - The repository config username/password would still need to be modified under "Advanced kms-properties"  
+     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig3.png) 
     
         
   - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):
@@ -1288,11 +1241,10 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - policy for hadoopadmin access to Hive  
   - policy for hadoopadmin access to the KMS keys we created
 
-  - Add the user hadoopadmin to the Ranger HDFS global policies. 
-    - Access Manager > HDFS > (clustername)_hdfs   
-    - This will open the list of HDFS policies
-    - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
-    - **TODO**: add screenshot
+  - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
+    - Access Manager > HIVE > (clustername)_hive   
+    - This will open the list of HIVE policies
+    - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save 
     
   - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
