@@ -1,46 +1,46 @@
 # Contents
 
-- [Lab 1](https://github.com/HortonworksUniversity/Security_Labs#lab-1)
+- [Lab 1](#lab-1)
   - Access cluster
   - Install Knox
   - Security w/o kerberos
-- [Lab 2](https://github.com/HortonworksUniversity/Security_Labs#lab-2)
+- [Lab 2](#lab-2)
   - Review use case
   - AD overview
   - Configure Name Resolution & AD Certificate
   - Setup Access to Active Directory Server
-- [Lab 3](https://github.com/HortonworksUniversity/Security_Labs#lab-3): Ambari Server Security
+- [Lab 3](#lab-3): Ambari Server Security
   - Enable Active Directory Authentication for Ambari
   - Ambari server as non-root
   - Ambari Encrypt Database and LDAP Passwords
   - SSL For Ambari server
-- [Lab 4](https://github.com/HortonworksUniversity/Security_Labs#lab-4): Kerberos
+- [Lab 4](#lab-4): Kerberos
   - Kerborize cluster
   - Setup AD/Operating System Integration using SSSD - AD KDC
   - Kerberos for Ambari Views
   - SPNEGO
-- [Lab 5](https://github.com/HortonworksUniversity/Security_Labs#lab-5)
+- [Lab 5](#lab-5)
   - Ranger install pre-reqs
   - Ranger install
-- [Lab 6a](https://github.com/HortonworksUniversity/Security_Labs#lab-6a)
+- [Lab 6a](#lab-6a)
   - Ranger KMS install
   - Add a KMS on another node
-- [Lab 6b](https://github.com/HortonworksUniversity/Security_Labs#lab-6b) 
+- [Lab 6b](#lab-6b) 
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
-- [Lab 7](https://github.com/HortonworksUniversity/Security_Labs#lab-7)
+- [Lab 7](#lab-7)
   - Secured Hadoop exercises
     - HDFS
     - Hive
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
-- [Lab 8](https://github.com/HortonworksUniversity/Security_Labs#lab-8)
+- [Lab 8](#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
     - WebHDFS
     - Hive
-- [Lab 9](https://github.com/HortonworksUniversity/Security_Labs#lab-9---optional)
+- [Lab 9](#lab-9---optional)
   - Configure Ambari views for kerberos
 
 ---------------
