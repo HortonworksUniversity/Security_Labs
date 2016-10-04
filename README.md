@@ -557,57 +557,49 @@ sudo ambari-server start
 
 Run below on only Ambari node:
 
-- Add your AD properties as defaults for Ambari LDAP sync into the bottom of ambari.properties  
-  - The below commands are just appending the authentication properties to bottom of the ambari.properties file. If you prefer, you can manually edit the file too
+- This puts our AD-specific settings into variables for use in the following command
   ```
-ad_dc="ad01.lab.hortonworks.net"
+ad_host="ad01.lab.hortonworks.net"
 ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
 ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
-
-sudo tee -a /etc/ambari-server/conf/ambari.properties > /dev/null << EOF
-authentication.ldap.baseDn=${ad_root}
-authentication.ldap.managerDn=${ad_user}
-authentication.ldap.primaryUrl=${ad_dc}:389
-authentication.ldap.bindAnonymously=false
-authentication.ldap.dnAttribute=distinguishedName
-authentication.ldap.groupMembershipAttr=member
-authentication.ldap.groupNamingAttr=cn
-authentication.ldap.groupObjectClass=group
-authentication.ldap.useSSL=false
-authentication.ldap.userObjectClass=user
-authentication.ldap.usernameAttribute=sAMAccountName
-EOF
-
   ```
 
-- Make sure the above LDAP authentication entries were added to ambari.properties
+- Execute the following to configure Ambari to sync with LDAP.
+- Use the default password used from without this course.
+  ```
+  ambari-server setup-ldap \
+    --ldap-url=${ad_host}:389 \
+    --ldap-secondary-url= \
+    --ldap-ssl=false \
+    --ldap-base-dn=${ad_root} \
+    --ldap-manager-dn=${ad_user} \
+    --ldap-bind-anonym=false \
+    --ldap-dn=distinguishedName \
+    --ldap-member-attr=member \
+    --ldap-group-attr=cn \
+    --ldap-group-class=group \
+    --ldap-user-class=user \
+    --ldap-user-attr=sAMAccountName \
+    --ldap-save-settings \
+    --ldap-bind-anonym=false \
+    --ldap-referral=
+  ```
+   ![Image](screenshots/Ambari-setup-LDAP-new.png)
 
-  ```
-  tail -n 20 /etc/ambari-server/conf/ambari.properties 
-  ```  
-- Run Ambari LDAP sync. 
- - Run below to setup AD sync. 
- - Press *enter key* at each prompt to accept the default value being displayed
- - When prompted for 'Manager Password' at the end, enter password : BadPass#1
-  ```
-  sudo ambari-server setup-ldap
-  ```
-   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-setup-LDAP.png)
-
-- Restart Ambari server. When you do this, the agent will likely go down so restart it as well.
+- Restart Ambari server
   ```
    sudo ambari-server restart
-   sudo ambari-agent restart
   ```
+
 - Run LDAPsync to sync only the groups we want
   - When prompted for user/password, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
   sudo ambari-server sync-ldap --groups groups.txt
   ```
-
+  
   - This should show a summary of what objects were created
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-run-LDAPsync.png)
+  ![Image](screenshots/Ambari-run-LDAPsync.png)
   
 - Give 'hadoop-admin' admin permissions in Ambari to allow the user to manage the cluster
   - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
