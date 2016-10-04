@@ -1223,13 +1223,14 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   
 - Open Ambari > start 'Add service' wizard > select 'Ranger KMS'.
 - Pick any node to install on
-- Keep the default configs except for below properties:
-
-    - The DB host and passwords would need to be specified under the new Ambari > Ranger KMS > Settings tab 
+- Keep the default configs except for 
+  - under Ambari > Ranger KMS > Settings tab :
+    - Ranger KMS DB host: <FQDN of Mysql>
+    - Ranger KMS DB password: `BadPass#1` 
+    - DBA password: `BadPass#1`
+    - KMS master secret password: `BadPass#1`
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig1.png) 
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
-    - The repository config username/password would still need to be modified under "Advanced kms-properties"  
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig3.png) 
     
         
   - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):
@@ -1287,10 +1288,11 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - policy for hadoopadmin access to Hive  
   - policy for hadoopadmin access to the KMS keys we created
 
-  - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
-    - Access Manager > HIVE > (clustername)_hive   
-    - This will open the list of HIVE policies
-    - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save 
+  - Add the user hadoopadmin to the Ranger HDFS global policies. 
+    - Access Manager > HDFS > (clustername)_hdfs   
+    - This will open the list of HDFS policies
+    - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
+    - **TODO**: add screenshot
     
   - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
