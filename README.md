@@ -437,8 +437,8 @@ Ambari Server 'setup' completed successfully.
 - Create proxy user settings for ambari user to enable it to become a super user on all hosts (more details on this later):
   - Ambari > HDFS > Configs > Advanced > Custom core-site > Add property > Bulk mode:
 ```
-hadoop.proxyuser.ambari.groups=*
-hadoop.proxyuser.ambari.hosts=* 
+hadoop.proxyuser.ambari-server.groups=*
+hadoop.proxyuser.ambari-server.hosts=* 
 ```
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-proxyuser.png)
 
@@ -493,63 +493,22 @@ Ambari Server 'setup-security' completed successfully.
 
 #### Create self-signed certificate
 
-- Note down Ambari node public hostname
+- For this lab we will be generating a self-signed certificate. In production environments you would want to use a signed certificate (either from a public authority or your own CA).
+
+- Generate the certificate & key
 ```
-curl icanhazptr.com
-```
-
-- Commands and sample output below (to be run on ambari node):
-  - Note that for 'Common Name' you should enter the public hostname of Ambari node
-  
-```
-$ cd
-$ sudo openssl genrsa -out ambari.key 2048
-Generating RSA private key, 2048 bit long modulus
-....+++
-.........+++
-e is 65537 (0x10001)
-
-$ sudo openssl req -new -key ambari.key -out ambari.csr
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
------
-Country Name (2 letter code) [XX]:US
-State or Province Name (full name) []:CA
-Locality Name (eg, city) [Default City]:Santa Clara
-Organization Name (eg, company) [Default Company Ltd]:Hortonworks
-Organizational Unit Name (eg, section) []:Sales
-Common Name (eg, your name or your server's hostname) []:YOUR_PUBLIC_HOSTNAME
-Email Address []:
-
-Please enter the following 'extra' attributes
-to be sent with your certificate request
-A challenge password []:BadPass#1
-An optional company name []:
-
-$ sudo openssl x509 -req -days 365 -in ambari.csr -signkey ambari.key -out ambari.crt
-Signature ok
-subject=/C=US/ST=CA/L=Santa Clara/O=Hortonworks/OU=Sales/CN=ec2-52-36-87-146.us-west-2.compute.amazonaws.com
-Getting Private key
+openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj '/CN=localhost'
 ```
 
-- This generates:
-  - certificate: ambari.crt
-  - private key: ambari.key
-
-- Copy the 3 files into a new folder called ssl under /etc/security (ambari.key, ambari.csr, ambari.crt)
+- Move & secure the certificate & key
 ```
-sudo mkdir /etc/security/ssl
-sudo cp ambari.* /etc/security/ssl
-sudo chmod 400 /etc/security/ssl/*
+  chown ambari-server ambari.crt ambari.key
+  chmod 0400 ambari.crt ambari.key
+  mv ambari.crt /etc/pki/tls/certs/
+  mv ambari.key /etc/pki/tls/private/
 ```
 
-- Proceed onto next section to enable HTTPS for Ambari using the self signed certificate we created
-
-#### Setup SSL for Ambari server
+#### Configure Ambari Server for HTTPS (using the above certificate & key)
 
 - Stop Ambari server
 ```
