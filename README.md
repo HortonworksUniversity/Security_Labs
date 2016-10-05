@@ -385,7 +385,12 @@ Further documentation [here](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2
 
 - Create a user for the Ambari Server:
 ```
-useradd -d /var/lib/ambari-server -G hadoop -M -r -s /sbin/nologin ambari-server
+useradd -d /var/lib/ambari-server -G hadoop -M -r -s /sbin/nologin ambari
+```
+
+- Grant the user 'sudoers' rights. This is required for Ambari Server to create it's Kerberos keytabs. You can remove this after kerberizing the cluster
+```
+echo 'ambari ALL=(ALL) NOPASSWD:SETENV: /bin/mkdir, /bin/cp, /bin/chmod, /bin/rm' > /etc/sudoers.d/ambari-server
 ```
 
 - To setup Ambari server as non-root run below on Ambari-server node:
@@ -395,7 +400,7 @@ sudo ambari-server setup
 - Then enter the below at the prompts:
   - OK to continue? y
   - Customize user account for ambari-server daemon? y
-  - Enter user account for ambari-server daemon (root):ambari-server
+  - Enter user account for ambari-server daemon (root):ambari
   - Do you want to change Oracle JDK [y/n] (n)? n
   - Enter advanced database configuration [y/n] (n)? n
 
@@ -433,7 +438,7 @@ Extracting system views...
 Adjusting ambari-server permissions and ownership...
 Ambari Server 'setup' completed successfully.
 ```
-
+<!---
 - Create proxy user settings for ambari user to enable it to become a super user on all hosts (more details on this later):
   - Ambari > HDFS > Configs > Advanced > Custom core-site > Add property > Bulk mode:
 ```
@@ -444,6 +449,10 @@ hadoop.proxyuser.ambari-server.hosts=*
 
 - Save and restart HDFS
   - Ambari will show that other components need restarting too but you can proceed without restarting those for now to save time (we will restart those later)
+
+--->
+
+### Run ambari-agent as non-root
 
 - For now we will skip configuring Ambari Agents for Non-Root
 
@@ -497,7 +506,7 @@ Ambari Server 'setup-security' completed successfully.
 
 - Generate the certificate & key
 ```
-openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj '/CN=localhost'
+openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj "/CN=$(curl icanhazptr.com)"
 ```
 
 - Move & secure the certificate & key
@@ -531,8 +540,8 @@ Choose one of the following options:
 Enter choice, (1-5): 1
 Do you want to configure HTTPS [y/n] (y)? y
 SSL port [8443] ? 8443
-Enter path to Certificate: /etc/security/ssl/ambari.crt
-Enter path to Private Key: /etc/security/ssl/ambari.key
+Enter path to Certificate: /etc/pki/tls/certs/ambari.crt
+Enter path to Private Key: /etc/pki/tls/private/ambari.key
 Please enter password for Private Key: BadPass#1
 Importing and saving Certificate...done.
 Adjusting ambari-server permissions and ownership...
