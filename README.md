@@ -1251,14 +1251,16 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - Access Manager > HDFS > (clustername)_hdfs   
     - This will open the list of HDFS policies
     - Create a new policy for keyadmin to be able to access /ranger/audit/kms and Save 
-    - **TODO**: add screenshot  
+     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
+    - Your policy has been added
+     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
   
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-permissions.png)
+     ![Image](screenshots/Ranger-user-permissions.png)
     - Click 'Audit' (second row from bottom) to change users who have access to Audit screen
     - Under 'Select User', add 'keyadmin' user
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-permissions-audits.png)
+     ![Image](screenshots/Ranger-user-permissions-audits.png)
     - Save
   
     
@@ -1267,15 +1269,15 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - Login to Ranger as keyadmin/keyadmin
 - Confirm the KMS repo was setup correctly
   - Under Service Manager > KMS > Click the Edit icon (next to the trash icon) to edit the KMS repo
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-repo.png) 
+  ![Image](screenshots/Ranger-KMS-edit-repo.png) 
   - Click 'Test connection' and confirm it works
 
-- Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
+- Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.0/bk_security/content/use_ranger_kms.html)
   - Select Encryption > Key Management
   - Select KMS service > pick your kms > Add new Key
     - if an error is thrown, go back and test connection as described in previous step
   - Create a key called `testkey` > Save
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-createkey.png)
+  ![Image](screenshots/Ranger-KMS-createkey.png)
 
 - Similarly, create another key called `testkey2`
   - Select Encryption > Key Management
