@@ -1205,22 +1205,22 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - Add the user hadoopadmin to the Ranger HDFS global policies. 
     - Access Manager > HDFS > (clustername)_hdfs   
     - This will open the list of HDFS policies
-   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-HDFS-list.png) 
+   ![Image](screenshots/Ranger-KMS-HDFS-list.png) 
     - Edit the 'all - path' global policy (the first one) and add hadoopadmin to global HDFS policy and Save 
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-HDFS-add-hadoopadmin.png) 
+    ![Image](screenshots/Ranger-KMS-HDFS-add-hadoopadmin.png) 
     - Your policy now includes hadoopadmin
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-HDFS-list-after.png) 
+    ![Image](screenshots/Ranger-KMS-HDFS-list-after.png) 
     
   - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
     - This will open the list of HIVE policies
-    [Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-HIVE-list.png) 
+    [Image](screenshots/Ranger-KMS-HIVE-list.png) 
     - Edit the 'all - database, table, column' global policy (the first one) and add hadoopadmin to global HIVE policy and Save  
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-HIVE-add-hadoopadmin-table.png) 
+    ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-table.png) 
     - Edit the 'all - database, udf' global policy (the second one) and add hadoopadmin to global HIVE policy and Save 
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-HIVE-add-hadoopadmin-udf.png) 
+    ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-udf.png) 
     - Your policies now includes hadoopadmin
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-HIVE-list-after.png) 
+     ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
      
   - Add policy for keyadmin to be able to access /ranger/audit/kms
     - Access Manager > HDFS > (clustername)_hdfs   
