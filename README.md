@@ -383,9 +383,13 @@ Further documentation [here](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2
 
 ### Ambari server as non-root
 
-- Create a user for the Ambari Server:
+- Create a user for the Ambari Server if it does not exists
 ```
 useradd -d /var/lib/ambari-server -G hadoop -M -r -s /sbin/nologin ambari
+```
+- Otherwise - Update the Ambari Server with the following
+```
+usermode -d /var/lib/ambari-server -G hadoop -s /sbin/nologin ambari
 ```
 
 - Grant the user 'sudoers' rights. This is required for Ambari Server to create it's Kerberos keytabs. You can remove this after kerberizing the cluster
