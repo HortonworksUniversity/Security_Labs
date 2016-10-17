@@ -389,7 +389,7 @@ useradd -d /var/lib/ambari-server -G hadoop -M -r -s /sbin/nologin ambari
 ```
 - Otherwise - Update the Ambari Server with the following
 ```
-usermode -d /var/lib/ambari-server -G hadoop -s /sbin/nologin ambari
+usermod -d /var/lib/ambari-server -G hadoop -s /sbin/nologin ambari
 ```
 
 - Grant the user 'sudoers' rights. This is required for Ambari Server to create it's Kerberos keytabs. You can remove this after kerberizing the cluster
@@ -515,7 +515,7 @@ openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000
 
 - Move & secure the certificate & key
 ```
-  chown ambari-server ambari.crt ambari.key
+  chown ambari ambari.crt ambari.key
   chmod 0400 ambari.crt ambari.key
   mv ambari.crt /etc/pki/tls/certs/
   mv ambari.key /etc/pki/tls/private/
