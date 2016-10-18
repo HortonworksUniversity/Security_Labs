@@ -1112,12 +1112,12 @@ This should already be installed on your cluster. If not, refer to appendix [her
 ```
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
-- Confirm Solr audits working by querying Solr REST API *from any solr node*
+- Confirm Solr audits working by querying Solr REST API *from any solr node* - SKIP 
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
 
-- Confirm Banana dashboard has started to show HDFS audits
+- Confirm Banana dashboard has started to show HDFS audits - SKIP
 http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
