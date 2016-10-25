@@ -58,7 +58,7 @@ Credentials will be provided for these services by the instructor:
 
 ### To connect using Putty from Windows laptop
 
-- Download ppk from [here](https://github.com/HortonworksUniversity/Security_Labs/raw/master/training-keypair.ppk)
+- Right click to download [this ppk key](https://github.com/HortonworksUniversity/Security_Labs/raw/master/training-keypair.ppk)
 - Use putty to connect to your node using the ppk key:
   - Connection > SSH > Auth > Private key for authentication > Browse... > Select training-keypair.ppk
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/putty.png)
@@ -69,7 +69,7 @@ Credentials will be provided for these services by the instructor:
 ### To connect from Linux/MacOSX laptop
 
 - SSH into Ambari node of your cluster using below steps:
-  - Right click [this pem key](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/training-keypair.pem)  > Save link as > save to Downloads folder
+- Right click to download [this pem key](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/training-keypair.pem)  > Save link as > save to Downloads folder
   - Copy pem key to ~/.ssh dir and correct permissions
   ```
   cp ~/Downloads/training-keypair.pem ~/.ssh/
