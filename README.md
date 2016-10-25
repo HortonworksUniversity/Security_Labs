@@ -578,7 +578,7 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
   ```
 
 - Execute the following to configure Ambari to sync with LDAP.
-- Use the default password used from without this course.
+- Use the default password used throughout this course.
   ```
   ambari-server setup-ldap \
     --ldap-url=${ad_host}:389 \
@@ -658,7 +658,7 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
     - Admin password: `BadPass#1`
 
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-2.png)
-  - Notice that the "Save admin credentials" checkbox is grayed out. We will enable that later.
+  - Notice that the "Save admin credentials" checkbox is available, clicking the check box will save the "admin principal".
   - Sometimes the "Test Connection" button may fail (usually related to AWS issues), but if you previously ran the "Configure name resolution & certificate to Active Directory" steps *on all nodes*, you can proceed.
   
 - Now click Next on all the following screens to proceed with all the default values  
@@ -734,7 +734,7 @@ KVNO Timestamp           Principal
 
 - *Note: the below is just a sample way of using SSSD.  It will vary completely by environment and needs tuning and testing for your environment.*
 
-- Run the steps in this section **on each node**
+- **Run the steps in this section on each node**
 
 ```
 ad_user="registersssd"
@@ -830,7 +830,7 @@ groups sales1
 
 ### Refresh HDFS User-Group mappings
 
-- Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN by running the below commands
+- **Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN by running the below commands**
 
 - **Restart HDFS service via Ambari**. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
