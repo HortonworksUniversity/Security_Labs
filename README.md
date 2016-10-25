@@ -1112,6 +1112,8 @@ This should already be installed on your cluster. If not, refer to appendix [her
 ```
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
+
+<!---
 - Confirm Solr audits working by querying Solr REST API *from any solr node* - SKIP 
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
@@ -1121,7 +1123,7 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
-
+--->
 ------------------
 
 # Lab 6a
@@ -1922,10 +1924,11 @@ logout
 
 - This shows how you can interact with Hadoop components on kerberized cluster and use Ranger to manage authorization policies and audits
 
+<!---
 - **TODO: fix for 2.5. Skip for now** At this point your Silk/Banana audit dashboard should show audit data from multiple Hadoop components e.g. http://54.68.246.157:6083/solr/banana/index.html#/dashboard
 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-banana.png)  
-
+--->
 
 #### (Optional) Use Sqoop to import 
 
