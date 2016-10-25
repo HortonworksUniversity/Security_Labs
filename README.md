@@ -1209,25 +1209,62 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - Add the user hadoopadmin to the Ranger HDFS global policies. 
     - Access Manager > HDFS > (clustername)_hdfs   
     - This will open the list of HDFS policies
-    - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
-    - **TODO**: add screenshot
+   ![Image](screenshots/Ranger-KMS-HDFS-list.png) 
+    - Edit the 'all - path' global policy (the first one) and add hadoopadmin to global HDFS policy and Save 
+    ![Image](screenshots/Ranger-KMS-HDFS-add-hadoopadmin.png) 
+    - Your policy now includes hadoopadmin
+    ![Image](screenshots/Ranger-KMS-HDFS-list-after.png) 
     
   - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
     - This will open the list of HIVE policies
-    - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save  
+    [Image](screenshots/Ranger-KMS-HIVE-list.png) 
+    - Edit the 'all - database, table, column' global policy (the first one) and add hadoopadmin to global HIVE policy and Save  
+    ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-table.png) 
+    - Edit the 'all - database, udf' global policy (the second one) and add hadoopadmin to global HIVE policy and Save 
+    ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-udf.png) 
+    - Your policies now includes hadoopadmin
+     ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
+     
   - Add policy for keyadmin to be able to access /ranger/audit/kms
+    - First Create the hdfs directory for Ranger KMS Audit
+    ```
+    #run below on Ambari node
+
+    export PASSWORD=BadPass#1
+
+    #detect name of cluster
+    output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
+    cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+    echo $cluster
+    ## this should show the name of your cluster
+
+    ## if not you can manully set this as below
+    ## cluster=Security-HWX-LabTesting-XXXX
+
+    #then kinit as hdfs using the headless keytab and the principal name
+    sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluster,,}"
+    
+    #Create the Ranger KMS Audit Directory 
+    sudo -u hdfs hdfs dfs -mkdir -p /ranger/audit/kms
+    sudo -u hdfs hdfs dfs -chown -R kms:hdfs /ranger/audit/kms
+    sudo -u hdfs hdfs dfs -chmod 700 /ranger/audit/kms
+    sudo -u hdfs hdfs dfs -ls /ranger/audit/kms
+    ```
     - Access Manager > HDFS > (clustername)_hdfs   
     - This will open the list of HDFS policies
     - Create a new policy for keyadmin to be able to access /ranger/audit/kms and Save 
-    - **TODO**: add screenshot  
+     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
+    - Your policy has been added
+     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
   
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-permissions.png)
+     ![Image](screenshots/Ranger-user-permissions.png)
     - Click 'Audit' (second row from bottom) to change users who have access to Audit screen
     - Under 'Select User', add 'keyadmin' user
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-permissions-audits.png)
+     ![Image](screenshots/Ranger-user-permissions-audits.png)
     - Save
   
     
@@ -1236,15 +1273,15 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - Login to Ranger as keyadmin/keyadmin
 - Confirm the KMS repo was setup correctly
   - Under Service Manager > KMS > Click the Edit icon (next to the trash icon) to edit the KMS repo
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-repo.png) 
+  ![Image](screenshots/Ranger-KMS-edit-repo.png) 
   - Click 'Test connection' and confirm it works
 
-- Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
+- Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.0/bk_security/content/use_ranger_kms.html)
   - Select Encryption > Key Management
   - Select KMS service > pick your kms > Add new Key
     - if an error is thrown, go back and test connection as described in previous step
   - Create a key called `testkey` > Save
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-createkey.png)
+  ![Image](screenshots/Ranger-KMS-createkey.png)
 
 - Similarly, create another key called `testkey2`
   - Select Encryption > Key Management
