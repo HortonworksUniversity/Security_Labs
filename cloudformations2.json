@@ -17,6 +17,9 @@
             "ap-northeast-1": {
                 "AMI": "ami-b80b6db8"
             },
+            "ap-northeast-2": {
+                "AMI": "ami-c74789a9"
+            },
             "ap-southeast-1": {
                 "AMI": "ami-2a7b6b78"
             },
