@@ -991,7 +991,7 @@ Prepare MySQL DB for Ranger use.
 - `sudo mysql`
 - Execute following in the MySQL shell. Change the password to your preference. 
 
-    ```sql
+```sql
 CREATE USER 'root'@'%';
 GRANT ALL PRIVILEGES ON *.* to 'root'@'%' WITH GRANT OPTION;
 SET PASSWORD FOR 'root'@'%' = PASSWORD('BadPass#1');
