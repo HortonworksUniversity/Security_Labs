@@ -358,7 +358,7 @@ sudo update-ca-trust check
 
 3. Test certificate & name resolution with `ldapsearch`
 
-   ```
+```
 ## Update ldap.conf with our defaults
 sudo tee -a /etc/openldap/ldap.conf > /dev/null << EOF
 TLS_CACERT /etc/pki/tls/cert.pem
@@ -371,7 +371,7 @@ openssl s_client -connect ad01:636 </dev/null
 
 ## test connection to AD using ldapsearch (when prompted for password, enter: BadPass#1)
 ldapsearch -W -D ldap-reader@lab.hortonworks.net
-   ```
+```
 
 **Make sure to repeat the above steps on all nodes**
 
