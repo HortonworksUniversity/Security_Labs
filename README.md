@@ -571,11 +571,11 @@ sudo ambari-server start
 Run below on only Ambari node:
 
 - This puts our AD-specific settings into variables for use in the following command
-  ```
+```
 ad_host="ad01.lab.hortonworks.net"
 ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
 ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
-  ```
+```
 
 - Execute the following to configure Ambari to sync with LDAP.
 - Use the default password used throughout this course.
