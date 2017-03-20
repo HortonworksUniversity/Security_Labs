@@ -24,11 +24,11 @@ Below are the steps, including many PowerShell commands to prepare an AD environ
 
 ## Change hostname, if needed, and restart
 
-   ```
+```
 ## this will restart the server
 $new_hostname = "ad01"
 Rename-Computer -NewName $new_hostname -Restart
-   ```
+```
    
 ****************************************
 
@@ -39,16 +39,16 @@ Rename-Computer -NewName $new_hostname -Restart
 
 2. Prepare your environment. Update these to your liking.
 
-   ```
+```
 $domainname = "lab.hortonworks.net"
 $domainnetbiosname = "LAB"
 $password = "BadPass#1"
-   ```
+```
 
 3. Install AD features & Configure AD. You have 2 options:
    1. Deploy AD without DNS (relying on /etc/hosts or a separate DNS)
 
-   ```
+```
 Install-WindowsFeature AD-Domain-Services –IncludeManagementTools
 Import-Module ADDSDeployment
 $secure_string_pwd = convertto-securestring ${password} -asplaintext -force
@@ -64,11 +64,11 @@ Install-ADDSForest `
 -SysvolPath "C:\Windows\SYSVOL" `
 -SafeModeAdministratorPassword:$secure_string_pwd `
 -Force:$true
-   ```
+```
 
    2. Deploy AD with DNS
 
-    ```
+ ```
 Install-WindowsFeature AD-Domain-Services –IncludeManagementTools
 Import-Module ADDSDeployment
 $secure_string_pwd = convertto-securestring ${password} -asplaintext -force
@@ -85,7 +85,7 @@ Install-ADDSForest `
 -SysvolPath "C:\Windows\SYSVOL" `
 -SafeModeAdministratorPassword:$secure_string_pwd `
 -Force:$true
-    ```
+ ```
 
 ****************************************
 
@@ -126,7 +126,7 @@ Instructions for each:
 
 3. Generate a self-signed certificate however you like.
    - Many options for this. I prefer OpenSSL (run from wherever you like):
-      ```
+   ```
 openssl genrsa -out ca.key 4096
 openssl req -new -x509 -days 3650 -key ca.key -out ca.crt \
     -subj '/CN=lab.hortonworks.net/O=Hortonworks Testing/C=US'
@@ -137,7 +137,7 @@ openssl req -new -key wildcard-lab-hortonworks-net.key -out wildcard-lab-hortonw
 openssl x509 -req -in wildcard-lab-hortonworks-net.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out wildcard-lab-hortonworks-net.crt -days 3650
 
 openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cryptographic Provider' -LMK -inkey wildcard-lab-hortonworks-net.key -in wildcard-lab-hortonworks-net.crt -certfile ca.crt  -out wildcard-lab-hortonworks-net.p12
-      ```
+   ```
    - Copy wildcard-lab-hortonworks-net.p12 to the Active Directory server
    - On your Active Directory server:
       - Run "mmc"
