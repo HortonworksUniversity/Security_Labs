@@ -2460,19 +2460,6 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 
 - Option 1: Manual setup following [doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.1.0/bk_ambari_views_guide/content/ch_using_ambari_views.html)
  
-- Option 2: Automated setup to install views
-```
-sudo su
-git clone https://github.com/HortonworksUniversity/ambari-bootstrap
-cd ambari-bootstrap/extras/
-export ambari_user=hadoopadmin
-export ambari_pass=BadPass#1
-export ambari_port=8443
-export ambari_protocol=https
-
-source ambari_functions.sh
-./ambari-views/create-views.sh
-```
 - Restart HDFS and YARN via Ambari
 
 - Access the views:
