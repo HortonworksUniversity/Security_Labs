@@ -580,7 +580,7 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 - Execute the following to configure Ambari to sync with LDAP.
 - Use the default password used throughout this course.
   ```
-  ambari-server setup-ldap \
+  sudo ambari-server setup-ldap \
     --ldap-url=${ad_host}:389 \
     --ldap-secondary-url= \
     --ldap-ssl=false \
@@ -1264,7 +1264,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
      ![Image](screenshots/Ranger-user-permissions.png)
-    - Click 'Audit' (second row from bottom) to change users who have access to Audit screen
+    - Click 'Audit' to change users who have access to Audit screen
     - Under 'Select User', add 'keyadmin' user
      ![Image](screenshots/Ranger-user-permissions-audits.png)
     - Save
@@ -1381,7 +1381,7 @@ sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 
 - Now lets test deleting and copying files between EZs - ([Reference doc](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/copy-to-from-encr-zone.html))
 ```
-#try to remove file from EZ using usual -rm command
+#try to remove file from EZ using usual -rm command (note: Trash Support for deletion in HDFS encryption zone has been added since HDP2.4.3)
 sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
 ## rm: Failed to move to trash.... /zone_encr/test2.log can't be moved from an encryption zone.
 
@@ -2403,23 +2403,26 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
 - By default Knox will use a self-signed (untrusted) certificate. To trust the certificate:
   
     - First on Knox node, create the /tmp/knox.crt certificate
-    ```
+
+```
 knoxserver=$(hostname -f)
 openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox.crt
-    ```
-    - On node where beeline will be run from (e.g. Hive node):
+```
+  - On node where beeline will be run from (e.g. Hive node):
       - copy over the /tmp/knox.crt
         - easiest option is to just open it in `vi` and copy/paste the contents over:
         `vi /tmp/knox.crt`
       - trust the certificate by running the command below      
-    ```
+
+```
 sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
-    ```
-    - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below:
+```
+
+  - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below:
   
-    ```
+```
 beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
-    ```
+```
 
 - Notice that in the JDBC connect string for connecting to an secured Hive running in http transport mode:
   - *port changes to Knox's port 8443*
