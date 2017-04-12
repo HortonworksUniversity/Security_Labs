@@ -202,6 +202,8 @@ Import-Csv "Users.csv" | ForEach-Object {
 }
 ```
 
+## Elevate AD priviledges for admins
+
 - Delegate OU permissions to `hadoopadmin` for `OU=HadoopServices`. In 'Active Directory Users and Computers' app:
   - right click HadoopServices 
   - Delegate Control
