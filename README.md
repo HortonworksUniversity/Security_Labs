@@ -1302,7 +1302,8 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy-add-nn.png)
   
     - Note that:
-      - `nn` user  needs `GetMetaData` and `GenerateEEK` privilege
+      - `hdfs` user  needs `GetMetaData` and `GenerateEEK` privilege - HDP 2.5
+      - `nn` user  needs `GetMetaData` and `GenerateEEK` privilege - HDP 2.4
       - `hive` user needs `GetMetaData` and `DecryptEEK` privilege
 
   
