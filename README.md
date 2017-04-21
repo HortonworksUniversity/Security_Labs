@@ -419,7 +419,7 @@ SELinux mode is 'permissive'
 WARNING: SELinux is set to 'permissive' mode and temporarily disabled.
 OK to continue [y/n] (y)? y
 Customize user account for ambari-server daemon [y/n] (n)? y
-Enter user account for ambari-server daemon (root):ambari-server
+Enter user account for ambari-server daemon (root):ambari
 Adjusting ambari-server permissions and ownership...
 Checking firewall status...
 Redirecting to /bin/systemctl status  iptables.service
