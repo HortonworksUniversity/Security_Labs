@@ -1480,8 +1480,8 @@ sudo -u hadoopadmin kinit
 # enter password: BadPass#1
 
 #create dir and set permissions to 000
-sudo -u hadoopadmin hadoop fs -mkdir /sales
-sudo -u hadoopadmin hadoop fs -chmod 000 /sales
+sudo -u hadoopadmin hdfs dfs -mkdir /sales
+sudo -u hadoopadmin hdfs dfs -chmod 000 /sales
 ```  
 
 - Now login as sales1 and attempt to access it before adding any Ranger HDFS policy
