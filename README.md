@@ -155,14 +155,14 @@ Credentials will be provided for these services by the instructor:
   ```
   - Create user dir for admin, sales1 and hr1
   ```
-   sudo -u hdfs hadoop fs  -mkdir /user/admin
-   sudo -u hdfs hadoop fs  -chown admin:hadoop /user/admin
+   sudo -u hdfs hdfs dfs  -mkdir /user/admin
+   sudo -u hdfs hdfs dfs  -chown admin:hadoop /user/admin
 
-   sudo -u hdfs hadoop fs  -mkdir /user/sales1
-   sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
+   sudo -u hdfs hdfs dfs  -mkdir /user/sales1
+   sudo -u hdfs hdfs dfs  -chown sales1:hadoop /user/sales1
    
-   sudo -u hdfs hadoop fs  -mkdir /user/hr1
-   sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1   
+   sudo -u hdfs hdfs dfs  -mkdir /user/hr1
+   sudo -u hdfs hdfs dfs  -chown hr1:hadoop /user/hr1   
   ```
     
   - Now create Hive table in default database by 
