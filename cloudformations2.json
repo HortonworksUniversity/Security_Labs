@@ -125,7 +125,7 @@
         },
         "AmbariVersion": {
             "AllowedPattern": "\\d\\.\\d\\.\\d\\.\\d",
-            "Default": "2.4.1.0",
+            "Default": "2.5.0.3",
             "Description": "Ambari Version",
             "Type": "String"
         },
