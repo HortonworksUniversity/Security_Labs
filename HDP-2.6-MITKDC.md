@@ -701,16 +701,24 @@ KVNO Timestamp           Principal
 ```
 {name of entity}-{cluster}@{REALM}. 
 ```
-
-- To view the principals created in KDC, run below to run listprincs query to the remote KDC (passwords are BadPass#1)
+- Notice we can now successfully kinit as the KDC admin 
 ```
 kinit admin/admin
+klist
+```
+- To view the principals created in KDC, run below to run listprincs query to the remote KDC (passwords are BadPass#1)
+```
 kadmin  -q listprincs
 ```
   - Sample output:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/MIT-KDC-principals.png)
 
-
+- Also notice you can also successfully kinit as a user defined in the Active Directory
+  - This is enabled by the one way trust that was setup between KDC and AD
+```
+kinit hadoopadmin@LAB.HORTONWORKS.NET
+klist
+```
 - For general info on Kerberos, KDC, Principals, Keytabs, Realms etc see doc [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_kerberos_overview.html)
 
 
