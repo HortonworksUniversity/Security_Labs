@@ -293,7 +293,7 @@ Use case: Customer has an existing cluster which they would like you to secure f
 - Goals:
   - Integrate Ambari with AD - so that hadoopadmin can administer the cluster
   - Integrate Hadoop nodes OS with AD - so business users are recognized and can submit Hadoop jobs
-  - Enable kerberos - to secured the cluster and enable authentication
+  - Enable kerberos using KDC - to secured the cluster and enable authentication
   - Install Ranger and enable Hadoop plugins - to allow admin to setup authorization policies and review audits across Hadoop components
   - Install Ranger KMS and enable HDFS encryption - to be able to create encryption zones
   - Encrypt Hive backing dirs - to protect hive tables
@@ -306,7 +306,7 @@ Use case: Customer has an existing cluster which they would like you to secure f
 
 We will run through a series of labs and step by step, achieve all of the above goals
   
-### AD overview
+### KDC and AD overview
 
 - Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been pre-created to look something like the below:
   - CorpUsers OU, which contains:
@@ -316,21 +316,22 @@ We will run through a series of labs and step by step, achieve all of the above 
   
   - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-serviceusers.png)
-  
-  - HadoopServices OU: hadoop service principals (will be created by Ambari)
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-hadoopservices.png)  
-  
+    
   - HadoopNodes OU: list of nodes registered with AD
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-hadoopnodes.png)
 
+  - HadoopServices will be created in Ambari in KDC (not AD)
+  
 - In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.2.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
-  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
-  - Active Directory secure LDAP (LDAPS) connectivity has been configured.
-  - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
-  - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
-
+  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the MIT KDC and AD Domain Controllers.
 
 - For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/hh831484(v=ws.11).aspx) 
+
+- MIT KDC will already be setup by the instructor using the steps in the documentation [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_optional_install_a_new_mit_kdc.html)
+  - Here is a screenshot of what the /etc/krb5.conf on the MIT KDC 
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/MIT-KDC-krb5.png)
+
+- A one way trust between KDC realm and Active Directory domain must be created using the steps [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/kerb-oneway-trust.html)
 
 
 ### Configure name resolution & certificate to Active Directory
