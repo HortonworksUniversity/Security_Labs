@@ -1016,19 +1016,16 @@ exit
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
 
-<---
-##### Install SolrCloud from HDPSearch for Audits (if not already installed)
 
 This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/HortonworksUniversity/Security_Labs#install-solrcloud)
 
 
 ###### Setup Solr for Ranger audit 
 
-- Starting HDP 2.5, if you have deployed Logsearch/Ambari Infra services, you can just use the embedded Solr for Ranger audits.
-  - Just make sure Logsearch is installed/started and proceed
+- Starting HDP 2.5, if you have deployed Ambari Infra services, you can just use the embedded Solr for Ranger audits.
+  - Just make sure Ambari Infra service is installed/started and proceed
+  - **TODO**: add steps to install/configure Banana dashboard for Ranger Audits
 
-- **TODO**: add steps to install/configure Banana dashboard for Ranger Audits
---->
 
 ## Ranger install
 
@@ -1067,7 +1064,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 4. Ranger User info tab 
   - Group configs subtab
-    - No changes needed
+    - Disable Group sync
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
@@ -1077,7 +1074,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 6. Ranger Audits tab 
   - SolrCloud = ON
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-8.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-9.png)
+
 
 7.Advanced tab
   - No changes needed (skipping configuring Ranger authentication against AD for now)
@@ -1107,7 +1104,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - Confirm that audits appear under 'Audit' > 'Access' tab
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audits.png)
 
-  - If audits do not show up here, you may need to restart Solr from Ambari
+  - If audits do not show up here, you may need to restart 'Ambari Infra' from Ambari
   
 - Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins' tab 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-plugins.png)
@@ -1120,7 +1117,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
 
-<!---
+<!--- TODO 
 - Confirm Solr audits working by querying Solr REST API *from any solr node* - SKIP 
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
