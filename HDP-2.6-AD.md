@@ -394,7 +394,7 @@ usermod -d /var/lib/ambari-server -G hadoop -s /sbin/nologin ambari
 
 - Grant the user 'sudoers' rights. This is required for Ambari Server to create it's Kerberos keytabs. You can remove this after kerberizing the cluster
 ```
-echo 'ambari ALL=(ALL) NOPASSWD:SETENV: /bin/mkdir, /bin/cp, /bin/chmod, /bin/rm' > /etc/sudoers.d/ambari-server
+echo 'ambari ALL=(ALL) NOPASSWD:SETENV: /bin/mkdir, /bin/cp, /bin/chmod, /bin/rm, /bin/chown' > /etc/sudoers.d/ambari-server
 ```
 
 - To setup Ambari server as non-root run below on Ambari-server node:
