@@ -350,37 +350,7 @@ echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
 kdc_ip=GET_THE_KDC_IP_FROM_YOUR_INSTRUCTOR
 echo "${kdc_ip} kdc-server.hdp.hortonworks.net kdc-server" | sudo tee -a /etc/hosts
    ```
-   
-#### ABAJWA: not needed?
-2. Add your CA certificate (if using self-signed & not already configured)
-  - In this case we have pre-exported the CA cert from our AD and made available for download. 
-   ```
-cert_url=https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/extras/ca.crt
-sudo yum -y install openldap-clients ca-certificates
-sudo curl -sSL "${cert_url}" -o /etc/pki/ca-trust/source/anchors/hortonworks-net.crt
-
-sudo update-ca-trust force-enable
-sudo update-ca-trust extract
-sudo update-ca-trust check
-   ```
-#### ABAJWA: not needed?
-3. Test certificate & name resolution with `ldapsearch`
-
-```
-## Update ldap.conf with our defaults
-sudo tee -a /etc/openldap/ldap.conf > /dev/null << EOF
-TLS_CACERT /etc/pki/tls/cert.pem
-URI ldaps://ad01.lab.hortonworks.net ldap://ad01.lab.hortonworks.net
-BASE dc=lab,dc=hortonworks,dc=net
-EOF
-
-##test connection to AD using openssl client
-openssl s_client -connect ad01:636 </dev/null
-
-## test connection to AD using ldapsearch (when prompted for password, enter: BadPass#1)
-ldapsearch -W -D ldap-reader@lab.hortonworks.net
-```
-
+      
 **Make sure to repeat the above steps on all nodes**
 
 # Lab 3
