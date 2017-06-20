@@ -331,7 +331,7 @@ We will run through a series of labs and step by step, achieve all of the above 
   - Here is a screenshot of what the /etc/krb5.conf on the MIT KDC 
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/MIT-KDC-krb5.png)
 
-- A one way trust between KDC realm and Active Directory domain must be created using the steps [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/kerb-oneway-trust.html)
+- A one way trust between KDC realm and Active Directory domain has already been created by the administrator. You can review the steps [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/kerb-oneway-trust.html)
 
 - For general info on Kerberos, KDC, Principals, Keytabs, Realms etc see doc [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_kerberos_overview.html)
 
