@@ -333,6 +333,8 @@ We will run through a series of labs and step by step, achieve all of the above 
 
 - A one way trust between KDC realm and Active Directory domain must be created using the steps [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/kerb-oneway-trust.html)
 
+- For general info on Kerberos, KDC, Principals, Keytabs, Realms etc see doc [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_kerberos_overview.html)
+
 
 ### Configure name resolution & certificate to Active Directory
 
@@ -699,6 +701,18 @@ KVNO Timestamp           Principal
 ```
 {name of entity}-{cluster}@{REALM}. 
 ```
+
+- To view the principals created in KDC, run below to run listprincs query to the remote KDC (passwords are BadPass#1)
+```
+kinit admin/admin
+kadmin  -q listprincs
+```
+  - Sample output:
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/MIT-KDC-principals.png)
+
+
+- For general info on Kerberos, KDC, Principals, Keytabs, Realms etc see doc [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_kerberos_overview.html)
+
 
 ### Setup AD/OS integration via SSSD
 
