@@ -747,7 +747,7 @@ ad_root="dc=lab,dc=hortonworks,dc=net"
 ad_ou="ou=HadoopNodes,${ad_root}"
 ad_realm=${ad_domain^^}
 
-sudo kinit ${ad_user}
+sudo kinit ${ad_user}@${ad_realm}
 ## enter BadPass#1 for password
 ```
 
@@ -776,7 +776,7 @@ sudo adcli join -v \
 
 
 ```
-#paste all the lines in this block together, in one shot
+#paste all the lines in this block together, in one shot - to create the sssd.conf file
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
 ## master & data nodes only require nss. Edge nodes require pam.
@@ -837,7 +837,7 @@ groups sales1
 
 - **Restart HDFS service via Ambari**. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
-- Execute the following on the Ambari node:
+- Once HDFS has been restarted, execute the following on the Ambari node:
 ```
 export PASSWORD=BadPass#1
 
@@ -852,14 +852,14 @@ sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 
 - Execute the following on the node where the YARN ResourceManager is installed:
 ```
-sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@LAB.HORTONWORKS.NET
+sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@KDC.LAB.HORTONWORKS.NET
 sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
 
 
 - kinit as an end user (password is BadPass#1)
 ```
-kinit hr1
+kinit hr1@LAB.HORTONWORKS.NET
 ```
 
 - check the group mappings
@@ -875,7 +875,10 @@ hr1@LAB.HORTONWORKS.NET : domain_users hr hadoop-users
 $ yarn rmadmin -getGroups hr1
 hr1 : domain_users hr hadoop-users
 ```
-
+  - TODO: Fix below error
+```
+getGroups: org.apache.hadoop.yarn.exceptions.YarnException: org.apache.hadoop.security.AccessControlException: User hr1@LAB.HORTONWORKS.NET doesn't have permission to call 'getGroupsForUser'
+```  
 - remove kerberos ticket
 ```
 kdestroy
@@ -891,7 +894,7 @@ hdfs dfs -ls /tmp/hive
 ## since we did not authenticate, this fails with GSSException: No valid credentials provided
 
 #authenticate
-kinit
+kinit sales1@LAB.HORTONWORKS.NET
 ##enter BadPass#1
 
 klist
@@ -904,6 +907,7 @@ hdfs dfs -ls /tmp/hive
 export HADOOP_USER_NAME=hdfs
 hdfs dfs -ls /tmp/hive 
 
+unset HADOOP_USER_NAME
 #log out as sales1
 logout
 ```
