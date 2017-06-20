@@ -343,6 +343,13 @@ We will run through a series of labs and step by step, achieve all of the above 
 ad_ip=GET_THE_AD_IP_FROM_YOUR_INSTRUCTOR
 echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
+2. Add your KDC's internal IP to /etc/hosts (if not in DNS). Make sure you replace the IP address of your KDC from your instructor below.
+  - **Change the IP to match your ADs internal IP**
+   ```
+kdc_ip=GET_THE_KDC_IP_FROM_YOUR_INSTRUCTOR
+echo "${kdc_ip} kdc-server.hdp.hortonworks.net kdc-server" | sudo tee -a /etc/hosts
+   ```
+   
 #### ABAJWA: not needed?
 2. Add your CA certificate (if using self-signed & not already configured)
   - In this case we have pre-exported the CA cert from our AD and made available for download. 
