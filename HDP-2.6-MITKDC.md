@@ -721,6 +721,16 @@ klist
 ```
 - For general info on Kerberos, KDC, Principals, Keytabs, Realms etc see doc [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_kerberos_overview.html)
 
+### Setup auth_to_local
+
+- Why? 
+    - This is needed for Hadoop to recognize users defined in AD i.e. it maps hadoopadmin@LAB.HORTONWORKS.NET to hadoopadmin, so we can later set policies in Ranger using just the userid, without including the full domain.
+- How?    
+  - In Ambari, click HDFS > Configs > Advanced and filter for 'auth' to expose the hadoop.security.auth_to_local property and expand the text field size so its easier to read
+  - Find the line that reads ```RULE:[1:$1@$0](.*@KDC.LAB.HORTONWORKS.NET)s/@.*//```
+  - **Above** that line, paste a line that reads: ```RULE:[1:$1@$0](.*@LAB.HORTONWORKS.NET)s/@.*//```
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KDC-authtolocal.png)  
+  - Save but do not restart HDFS yet (we will do this in next section)
 
 ### Setup AD/OS integration via SSSD
 
@@ -1155,19 +1165,10 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - KMS master secret password: `BadPass#1`
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig1.png) 
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
-    
-        
-  - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):
-      - hadoop.kms.proxyuser.hive.users=*
-      - hadoop.kms.proxyuser.oozie.users=*
-      - hadoop.kms.proxyuser.HTTP.users=*
+       
+  - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):      
       - hadoop.kms.proxyuser.ambari.users=*
-      - hadoop.kms.proxyuser.yarn.users=*
-      - hadoop.kms.proxyuser.hive.hosts=*
-      - hadoop.kms.proxyuser.oozie.hosts=*
-      - hadoop.kms.proxyuser.HTTP.hosts=*
       - hadoop.kms.proxyuser.ambari.hosts=*
-      - hadoop.kms.proxyuser.yarn.hosts=*    
       - hadoop.kms.proxyuser.keyadmin.groups=*
       - hadoop.kms.proxyuser.keyadmin.hosts=*
       - hadoop.kms.proxyuser.keyadmin.users=*      
@@ -1190,6 +1191,10 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     
 - Restart the services that require it e.g. HDFS, Mapreduce, YARN via Actions > Restart All Required
 
+- Make sire the auth_to_local value we added before was propogated to RangerKMS
+  - Under RangerKMS > Configs > Advanced >Advanced kms-site, check for below entry:
+       - ```RULE:[1:$1@$0](.*@LAB.HORTONWORKS.NET)s/@.*//```
+       
 - Restart Ranger and RangerKMS services.
 
 - (Optional) Add another KMS:
@@ -1338,9 +1343,9 @@ echo $cluster
 #first we will run login 3 different users: hdfs, hadoopadmin, sales1
 
 #kinit as hadoopadmin and sales using BadPass#1 
-sudo -u hadoopadmin kinit
+sudo -u hadoopadmin kinit hadoopadmin@LAB.HORTONWORKS.NET
 ## enter BadPass#1
-sudo -u sales1 kinit
+sudo -u sales1 kinit sales1@LAB.HORTONWORKS.NET
 ## enter BadPass#1
 
 #then kinit as hdfs using the headless keytab and the principal name
