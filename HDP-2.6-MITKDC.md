@@ -1391,14 +1391,9 @@ sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 
 - Now lets test deleting and copying files between EZs - ([Reference doc](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/copy-to-from-encr-zone.html))
 ```
-#try to remove file from EZ using usual -rm command (note: Trash Support for deletion in HDFS encryption zone has been added since HDP2.4.3)
+#Notice that removing file from EZ using usual -rm command woks (note: Prior to HDP2.4.3, you would need to pass the -skipTrash option)
 sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
-## rm: Failed to move to trash.... /zone_encr/test2.log can't be moved from an encryption zone.
 
-#recall that to delete a file from EZ you need to specify the skipTrash option
-sudo -u hadoopadmin hdfs dfs -rm -skipTrash /zone_encr/test2.log
-
-#TODO: looks like -skiptrash no loner needed?
 
 #confirm that test2.log was deleted and that zone_encr only contains test1.log
 sudo -u hadoopadmin hdfs dfs -ls  /zone_encr/
