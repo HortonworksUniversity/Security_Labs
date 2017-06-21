@@ -731,6 +731,8 @@ klist
   - **Above** that line, paste a line that reads: ```RULE:[1:$1@$0](.*@LAB.HORTONWORKS.NET)s/@.*//```
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KDC-authtolocal.png)  
   - Save but do not restart HDFS yet (we will do this in next section)
+  
+- For more details on auth_to_local see [here](https://community.hortonworks.com/content/kbentry/14463/auth-to-local-rules-syntax.html)
 
 ### Setup AD/OS integration via SSSD
 
