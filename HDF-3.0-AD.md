@@ -419,7 +419,7 @@ Screenshots:
   - Note if the wizard fails after completing more than 90% of "Start and test services" phase, you can just click "Complete" and manually start any unstarted services (e.g. WebHCat or HBase master)
 
 
-Once kerberos is enabled, follow the steps from the middle of this article for next steps (Search for "What’s happening to Nifi under the covers when security wizard runs?" and proceed from there)
-https://community.hortonworks.com/articles/60186/hdf-20-use-ambari-to-enable-kerberos-for-hdf-clust-1.html
+- Once kerberos is enabled, follow the steps from the middle of [this article](https://community.hortonworks.com/articles/60186/hdf-20-use-ambari-to-enable-kerberos-for-hdf-clust-1.html) for next steps (Search for "What’s happening to Nifi under the covers when security wizard runs?" and proceed from there)
+
 
 
