@@ -326,7 +326,7 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
 
 ## Enable SSL for Nifi
 
-- Follow the steps from this guide with below exceptions: https://community.hortonworks.com/articles/58009/hdf-20-enable-ssl-for-apache-nifi-from-ambari.html
+- Follow the steps from [this](https://community.hortonworks.com/articles/58009/hdf-20-enable-ssl-for-apache-nifi-from-ambari.html) guide with below exceptions: 
   - OU=LAB.HORTONWORKS.NET (instead of CLOUD.HORTONWORKS.COM)
   - hadoopadmin (instead of nifiadmin)
   - path to the nifi toolkit is also different
@@ -335,5 +335,28 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-2.png)
 
 
+## Install Ranger
 
+- Follow the steps from [this](https://community.hortonworks.com/articles/58769/hdf-20-enable-ranger-authorization-for-hdf-compone.html) guide with below exceptions:
+  - For configuring Rangner user sync use AD (instead of UNIX)
 
+2. Ranger User info tab
+  - 'Sync Source' = LDAP/AD 
+  - Common configs subtab
+    - Enter password: BadPass#1
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.5.png)
+
+3. Ranger User info tab 
+  - User configs subtab
+    - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
+    - User Search Filter = `(objectcategory=person)`
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-4.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-5.png)
+
+4. Ranger User info tab 
+  - Group configs subtab
+    - Make sure Group sync is disabled
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
+  
+  
