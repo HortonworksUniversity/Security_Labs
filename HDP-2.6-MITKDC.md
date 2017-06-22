@@ -2157,6 +2157,47 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
                 <role>RESOURCEMANAGER</role>
                 <url>http://{{rm_host}}:{{rm_port}}/ws</url>
             </service>
+            
+            <service>
+                <role>DRUID-COORDINATOR-UI</role>
+                {{druid_coordinator_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-COORDINATOR</role>
+                {{druid_coordinator_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-OVERLORD-UI</role>
+                {{druid_overlord_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-OVERLORD</role>
+                {{druid_overlord_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-ROUTER</role>
+                {{druid_router_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-BROKER</role>
+                {{druid_broker_urls}}
+            </service>
+
+            <service>
+                <role>ZEPPELINUI</role>
+                {{zeppelin_ui_urls}}
+            </service>
+
+            <service>
+                <role>ZEPPELINWS</role>
+                {{zeppelin_ws_urls}}
+            </service>
+                        
         </topology>
 ```
 
@@ -2241,14 +2282,14 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     ```
     curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
     ```
-      - You can run below command to create a test file into /tmp
+      - You can run below command to create a test file into /tmp as sales1
       
       ```
       echo "Test file" > /tmp/testfile.txt
-      sudo -u sales1 kinit
+      su - sales1
       ## enter BadPass#1
-      sudo -u sales1 hdfs dfs -put /tmp/testfile.txt /tmp
-      sudo -u sales1 kdestroy
+      hdfs dfs -put /tmp/testfile.txt /tmp
+      logout
       ```
       
     - Open this file via WebHDFS 
@@ -2273,6 +2314,8 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     ```
     sudo java -jar /usr/hdp/current/knox-server/bin/shell.jar /usr/hdp/current/knox-server/samples/ExampleWebHdfsLs.groovy
     ```
+    - **TODO** fix error ```Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target```
+
     - Notice output show list of dirs in HDFS
     ```
     [app-logs, apps, ats, hdp, mapred, mr-history, ranger, tmp, user, zone_encr]
@@ -2341,16 +2384,19 @@ openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox
 sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
 ```
 
-  - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below:
+  - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below, and run a query:
   
 ```
 beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
+
+select code, description from sample_07;
 ```
 
 - Notice that in the JDBC connect string for connecting to an secured Hive running in http transport mode:
   - *port changes to Knox's port 8443*
   - *traffic between client and Knox is over HTTPS*
   - *a kerberos principal not longer needs to be passed in*
+  - *we can run the query as any user by passing their AD credentials*
 
 
 - Test these users:
@@ -2417,62 +2463,3 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 -----------------
 
 
-# Appendix
-
-###### Install SolrCloud
-
-###### Option 1: Install Solr manually
-
-- Manually install Solr *on each node where Zookeeper is running*
-```
-export JAVA_HOME=/usr/java/default   
-sudo yum -y install lucidworks-hdpsearch
-```
-
-###### Option 2: Use Ambari service for Solr
-
-- Install Ambari service for Solr
-```
-VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-sudo git clone https://github.com/HortonworksUniversity/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
-sudo ambari-server restart
-```
-- Login to Ambari as hadoopadmin and wait for all the services to turn green
-- Install Solr by starting the 'Add service' wizard (using 'Actions' dropdown) and choosing Solr. Pick the defaults in the wizard except:
-  - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-placement.png)
-  
-  - On the screen to Customize the Solr service
-    - under 'Advanced solr-config':
-      - set `solr.datadir` to `/opt/ranger_audit_server`    
-      - set `solr.download.location` to `HDPSEARCH`
-      - set `solr.znode` to `/ranger_audits`
-    - under 'Advanced solr-env':
-      - set `solr.port` to `6083`
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-configs.png)  
-
-- Under Configure Identities page, you will have to enter your AD admin credentials:
-  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
-  - Admin password: BadPass#1
-
-- Then go through the rest of the install wizard by clicking Next to complete installation of Solr
-
-- (Optional) In case of failure, run below from Ambari node to delete the service so you can try again:
-```
-export SERVICE=SOLR
-export AMBARI_HOST=localhost
-export PASSWORD=BadPass#1
-output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
-CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
-
-#attempt to unregister the service
-curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
-#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-sudo service ambari-server restart
-
-#restart agents on all nodes
-sudo service ambari-agent restart
-```
