@@ -330,9 +330,14 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
   - OU=LAB.HORTONWORKS.NET (instead of CLOUD.HORTONWORKS.COM)
   - hadoopadmin (instead of nifiadmin)
   - path to the nifi toolkit is also different
+  - add the identity mappings by default
 
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-1.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-2.png)
+- *TODO*: can we define the admin as just hadoopadmin (instead of CN=hadoopadmin, OU=LAB.HORTONWORKS.NET) - so it uses the existing hadoopadmin user defined in AD? In theory the identity mappings should work
+
+Screenshots:
+- ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-1.png)
+
+- ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-2.png)
 
 
 ## Install Ranger
@@ -347,24 +352,74 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
     - User search base: ou=CorpUsers,dc=lab,dc=hortonworks,dc=net
     - USer search filter: (objectcategory=person)
 
-2. Ranger User info tab
+  - Turn off Audit to HDFS
+  
+  
+1. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
   - Common configs subtab
     - Enter password: BadPass#1
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.5.png)
 
-3. Ranger User info tab 
+2. Ranger User info tab 
   - User configs subtab
     - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
     - User Search Filter = `(objectcategory=person)`
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-4.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-5.png)
 
-4. Ranger User info tab 
+3. Ranger User info tab 
   - Group configs subtab
     - Make sure Group sync is disabled
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
   
+
+## Kerberize the Cluster
+
+### Run Ambari Kerberos Wizard against Active Directory environment
+
+- Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos > Enable kerberos > proceed). 
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-start-kerberos-wizard.png)
+
+- Select "Existing Active Directory" and check all the boxes
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-1.png)
+  
+- Enter the below details:
+
+- KDC:
+    - KDC host: `ad01.lab.hortonworks.net`
+    - Realm name: `LAB.HORTONWORKS.NET`
+    - LDAP url: `ldaps://ad01.lab.hortonworks.net`
+    - Container DN: `ou=HadoopServices,dc=lab,dc=hortonworks,dc=net`
+    - Domains: `us-west-2.compute.internal,.us-west-2.compute.internal`
+- Kadmin:
+    - Kadmin host: `ad01.lab.hortonworks.net`
+    - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
+    - Admin password: `BadPass#1`
+
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-2.png)
+  - Notice that the "Save admin credentials" checkbox is available, clicking the check box will save the "admin principal".
+  - Sometimes the "Test Connection" button may fail (usually related to AWS issues), but if you previously ran the "Configure name resolution & certificate to Active Directory" steps *on all nodes*, you can proceed.
+  
+- Now click Next on all the following screens to proceed with all the default values  
+
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-3.png)
+
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-4.png)
+
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-5.png)
+
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-6.png)
+
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-7.png)
+
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-8.png)
+
+  - Note if the wizard fails after completing more than 90% of "Start and test services" phase, you can just click "Complete" and manually start any unstarted services (e.g. WebHCat or HBase master)
+
+
+Once kerberos is enabled, follow the steps from the middle of this article for next steps (Search for "What’s happening to Nifi under the covers when security wizard runs?" and proceed from there)
+https://community.hortonworks.com/articles/60186/hdf-20-use-ambari-to-enable-kerberos-for-hdf-clust-1.html
 
 
