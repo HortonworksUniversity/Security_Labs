@@ -101,33 +101,41 @@ sudo ambari-server restart
   - All Database types are MySql; 
   - All hostnames are FDQDN of node where mysql was installed (ambari node)
   - All mysql ports are 3306; 
-  - Update the mysql URLs with FQDN manually; In SAM registry.url to http://MYSQL_FQDN:7788/api/v1; 
-  - In SAM, update streamline.dashboard.url to http://MYSQL_FQDN:9089
+
+
+
+  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-a.png)
+
+  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-b.png)
+  
+  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-f.png)
+  
+  - In Schema registry
+    - All Database types are MySql; 
+    - All hostnames are FDQDN of node where mysql was installed (ambari node)
+    - All mysql ports are 3306; 
+  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-g.png)
+  - In SAM
+    - All Database types are MySql; 
+    - All hostnames are FDQDN of node where mysql was installed (ambari node)
+    - All mysql ports are 3306; 
+    - update streamline.dashboard.url to http://MYSQL_FQDN:9089  
+    - update registry.url to http://MYSQL_FQDN:7788/api/v1; 
+  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-h.png)
+
   - Druid
+    - All Database types are MySql; 
+    - All hostnames are FDQDN of node where mysql was installed (ambari node)
+    - All mysql ports are 3306;   
     - Change SUPERSET_WEBSERVER_PORT from 9088 to 9089
     - druid.storage.storageDirectory = /user/druid/data
     - druid.storage.type = local
     - Superset: email: a@b.c, firstname: admin, lastname: jones; 
 
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-a.png)
-
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-b.png)
-
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-c.png)
-
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-d.png)
-
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-e.png)
-
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-f.png)
-  
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-g.png)
-  
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-h.png)
-
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-i.png)
-
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-j.png)
+  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-d.png)
+  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-e.png)  
 
 - Click deploy and wait until services installed 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-complete.png)
