@@ -69,33 +69,46 @@ sudo ambari-server restart
 - wait 30s then open ambari UI via browser on port 8080
 
 
-- Add Services HDFS, Storm, Kafka, NiFi, Registry, Streaming Analytics Manager, Druid
+
+
+
+- Screenshots
+- Click Install Wizard
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step1.png)
+
+- clustername: hdf3
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step2.png)
+
+- Select Version
+  - Click Next
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step3.png)
+
+- Add Services
+  - select Storm, Kafka, NiFi, Registry, Streaming Analytics Manager, Druid
+  
 - Assign masters
   - keep SAM/registry/Druid on Ambari node (where Mysql was installed)
   - move Storm, Smartsense, Metrics related to seperate nodes 
   - add nifi on all nodes
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step5.png)
 
-- keep default clients
+- Assign slaves
+  - keep default clients
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step6.png)
 
-- Customize Services: 
+- Customize Services (see screenshots below): 
   - Password/Secrets are 'StrongPassword' for all services
   - All Database types are MySql; 
-  - All hostnames are FDQDN of ambari node, mysql port 3306; 
-  - Update the mysql URLs with FQDN manually; In SAM registry.url to http://FQDN:7788/api/v1; 
-  - In SAM, update streamline.dashboard.url to http://FQDN:9089
+  - All hostnames are FDQDN of node where mysql was installed (ambari node)
+  - All mysql ports are 3306; 
+  - Update the mysql URLs with FQDN manually; In SAM registry.url to http://MYSQL_FQDN:7788/api/v1; 
+  - In SAM, update streamline.dashboard.url to http://MYSQL_FQDN:9089
   - Druid
+    - Change SUPERSET_WEBSERVER_PORT from 9088 to 9089
     - druid.storage.storageDirectory = /user/druid/data
     - druid.storage.type = local
-    - Superset: email: a@b.c, firstname: admin, lastname: jones; Change SUPERSET_WEBSERVER_PORT from 9088 to 9089;
+    - Superset: email: a@b.c, firstname: admin, lastname: jones; 
 
-
-- Screenshots
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step1.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step2.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step3.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step4.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step5.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step6.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-a.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-b.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-c.png)
@@ -106,6 +119,14 @@ sudo ambari-server restart
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-h.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-i.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-j.png)
+
+- Click deploy and wait until services installed 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-complete.png)
 
 
+## Enable SSL for Nifi
+
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-1.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-2.png)
+
+- Restart Nifi and wait for services to come up
