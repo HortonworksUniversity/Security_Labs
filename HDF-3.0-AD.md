@@ -103,11 +103,13 @@ sudo ambari-server restart
   - All mysql ports are 3306; 
 
 
-
+  - AMS: replace password with StrongPassword
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-a.png)
 
+  - Smartsense: replace password with StrongPassword
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-b.png)
   
+  - Nifi: replace passwords with StrongPassword  
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-f.png)
   
   - In Schema registry
@@ -133,7 +135,6 @@ sudo ambari-server restart
     - Superset: email: a@b.c, firstname: admin, lastname: jones; 
 
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-i.png)
-  - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-j.png)
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-d.png)
   - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/install-step7-e.png)  
 
