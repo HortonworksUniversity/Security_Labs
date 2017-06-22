@@ -1470,14 +1470,6 @@ In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbas
  
  
 - Login to Ranger (using admin/admin) and confirm the HDFS repo was setup correctly in Ranger
-  - In Ranger > Under Service Manager > HDFS > Click the Edit icon (next to the trash icon) to edit the HDFS repo
-  - Click 'Test connection' 
-  - if it fails re-enter below fields and re-try:
-    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
-    - Password: BadPass#1
-    - RPC Protection type: Authentication
-  - Once the test passes, click Save  
-  
    
 - Create /sales dir in HDFS as hadoopadmin
 ```
@@ -1490,27 +1482,21 @@ sudo -u hadoopadmin hdfs dfs -mkdir /sales
 sudo -u hadoopadmin hdfs dfs -chmod 000 /sales
 ```  
 
-- Now login as sales1 and attempt to access it before adding any Ranger HDFS policy
+- Now login as sales1 and notice it obtained a ticket for you under the covers
 ```
-sudo su - sales1
-
-hdfs dfs -ls /sales
-```
-- This fails with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
-
-- Authenticate as sales1 user and check the ticket
-```
-kinit
-# enter password: BadPass#1
+su - sales1
 
 klist
 ## Default principal: sales1@LAB.HORTONWORKS.NET
 ```
-- Now try accessing the dir again as sales1
+
+- If you did not have a valid ticket, this would have failed with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
+
+- Now try accessing the dir again as sales1 before adding any Ranger HDFS policy
 ```
 hdfs dfs -ls /sales
 ```
-- This time it fails with authorization error: 
+- Notice fails with authorization error: 
   - `Permission denied: user=sales1, access=READ_EXECUTE, inode="/sales":hadoopadmin:hdfs:d---------`
 
 - Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
@@ -1568,15 +1554,11 @@ hdfs dfs -ls /sales
 
 - Logout as sales1 and log back in as hr1
 ```
-kdestroy
 #logout as sales1
 logout
 
-#login as hr1 and authenticate
-sudo su - hr1
-
-kinit
-# enter password: BadPass#1
+#login as hr1 and authenticate using password BadPass#1
+su - hr1
 
 klist
 ## Default principal: hr1@LAB.HORTONWORKS.NET
@@ -1600,7 +1582,6 @@ hdfs dfs -ls /sales
 
 - Logout as hr1
 ```
-kdestroy
 logout
 ```
 - We have successfully setup an HDFS dir which is only accessible by sales group (and admins)
@@ -1609,19 +1590,8 @@ logout
 
 - Goal: Setup Hive authorization policies to ensure sales users only have access to code, description columns in default.sample_07
 
-- Enable Hive on tez by setting below and restarting Hive 
-  - Ambari > Hive > Configs  	
-    - Execution Engine = Tez
 
-- Confirm the HIVE repo was setup correctly in Ranger
-  - In Ranger > Service Manager > HIVE > Click the Edit icon (next to the trash icon) to edit the HIVE repo
-  - Click 'Test connection' 
-  - if it fails re-enter below fields and re-try:
-    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
-    - Password: BadPass#1
-  - Once the test passes, click Save  
-
-- Now run these steps from node where Hive (or client) is installed 
+- Run these steps from node where Hive (or client) is installed 
 
 - Login as sales1 and attempt to connect to default database in Hive via beeline and access sample_07 table
 
@@ -1629,37 +1599,26 @@ logout
   - port remains 10000
   - *now a kerberos principal needs to be passed in*
 
-- Login as sales1 without kerberos ticket and try to open beeline connection:
+- Login as sales1 and notice it automatically provided a kerberos ticket:
 ```
-sudo su - sales1
-kdestroy
-beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
-```
-- This fails with `GSS initiate failed` because the cluster is kerberized and we have not authenticated yet
-
-- To exit beeline:
-```
-!q
-```
-- Authenticate as sales1 user and check the ticket
-```
-kinit
-# enter password: BadPass#1
-
+su - sales1
 klist
 ## Default principal: sales1@LAB.HORTONWORKS.NET
 ```
+
 - Now try connect to Hive via beeline as sales1
 ```
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
 ```
 
-- If you get the below error, it is because you did not add hive to the global KMS policy in an earlier step (along with nn, hadoopadmin). Go back and add it in.
+  - If you did not have a valid ticket, it would have thrown a `GSS initiate failed` because the cluster is kerberized and we have not authenticated yet
+
+  - If you get the below error, it is because you did not add hive to the global KMS policy in an earlier step (along with nn, hadoopadmin). Go back and add it in.
 ```
 org.apache.hadoop.security.authorize.AuthorizationException: User:hive not allowed to do 'GET_METADATA' on 'testkey'
 ```
 
-- This time it connects. Now try to run a query
+- Now try to run a query
 ```
 beeline> select code, description from sample_07;
 ```
@@ -1691,7 +1650,8 @@ beeline> select code, description from sample_07;
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy.png)
   
 - Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
-  -  This was done using the rangeradmin principal we provided during Ranger install
+  - This was done using the rangerlookup principal 
+  - Note in HDP 2.6.1.0, there is a bug where the lookup for Hive does not work
 
 - Wait 30s for the new policy to be picked up
   
@@ -1734,15 +1694,11 @@ beeline> select code, description from sample_07;
 
 - Logout as sales1 and log back in as hr1
 ```
-kdestroy
 #logout as sales1
 logout
 
-#login as hr1 and authenticate
-sudo su - hr1
-
-kinit
-# enter password: BadPass#1
+#login as hr1 and authenticate using password: BadPass#1
+su - hr1
 
 klist
 ## Default principal: hr1@LAB.HORTONWORKS.NET
@@ -1784,36 +1740,25 @@ logout
 
 - Login as sales1
 ```
-sudo su - sales1
+su - sales1
 ```
 -  Start the hbase shell
 ```
 hbase shell
-```
-- List tables in default database
-```
-hbase> list 'default'
-```
-- This fails with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
-
-- To exit hbase shell:
-```
-exit
-```
-- Authenticate as sales1 user and check the ticket
-```
-kinit
-# enter password: BadPass#1
 
 klist
 ## Default principal: sales1@LAB.HORTONWORKS.NET
 ```
-- Now try connect to Hbase shell and list tables as sales1
+- Now try connect to Hbase shell and list tables as sales1. Should return an empty list.
 ```
 hbase shell
 hbase> list 'default'
 ```
-- This time it works. Now try to create a table called `sales` with column family called `cf`
+  - If you did not have a valid ticket, it would have failed with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
+
+
+- Now try to create a table called `sales` with column family called `cf`
+
 ```
 hbase> create 'sales', 'cf'
 ```
@@ -1883,15 +1828,11 @@ hbase> exit
 
 - Logout as sales1 and log back in as hr1
 ```
-kdestroy
 #logout as sales1
 logout
 
-#login as hr1 and authenticate
-sudo su - hr1
-
-kinit
-# enter password: BadPass#1
+#login as hr1 and authenticate using password: BadPass#1
+su - hr1
 
 klist
 ## Default principal: hr1@LAB.HORTONWORKS.NET
@@ -1924,7 +1865,6 @@ hbase> exit
 
 - Logout as hr1
 ```
-kdestroy
 logout
 ```
 - We have successfully created a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
@@ -1977,12 +1917,6 @@ logout
   - Access Manager > Hive > (cluster)_hive > Add new policy
   - Create new policy as below and click Add:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy-persons.png) 
-
-- Create Ranger policy to allow `sales` group `all permissions` on `/ranger/audit/kms` dir in HDFS
-  - Access Manager > HDFS > (cluster)_hdfs > Add new policy
-  - Create new policy as below and click Add:
-  **TODO: add screenshot**
-
   - Log out of Ranger
   
 - Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. the key used to encrypt Hive warehouse directories)
@@ -1992,12 +1926,12 @@ logout
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-create-policy-testkey.png)  
   - Log out of Ranger and re-login as admin/admin
 
-- Login as sales1
+- Login as sales1 using password: BadPass#1
 ```
-sudo su - sales1
+su - sales1
 ```
 
-- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL. Below are the details of the arguments passed in:
+- As sales1 user, run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL. Below are the details of the arguments passed in:
   - Table: MySQL table name
   - username: Mysql username
   - password: Mysql password
@@ -2007,9 +1941,6 @@ sudo su - sales1
   - m: number of mappers
   
 ```
-kinit
-## enter BadPass#1 as password
-
 sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table persons --username sales1 --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
@@ -2018,6 +1949,9 @@ sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table pe
 ```
  java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 ```
+
+
+- Also note: if the mapreduce job fails saying sales user does not have write access to /apps/hive/warehouse, you will need to create HDFS policy allowing sales1 user and hive access on /apps/hive/warehouse dir 
 
 - Login to beeline
 ```
@@ -2035,26 +1969,8 @@ beeline> select * from persons;
     - Service type: HIVE
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-audit-persons.png)
 
-
-##### Drop Encrypted Hive tables 
-
-- From beeline, try to drop the persons table. 
+-  logout as sales1
 ```
-beeline> drop table persons;
-```
-- You will get error similar to below
-```
-message:Unable to drop default.persons because it is in an encryption zone and trash is enabled.  Use PURGE option to skip trash.
-```
-
-- To drop a Hive table (when Hive directories are located in EncryptionZone), you need to include `purge` as below:
-```
-beeline> drop table persons purge;
-```
-
-- Destroy the ticket and logout as sales1
-```
-kdestroy
 logout
 ```
 
