@@ -125,7 +125,7 @@
         },
         "AmbariVersion": {
             "AllowedPattern": "\\d\\.\\d\\.\\d\\.\\d",
-            "Default": "2.5.0.3",
+            "Default": "2.5.1.0",
             "Description": "Ambari Version",
             "Type": "String"
         },
@@ -147,7 +147,7 @@
         },
         "HDPStack": {
             "AllowedPattern": "\\d\\.\\d",
-            "Default": "2.4",
+            "Default": "2.6",
             "Description": "Password for Ambari Server. Must be at least 8 characters containing letters, numbers and symbols",
             "Type": "String"
         },
