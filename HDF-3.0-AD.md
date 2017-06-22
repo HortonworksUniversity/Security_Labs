@@ -338,7 +338,14 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
 ## Install Ranger
 
 - Follow the steps from [this](https://community.hortonworks.com/articles/58769/hdf-20-enable-ranger-authorization-for-hdf-compone.html) guide with below exceptions:
-  - For configuring Rangner user sync use AD (instead of UNIX)
+
+  - For configuring Ranger user sync use AD (instead of UNIX)
+    - LDAP/AD url: ldap://ad01.lab.hortonworks.net:389
+    - Bind user: cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net
+    - Username attribute: sAMAccountName
+    - User object class: user
+    - User search base: ou=CorpUsers,dc=lab,dc=hortonworks,dc=net
+    - USer search filter: (objectcategory=person)
 
 2. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
@@ -359,4 +366,5 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
     - Make sure Group sync is disabled
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
   
-  
+
+
