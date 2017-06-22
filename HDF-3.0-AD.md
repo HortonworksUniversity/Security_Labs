@@ -144,7 +144,14 @@ sudo ambari-server restart
 
 ## Enable SSL for Nifi
 
+- Follow the steps from this guide with below exceptions: https://community.hortonworks.com/articles/58009/hdf-20-enable-ssl-for-apache-nifi-from-ambari.html
+  - OU=LAB.HORTONWORKS.NET (instead of CLOUD.HORTONWORKS.COM)
+  - hadoopadmin (instead of nifiadmin)
+  - path to the nifi toolkit is also different
+
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-1.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-2.png)
 
-- Restart Nifi and wait for services to come up
+
+
+
