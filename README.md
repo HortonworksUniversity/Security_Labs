@@ -6,6 +6,6 @@
 
 [HDP 2.6 using MIT KDC](./HDP-2.6-MITKDC.md)
 
-[HDF 3.0 using Active Directory](./HDF3.0-AD.md)
+[HDF 3.0 using Active Directory](./HDF-3.0-AD.md)
 
-[HDF 3.0 using MIT KDC](./HDF3.0-MITKDC.md)
+[HDF 3.0 using MIT KDC](./HDF-3.0-MITKDC.md)
