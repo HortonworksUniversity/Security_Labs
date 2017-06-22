@@ -1062,7 +1062,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 4. Ranger User info tab 
   - Group configs subtab
-    - No changes needed
+    - Make sure Group sync is disabled
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
