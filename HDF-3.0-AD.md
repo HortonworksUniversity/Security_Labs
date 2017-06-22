@@ -70,7 +70,11 @@ sudo ambari-server restart
 
 
 - Add Services HDFS, Storm, Kafka, NiFi, Registry, Streaming Analytics Manager, Druid
-- Move Storm, Smartsense, Metrics related components off first node (to spread load), but keep SAM/registry/Druid one first. Add nifi on all nodes
+- Assign masters
+  - keep SAM/registry/Druid on Ambari node (where Mysql was installed)
+  - move Storm, Smartsense, Metrics related to seperate nodes 
+  - add nifi on all nodes
+
 - keep default clients
 
 - Customize Services: 
