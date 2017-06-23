@@ -387,7 +387,7 @@ Screenshots:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
   
 
-2.1 - Either manually create users/policies in Ranger or run script below (replace values for your cluster)
+2.1 - Create users for Nifi hosts (without realm suffix) in Ranger and their corresponding Nifi policies.  You can do this manually via the Ranger UI or run script below (replace values for your cluster)
 ```
 export hosts="ip-xxx-xx-x-xx.us-west-2.compute.internal ip-xxx-xx-x-xx.us-west-2.compute.internal ip-xxx-xx-x-xx.us-west-2.compute.internal" ## space seperated list of FQDN of Nifi hosts - replace with your Nifi hostnames
 export cluster="myhdfclustername"  ##replace with your cluster name
@@ -396,8 +396,9 @@ export admin="hadoopadmin"   ## admin user defined in AD - leave as hadoopadmin
 export realm=""  ## leave realm empty
 
 curl -sSL https://gist.github.com/abajwa-hw/2b59db1a850406616d4583f44bad0a78/raw | sudo -E sh
-
 ```
+
+
 ## Kerberize the Cluster
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
