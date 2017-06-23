@@ -331,8 +331,9 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
   - hadoopadmin (instead of nifiadmin)
   - path to the nifi toolkit is also different
   - add the identity mappings by default
+    - nifi.security.identity.mapping.pattern.dn=`^CN=(.*?), OU=(.*?)$`
+    - nifi.security.identity.mapping.value.dn=`$1@$2`
 
-- *TODO*: can we define the admin as just hadoopadmin (instead of CN=hadoopadmin, OU=LAB.HORTONWORKS.NET) - so it uses the existing hadoopadmin user defined in AD? In theory the identity mappings should work
 
 Screenshots:
 - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-1.png)
@@ -346,12 +347,12 @@ Screenshots:
 ### 1. Setup Ranger and user Synch
 
 - Follow the steps from [this](https://community.hortonworks.com/articles/58769/hdf-20-enable-ranger-authorization-for-hdf-compone.html) guide with below exceptions:
-
-  - For configuring Ranger user sync use AD (instead of UNIX)
-  - Turn off Audit to HDFS
+  - 1. For configuring Ranger user sync use AD (instead of UNIX)
+  - 2. Create ranger users for the Nifi hosts (without realm) and 
+  - 3. Turn off Audit to HDFS
   
 
-2.1. Ranger User info tab
+1.1. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
   - Common configs subtab
      - LDAP/AD URL : `ldap://ad01.lab.hortonworks.net:389`
@@ -361,7 +362,7 @@ Screenshots:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.5.png)
 
-2.2. Ranger User info tab 
+1.2. Ranger User info tab 
   - User configs subtab
     - Username attribute: `sAMAccountName`
     - User object class: `user`
@@ -371,18 +372,29 @@ Screenshots:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-4.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-5.png)
 
-2.3. Ranger User info tab 
+1.3. Ranger User info tab 
   - Group configs subtab
     - Make sure Group sync is disabled
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
 
-2.4. Advanced Tab 
+1.4. Advanced Tab 
    - Go to Ranger Settings
      - Ensure that the LDAP radio button is activated 
      - *TODO* check if this is actually needed - this property should only impact logging into Ranger (not user sync)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
   
 
+2.1 - Either manually create users/policies in Ranger or run script below (replace values for your cluster)
+```
+export hosts="ip-xxx-xx-x-xx.us-west-2.compute.internal ip-xxx-xx-x-xx.us-west-2.compute.internal ip-xxx-xx-x-xx.us-west-2.compute.internal" ## space seperated list of FQDN of Nifi hosts - replace with your Nifi hostnames
+export cluster="myhdfclustername"  ##replace with your cluster name
+
+export admin="hadoopadmin"   ## admin user defined in AD - leave as hadoopadmin
+export realm=""  ## leave realm empty
+
+curl -sSL https://gist.github.com/abajwa-hw/2b59db1a850406616d4583f44bad0a78/raw | sudo -E sh
+
+```
 ## Kerberize the Cluster
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
@@ -429,6 +441,12 @@ Screenshots:
 
 - Once kerberos is enabled, follow the steps from the middle of [this article](https://community.hortonworks.com/articles/60186/hdf-20-use-ambari-to-enable-kerberos-for-hdf-clust-1.html) for next steps (Search for "What’s happening to Nifi under the covers when security wizard runs?" and proceed from there) with below exceptions:
   - When logging into Nifi use hadoopadmin/BadPass#1 (instead of nifiadmin)
+  
+Once you are able to successfully login to Nifi without the certificate, the HDF lab is complete  
+
+
+
+
 
 ## Nifi Troubleshooting : 
 
