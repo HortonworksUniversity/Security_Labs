@@ -385,6 +385,17 @@ Screenshots:
      - Ensure that the LDAP radio button is activated 
      - *TODO* check if this is actually needed - this property should only impact logging into Ranger (not user sync)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
+
+## 2 Enable deny conditions 
+
+The deny condition in policies is optional by default and must be enabled for use.
+
+	From Ambari>Ranger>Configs>Advanced>Custom ranger-admin-site, add 
+  `ranger.servicedef.enableDenyAndExceptionsInPolicies=true.`
+	
+  Restart Ranger
+  
+  cf. https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/about_ranger_policies.html
   
 
 2.1 - Create users for Nifi hosts (without realm suffix) in Ranger and their corresponding Nifi policies.  You can do this manually via the Ranger UI or run script below (replace values for your cluster)
