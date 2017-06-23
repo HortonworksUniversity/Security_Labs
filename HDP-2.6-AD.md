@@ -1093,6 +1093,19 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), delete Ranger service from Ambari and retry.
 
 
+
+8 - (Optional) Enable Deny condition in Ranger 
+
+The deny condition in policies is optional by default and must be enabled for use.
+
+- From Ambari>Ranger>Configs>Advanced>Custom ranger-admin-site, add : 
+`ranger.servicedef.enableDenyAndExceptionsInPolicies=true`
+
+- Restart Ranger
+
+https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/about_ranger_policies.html
+
+
 ##### Check Ranger
 
 - Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/admin
