@@ -354,17 +354,17 @@ Screenshots:
 2.1. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
   - Common configs subtab
-     - LDAP/AD URL : >ldap://ad01.lab.hortonworks.net:389
-     - Bind User : cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net
-     - Bind User Password: BadPass#1
+     - LDAP/AD URL : `ldap://ad01.lab.hortonworks.net:389`
+     - Bind User : `cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net`
+     - Bind User Password: `BadPass#1`
 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.5.png)
 
 2.2. Ranger User info tab 
   - User configs subtab
-    - Username attribute: sAMAccountName
-    - User object class: user
+    - Username attribute: `sAMAccountName`
+    - User object class: `user`
     - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
     - User Search Filter = `(objectcategory=person)`
     
@@ -379,7 +379,8 @@ Screenshots:
 2.4. Advanced Tab 
    - Go to Ranger Settings
      - Ensure that the LDAP radio button is activated 
-![Image] (https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
+     - *TODO* check if this is actually needed - this property should only impact logging into Ranger (not user sync)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
   
 
 ## Kerberize the Cluster
@@ -438,19 +439,23 @@ Screenshots:
 
 1. Remove trustore and keystore 
 In the NiFi CA directory, remove the following files 
-
-> rm keystore.p12 nifi-cert.pem truststore.jks
-
+```
+rm keystore.p12 nifi-cert.pem truststore.jks
+```
 Note default path with ambari install : /var/lib/ambari-agent/cache/common-services/NIFI/1.0.0/package/files/nifi-toolkit-1.2.0.3.0.0.0-453/
 
 
 2.Regenerate certificate and trustore
-> ./bin/tls-toolkit.sh  client -c <nifi_CA_host.fqdn> -D <Admin Idenity> -p 10443 -t <CA Token value> -T pkcs12
+```
+./bin/tls-toolkit.sh  client -c <nifi_CA_host.fqdn> -D <Admin Idenity> -p 10443 -t <CA Token value> -T pkcs12
+```
 Where : 
   -D : pass in your “Initial Admin Identity” value used in the "Advanced nifi-ambari-ssl-config" Ambari tab (ex: CN=nifiadmin,        OU=LAB.HORTONWORKS.NET )
   -t: pass in your “CA token” value used in the "Advanced nifi-ambari-ssl-config" Ambari tab (ex: StrongPassword)
   -c: pass in the hostname of the node where Nifi CA is running
-> ./bin/tls-toolkit.sh  client -c <CA Certificate> -D 'CN=nifiadmin, OU=LAB.HORTONWORKS.NET' -p 10443 -t StrongPassword -T pkcs12
+```  
+./bin/tls-toolkit.sh  client -c <CA Certificate> -D 'CN=nifiadmin, OU=LAB.HORTONWORKS.NET' -p 10443 -t StrongPassword -T pkcs12
+```
 
 3. In ambari, activate the "NiFi CA Force Regenerate?" option in "Advanced nifi-ambari-ssl-config" tab
 
@@ -471,13 +476,17 @@ OR
  - flow.xml.gz
  - users.xml
  
- > cd /var/lib/nifi/conf
- > rm *.xml
- > rm *.gz
+ ```
+ cd /var/lib/nifi/conf
+ rm *.xml
+ rm *.gz
+ ```
  
  2. remove "authorizers.xml" from the following directory : /usr/hdf/current/nifi/conf
- > cd /usr/hdf/current/nifi/conf
- > rm authorizers.xml
+ ```
+ cd /usr/hdf/current/nifi/conf
+ rm authorizers.xml
+ ```
  
  3. Restart NiFi services
  
