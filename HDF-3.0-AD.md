@@ -483,6 +483,7 @@ OR
  ```
  
  2. remove "authorizers.xml" from the following directory : /usr/hdf/current/nifi/conf
+ **TODO** double check this. Per Bryan B from Nifi team, you shouldn't ever have to delete authorizers.xml
  ```
  cd /usr/hdf/current/nifi/conf
  rm authorizers.xml
