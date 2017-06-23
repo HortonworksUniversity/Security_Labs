@@ -438,7 +438,12 @@ Note default path with ambari install : /var/lib/ambari-agent/cache/common-servi
 
 
 2.Regenerate certificate and trustore
-> ./bin/tls-toolkit.sh  client -c <CA Certificate >l -D 'CN=nifiadmin, OU=LAB.HORTONWORKS.NET' -p 10443 -t StrongPassword -T pkcs12
+> ./bin/tls-toolkit.sh  client -c <nifi_CA_host.fqdn> -D <Admin Idenity> -p 10443 -t <CA Token value> -T pkcs12
+Where : 
+  -D : pass in your “Initial Admin Identity” value used in the "Advanced nifi-ambari-ssl-config" Ambari tab (ex: CN=nifiadmin,        OU=LAB.HORTONWORKS.NET )
+  -t: pass in your “CA token” value used in the "Advanced nifi-ambari-ssl-config" Ambari tab (ex: StrongPassword)
+  -c: pass in the hostname of the node where Nifi CA is running
+> ./bin/tls-toolkit.sh  client -c <CA Certificate> -D 'CN=nifiadmin, OU=LAB.HORTONWORKS.NET' -p 10443 -t StrongPassword -T pkcs12
 
 3. In ambari, activate the "NiFi CA Force Regenerate?" option in "Advanced nifi-ambari-ssl-config" tab
 
