@@ -422,5 +422,50 @@ Screenshots:
 - Once kerberos is enabled, follow the steps from the middle of [this article](https://community.hortonworks.com/articles/60186/hdf-20-use-ambari-to-enable-kerberos-for-hdf-clust-1.html) for next steps (Search for "What’s happening to Nifi under the covers when security wizard runs?" and proceed from there) with below exceptions:
   - When logging into Nifi use hadoopadmin/BadPass#1 (instead of nifiadmin)
 
+## Troubleshooting : 
+
+**Error = "Caused by: java.io.IOException: Keystore was tampered with, or password was incorrect"  or  "no valid keystore"**
+
+**Solution**: Regenerate certificate and trustore 
+=> Using the NiFi CA certificate : 
+
+1. Remove trustore and keystore 
+In the NiFi CA directory, remove the following files 
+
+> rm keystore.p12 nifi-cert.pem truststore.jks
+
+Note default path with ambari install : /var/lib/ambari-agent/cache/common-services/NIFI/1.0.0/package/files/nifi-toolkit-1.2.0.3.0.0.0-453/
 
 
+2.Regenerate certificate and trustore
+> ./bin/tls-toolkit.sh  client -c <CA Certificate >l -D 'CN=nifiadmin, OU=LAB.HORTONWORKS.NET' -p 10443 -t StrongPassword -T pkcs12
+
+3. In ambari, activate the "NiFi CA Force Regenerate?" option in "Advanced nifi-ambari-ssl-config" tab
+
+4. Restart all NiFi services 
+
+5. UNCHECK the "NiFi CA Force Regenerate?" option in "Advanced nifi-ambari-ssl-config" tab
+
+6. Import certificates in browsers again 
+
+
+**Error = "Troubleshooting : Proposed Authorizer is not inheritable by the flow controller because of Authorizer differences: Proposed Authorizations do not match current Authorizations "
+OR 
+"Failed to connect node to cluster because local flow is different than cluster flow"**
+ 
+ **Solution :**
+ 1. remove all files in the following directory : /var/lib/nifi/conf
+ - authorizations.xml
+ - flow.xml.gz
+ - users.xml
+ 
+ > cd /var/lib/nifi/conf
+ > rm *.xml
+ > rm *.gz
+ 
+ 2. remove "authorizers.xml" from the following directory : /usr/hdf/current/nifi/conf
+ > cd /usr/hdf/current/nifi/conf
+ > rm authorizers.xml
+ 
+ 3. Restart NiFi services
+ 
