@@ -347,9 +347,9 @@ Screenshots:
 ### 1. Setup Ranger and user Synch
 
 - Follow the steps from [this](https://community.hortonworks.com/articles/58769/hdf-20-enable-ranger-authorization-for-hdf-compone.html) guide with below exceptions:
-  - 1. For configuring Ranger user sync use AD (instead of UNIX)
-  - 2. Create ranger users for the Nifi hosts (without realm) and 
-  - 3. Turn off Audit to HDFS
+  - 1: For configuring Ranger user sync use AD (instead of UNIX) and turn off audit to HDFS
+  - 2: Create ranger users for the Nifi hosts (without realm) and the Nifi policies 
+
   
 
 1.1. Ranger User info tab
@@ -377,7 +377,10 @@ Screenshots:
     - Make sure Group sync is disabled
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
 
-1.4. Advanced Tab 
+1.4 Ranger audit tab
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/ranger-config-audits.png)
+
+1.5. Advanced Tab 
    - Go to Ranger Settings
      - Ensure that the LDAP radio button is activated 
      - *TODO* check if this is actually needed - this property should only impact logging into Ranger (not user sync)
