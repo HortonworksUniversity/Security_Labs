@@ -1111,7 +1111,25 @@ This should already be installed on your cluster. If not, refer to appendix [her
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-groups.png)
 
 - Confirm HDFS audits working by querying the audits dir in HDFS:
+
 ```
+#### 1 authenticate
+export PASSWORD=BadPass#1
+
+#detect name of cluster
+output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
+cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+echo $cluster
+## this should show the name of your cluster
+
+## if not you can manully set this as below
+## cluster=Security-HWX-LabTesting-XXXX
+
+#then kinit as hdfs using the headless keytab and the principal name
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluster,,}"
+    
+#### 2 read audit dir in hdfs 
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
 
