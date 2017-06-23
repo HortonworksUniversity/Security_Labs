@@ -342,37 +342,86 @@ Screenshots:
 
 ## Install Ranger
 
+### 1. Setup LDAP Communication
+
+#### Configure name resolution & certificate to Active Directory
+
+**Run below on the Ranger node**
+
+1. Add your Active Directory's internal IP to /etc/hosts (if not in DNS). Make sure you replace the IP address of your AD from your instructor below.
+  - **Change the IP to match your ADs internal IP**
+   ```
+ad_ip=GET_THE_AD_IP_FROM_YOUR_INSTRUCTOR
+echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
+   ```
+
+2. Add your CA certificate (if using self-signed & not already configured)
+  - In this case we have pre-exported the CA cert from our AD and made available for download. 
+   ```
+cert_url=https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/extras/ca.crt
+sudo yum -y install openldap-clients ca-certificates
+sudo curl -sSL "${cert_url}" -o /etc/pki/ca-trust/source/anchors/hortonworks-net.crt
+
+sudo update-ca-trust force-enable
+sudo update-ca-trust extract
+sudo update-ca-trust check
+   ```
+
+3. Test certificate & name resolution with `ldapsearch`
+
+```
+## Update ldap.conf with our defaults
+sudo tee -a /etc/openldap/ldap.conf > /dev/null << EOF
+TLS_CACERT /etc/pki/tls/cert.pem
+URI ldaps://ad01.lab.hortonworks.net ldap://ad01.lab.hortonworks.net
+BASE dc=lab,dc=hortonworks,dc=net
+EOF
+
+##test connection to AD using openssl client
+openssl s_client -connect ad01:636 </dev/null
+
+## test connection to AD using ldapsearch (when prompted for password, enter: BadPass#1)
+ldapsearch -W -D ldap-reader@lab.hortonworks.net
+```
+
+
+### 2. Setup Ranger and user Synch
+
 - Follow the steps from [this](https://community.hortonworks.com/articles/58769/hdf-20-enable-ranger-authorization-for-hdf-compone.html) guide with below exceptions:
 
   - For configuring Ranger user sync use AD (instead of UNIX)
-    - LDAP/AD url: ldap://ad01.lab.hortonworks.net:389
-    - Bind user: cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net
-    - Username attribute: sAMAccountName
-    - User object class: user
-    - User search base: ou=CorpUsers,dc=lab,dc=hortonworks,dc=net
-    - USer search filter: (objectcategory=person)
-
   - Turn off Audit to HDFS
   
-  
-1. Ranger User info tab
+
+2.1. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
   - Common configs subtab
-    - Enter password: BadPass#1
+     - LDAP/AD URL : >ldap://ad01.lab.hortonworks.net:389
+     - Bind User : cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net
+     - Bind User Password: BadPass#1
+
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.5.png)
 
-2. Ranger User info tab 
+2.2. Ranger User info tab 
   - User configs subtab
+    - Username attribute: sAMAccountName
+    - User object class: user
     - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
     - User Search Filter = `(objectcategory=person)`
+    
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-4.png)
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-5.png)
 
-3. Ranger User info tab 
+2.3. Ranger User info tab 
   - Group configs subtab
     - Make sure Group sync is disabled
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
+
+2.4. Advanced Tab 
+   - Go to Ranger Settings
+     - Ensure that the LDAP radio button is activated 
+![Image] (https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
   
 
 ## Kerberize the Cluster
