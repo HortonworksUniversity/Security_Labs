@@ -429,7 +429,7 @@ Screenshots:
 - Once kerberos is enabled, follow the steps from the middle of [this article](https://community.hortonworks.com/articles/60186/hdf-20-use-ambari-to-enable-kerberos-for-hdf-clust-1.html) for next steps (Search for "What’s happening to Nifi under the covers when security wizard runs?" and proceed from there) with below exceptions:
   - When logging into Nifi use hadoopadmin/BadPass#1 (instead of nifiadmin)
 
-## Troubleshooting : 
+## Nifi Troubleshooting : 
 
 **Error = "Caused by: java.io.IOException: Keystore was tampered with, or password was incorrect"  or  "no valid keystore"**
 
