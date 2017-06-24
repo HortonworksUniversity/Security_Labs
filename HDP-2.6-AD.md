@@ -2227,6 +2227,40 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
                     <enabled>true</enabled>
                 </provider>
 
+<!--
+  Knox HaProvider for Hadoop services
+  -->
+<provider>
+     <role>ha</role>
+     <name>HaProvider</name>
+     <enabled>true</enabled>
+     <param>
+         <name>OOZIE</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+     </param>
+     <param>
+         <name>HBASE</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+     </param>
+     <param>
+         <name>WEBHCAT</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+     </param>
+     <param>
+         <name>WEBHDFS</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;maxRetryAttempts=300;retrySleep=1000;enabled=true</value>
+     </param>
+     <param>
+        <name>HIVE</name>
+        <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true;zookeeperEnsemble=machine1:2181,machine2:2181,machine3:2181;
+       zookeeperNamespace=hiveserver2</value>
+     </param>
+</provider>
+<!--
+  END Knox HaProvider for Hadoop services
+  -->
+
+
             </gateway>
 
             <service>
