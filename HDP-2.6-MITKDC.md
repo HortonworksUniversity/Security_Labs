@@ -623,7 +623,7 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
 - Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos > Enable kerberos > proceed). 
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-start-kerberos-wizard.png)
 
-- Select "Existing MIT KDC Server" and check all the boxes
+- Select "Existing MIT KDC" and check all the boxes
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-1-MIT.png)
   
 - Enter the below details:
