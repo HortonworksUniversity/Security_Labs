@@ -884,13 +884,10 @@ yarn rmadmin -getGroups hr1
 ```
 $ hdfs groups
 hr1@LAB.HORTONWORKS.NET : domain_users hr hadoop-users
-$ yarn rmadmin -getGroups hr1
+$ sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@KDC.LAB.HORTONWORKS.NET
+$ sudo sudo -u yarn yarn rmadmin -getGroups hr1
 hr1 : domain_users hr hadoop-users
-```
-  - TODO: Fix below error
-```
-getGroups: org.apache.hadoop.yarn.exceptions.YarnException: org.apache.hadoop.security.AccessControlException: User hr1@LAB.HORTONWORKS.NET doesn't have permission to call 'getGroupsForUser'
-```  
+  
 - remove kerberos ticket
 ```
 kdestroy
