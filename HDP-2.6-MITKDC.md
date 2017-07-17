@@ -381,7 +381,7 @@ echo 'ambari ALL=(ALL) NOPASSWD:SETENV: /bin/mkdir, /bin/cp, /bin/chmod, /bin/rm
 
 - To setup Ambari server as non-root run below on Ambari-server node:
 ```
-sudo ambari-server setup
+ambari-server setup
 ```
 - Then enter the below at the prompts:
   - OK to continue? y
@@ -392,7 +392,7 @@ sudo ambari-server setup
 
 - Sample output:
 ```
-$ sudo ambari-server setup
+# ambari-server setup
 Using python  /usr/bin/python2
 Setup ambari-server
 Checking SELinux...
@@ -448,8 +448,8 @@ hadoop.proxyuser.ambari-server.hosts=*
 
 - To encrypt password, run below
 ```
-sudo ambari-server stop
-sudo ambari-server setup-security
+ambari-server stop
+ambari-server setup-security
 ```
 - Then enter the below at the prompts:
   - enter choice: 2
@@ -459,11 +459,11 @@ sudo ambari-server setup-security
 
 - Then start ambari
 ```
-sudo ambari-server start
+ambari-server start
 ```  
 - Sample output
 ```
-$ sudo ambari-server setup-security
+# ambari-server setup-security
 Using python  /usr/bin/python2
 Security setup options...
 ===========================================================================
@@ -562,7 +562,7 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 - Execute the following to configure Ambari to sync with LDAP.
 - Use the default password used throughout this course.
   ```
-  sudo ambari-server setup-ldap \
+  ambari-server setup-ldap \
     --ldap-url=${ad_host}:389 \
     --ldap-secondary-url= \
     --ldap-ssl=false \
@@ -583,14 +583,14 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 
 - Restart Ambari server
   ```
-   sudo ambari-server restart
+   ambari-server restart
   ```
 
 - Run LDAPsync to sync only the groups we want
   - When prompted for user/password, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
-  sudo ambari-server sync-ldap --groups groups.txt
+  ambari-server sync-ldap --groups groups.txt
   ```
   
   - This should show a summary of what objects were created
