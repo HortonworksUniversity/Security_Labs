@@ -507,12 +507,12 @@ openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000
 
 - Stop Ambari server
 ```
-sudo ambari-server stop
+ambari-server stop
 ```
 
 - Setup HTTPS for Ambari 
 ```
-# sudo ambari-server setup-security
+ambari-server setup-security
 Using python  /usr/bin/python2
 Security setup options...
 ===========================================================================
@@ -535,7 +535,7 @@ Adjusting ambari-server permissions and ownership...
 
 - Start Ambari
 ```
-sudo ambari-server start
+ambari-server start
 ```
 
 - Now you can access Ambari on **HTTPS** on port 8443 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8443
