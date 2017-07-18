@@ -643,6 +643,12 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
   
 - As part of the security wizard, Ambari will also create krb5.conf files on all cluster hosts. Since we are doing one way trust with AD, we need to update the krb5.conf template to include the AD domain entry
   - Scroll down to 'Advanced krb5-conf template' and scroll down to bottom of the text box. Then paste the entry for the Active Dirctory
+```
+LAB.HORTONWORKS.NET = {
+kdc = ad01.lab.hortonworks.net
+admin_server = ad01.lab.hortonworks.net
+default_domain = lab.hortonworks.net
+```
     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-KDC-wizard-2-krb.png)
 - Now click Next on all the following screens to proceed with all the default values  
 
