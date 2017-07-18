@@ -1093,7 +1093,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - Click Next > Proceed Anyway to proceed
     
 - If prompted, on Configure Identities page, you may have to enter your AD admin credentials:
-  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
+  - Admin principal: `admin/admin@KDC.LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Notice that you can now save the admin credentials. Check this box too
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-configureidentities.png)
@@ -1177,7 +1177,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - Click Next > Proceed Anyway to proceed with the wizard
 
 - If prompted, on Configure Identities page, you may have to enter your AD admin credentials:
-  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
+  - Admin principal: `admin/admin@KDC.LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Check the "Save admin credentials" checkbox
   
