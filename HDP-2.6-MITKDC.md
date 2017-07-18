@@ -887,8 +887,9 @@ hr1@LAB.HORTONWORKS.NET : domain_users hr hadoop-users
 $ sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@KDC.LAB.HORTONWORKS.NET
 $ sudo sudo -u yarn yarn rmadmin -getGroups hr1
 hr1 : domain_users hr hadoop-users
-  
+```
 - remove kerberos ticket
+
 ```
 kdestroy
 ```
