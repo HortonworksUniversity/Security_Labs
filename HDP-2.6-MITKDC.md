@@ -647,6 +647,7 @@ LAB.HORTONWORKS.NET = {
 kdc = ad01.lab.hortonworks.net
 admin_server = ad01.lab.hortonworks.net
 default_domain = lab.hortonworks.net
+}
 ```
 
   - Scroll down to 'Advanced krb5-conf template' and scroll down to bottom of the text box. Then paste the entry for the Active Dirctory
