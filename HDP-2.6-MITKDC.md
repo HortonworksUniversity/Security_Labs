@@ -641,14 +641,16 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
   - Notice that the "Save admin credentials" checkbox is available, clicking the check box will save the "admin principal".
   - Sometimes the "Test Connection" button may fail (usually related to AWS issues), but if you previously ran the "Configure name resolution & certificate to Active Directory" steps *on all nodes*, you can proceed.
   
-- As part of the security wizard, Ambari will also create krb5.conf files on all cluster hosts. Since we are doing one way trust with AD, we need to update the krb5.conf template to include the AD domain entry
-  - Scroll down to 'Advanced krb5-conf template' and scroll down to bottom of the text box. Then paste the entry for the Active Dirctory
+- As part of the security wizard, Ambari will also create krb5.conf files on all cluster hosts. Since we are doing one way trust with AD, we need to update the krb5.conf template to include the AD domain entry show below
 ```
 LAB.HORTONWORKS.NET = {
 kdc = ad01.lab.hortonworks.net
 admin_server = ad01.lab.hortonworks.net
 default_domain = lab.hortonworks.net
 ```
+
+  - Scroll down to 'Advanced krb5-conf template' and scroll down to bottom of the text box. Then paste the entry for the Active Dirctory
+
     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-KDC-wizard-2-krb.png)
 - Now click Next on all the following screens to proceed with all the default values  
 
