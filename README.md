@@ -1,6 +1,6 @@
 # Security Course Labs
 
-## Pick You Poison
+## Pick Your Poison
 
 [HDP 2.6 using Active Directory](./HDP-2.6-AD.md)
 
