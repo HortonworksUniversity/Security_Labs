@@ -1258,39 +1258,6 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - Your policies now includes hadoopadmin
      ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
      
-  - Add policy for keyadmin to be able to access /ranger/audit/kms
-    - First Create the hdfs directory for Ranger KMS Audit
-    ```
-    #run below on Ambari node
-
-    export PASSWORD=BadPass#1
-
-    #detect name of cluster
-    output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
-    cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
-
-    echo $cluster
-    ## this should show the name of your cluster
-
-    ## if not you can manully set this as below
-    ## cluster=Security-HWX-LabTesting-XXXX
-
-    #then kinit as hdfs using the headless keytab and the principal name
-    sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluster,,}"
-    
-    #Create the Ranger KMS Audit Directory 
-    sudo -u hdfs hdfs dfs -mkdir -p /ranger/audit/kms
-    sudo -u hdfs hdfs dfs -chown -R kms:hdfs /ranger/audit/kms
-    sudo -u hdfs hdfs dfs -chmod 700 /ranger/audit/kms
-    sudo -u hdfs hdfs dfs -ls /ranger/audit/kms
-    ```
-    - Access Manager > HDFS > (clustername)_hdfs   
-    - This will open the list of HDFS policies
-    - Create a new policy for keyadmin to be able to access /ranger/audit/kms and Save 
-     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
-    - Your policy has been added
-     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
-  
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
      ![Image](screenshots/Ranger-user-permissions.png)
