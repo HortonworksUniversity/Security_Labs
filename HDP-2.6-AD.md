@@ -195,6 +195,9 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
 ```
 load data local inpath '/tmp/sample_08.csv' into table sample_08;
 ```
+```
+q!
+```
 
 - Notice that in the JDBC connect string for connecting to an unsecured Hive while its running in default (ie binary) transport mode :
   - port is 10000
