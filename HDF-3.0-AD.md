@@ -245,7 +245,7 @@ Use case: Customer has an existing cluster which they would like you to secure f
   
 - Goals:
   - Integrate Ambari with AD - so that hadoopadmin can administer the cluster
-  - Integrate Hadoop nodes OS with AD - so business users are recognized and can submit Hadoop jobs
+  - Integrate Hadoop nodes OS with AD - so business users are recognized and can interact with HDF components
   - Enable SSL for Nifi
   - Install Ranger and enable plugins - to allow admin to setup authorization policies and review audits across HDF components
   - Configure Ranger policies to:
