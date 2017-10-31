@@ -106,7 +106,7 @@ There are several methods to enable SSL for LDAP (aka LDAPS).
 1. Use a certificate from a public respected certificate authority.
 2. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
 3. Generate a self-signed certificate from your own certificate authority.
-
+4. Import a previously generated self-signed certificate
 
 Instructions for each:
 
@@ -146,6 +146,17 @@ openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cry
       - Select "All Tasks" -> "Import...", and import the the "p12".
       - Reboot the Active Directory server for it to load the certificate.
    - Step by step instructions [here](https://www.trustico.com/install/import/iis7/iis7-pfx-installation.php)
+
+4. For example to use the same certificate as the one used in the security lab:
+   - Copy wildcard-lab-hortonworks-net.p12 to the Active Directory server from [here](https://github.com/HortonworksUniversity/Security_Labs/blob/master/extras/wildcard-lab-hortonworks-net.p12?raw=true)
+   - On your Active Directory server:
+      - Run "mmc"
+      - Open the "Certificates snap-in".
+      - Expand the "Certificates" node under "Personal".
+      - Select "All Tasks" -> "Import...", and import the the "p12".
+      - Reboot the Active Directory server for it to load the certificate.
+   - Step by step instructions [here](https://www.trustico.com/install/import/iis7/iis7-pfx-installation.php)
+
 
 ****************************************
 
@@ -240,8 +251,14 @@ Import-Csv "Users.csv" | ForEach-Object {
 
 For more details on steps above see reference material [here](https://jonconwayuk.wordpress.com/2011/10/20/minimum-permissions-required-for-account-to-join-workstations-to-the-domain-during-deployment/)
 
+- Also make sure that the time on the Windows machine is correct and timezone setting automatically adjusts for DST
+  - e.g For PST: Windows is -0800 and Linux is -0700.
+  - if clock skew between Linux hosts and Windows AD is greater than 5 min, services will not start with below error:
+```
+KrbException: Clock skew too great
+```
 
-- create keytab for Ambari. This will be used later to kerborize Ambari before setting up views
+- *No longer needed* create keytab for Ambari. This will be used later to kerborize Ambari before setting up views
 ```
 ktpass -out ambari.keytab -princ ambari@LAB.HORTONWORKS.NET -pass BadPass#1 -mapuser ambari@LAB.HORTONWORKS.NET -mapop set -crypto All -ptype KRB5_NT_PRINCIPAL
 ```
