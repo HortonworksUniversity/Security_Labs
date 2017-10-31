@@ -1006,7 +1006,11 @@ exit
 ```
 
 - Confirm MySQL user: `mysql -u root -h $(hostname -f) -p -e "select count(user) from mysql.user;"`
-  - Output should be a simple count. Check the last step if there are errors.
+  - Output should be a simple count. 
+  - In case of errors, check the previous step. If it still does not work, edit /etc/my.cnf by adding below line above `[mysqld_safe]` and then run `service mysql restart`
+```
+skip-grant-tables
+```
 
 ##### Prepare Ambari for MySQL
 - Run this on Ambari node
