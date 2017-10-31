@@ -101,6 +101,7 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/am
 
 - run on ambari node to install ambari-server
 ```
+export ambari_version=2.5.1.0 
 export install_ambari_server=true
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ambari-bootstrap.sh | sudo -E sh
 ```
