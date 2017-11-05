@@ -1017,17 +1017,19 @@ exit
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
 
-<---
-##### Install SolrCloud from HDPSearch for Audits (if not already installed)
 
-This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/HortonworksUniversity/Security_Labs#install-solrcloud)
 
 
 ###### Setup Solr for Ranger audit 
 
-- Starting HDP 2.5, if you have deployed Logsearch/Ambari Infra services, you can just use the embedded Solr for Ranger audits.
-  - Just make sure Logsearch is installed/started and proceed
+- Starting HDP 2.5, if you have deployed Ambari Infra service installed, this can be used for Ranger audits.
+- **Make sure Ambari Infra service is installed and started before starting Ranger install**
 
+
+<---
+##### Install SolrCloud from HDPSearch for Audits (if not already installed)
+
+This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/HortonworksUniversity/Security_Labs#install-solrcloud)
 - **TODO**: add steps to install/configure Banana dashboard for Ranger Audits
 --->
 
