@@ -892,8 +892,8 @@ yarn rmadmin -getGroups hr1
 ```
 $ hdfs groups
 hr1@LAB.HORTONWORKS.NET : domain_users hr hadoop-users
-$ yarn rmadmin -getGroups hr1
-hr1 : domain_users hr hadoop-users
+$ sudo sudo -u yarn yarn rmadmin -getGroups hr1
+hr1 : domain_users hadoop-users hr
 ```
 
 - remove kerberos ticket
