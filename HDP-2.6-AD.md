@@ -515,7 +515,8 @@ Ambari Server 'setup-security' completed successfully.
 
 - Generate the certificate & key using CN=(Public hostname of Ambari host) e.g. CN=ec2-52-89-61-196.us-west-2.compute.amazonaws.com
 ```
-openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj "/CN=$(curl icanhazptr.com)"
+public_hostname=$(curl icanhazptr.com)  ## on public cloud, this can be used to fetch public hostname
+openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj "/CN=${public_hostname}"
 ```
 
 - Move & secure the certificate & key
