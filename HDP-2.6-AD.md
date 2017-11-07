@@ -575,7 +575,18 @@ sudo ambari-server start
 
 Run below on only Ambari node:
 
-- Set below to disable python HTTPS verification (see [here](https://access.redhat.com/articles/2039753) for more details)
+- Trust the ambari certificate on Ambari host
+```
+sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias ambari -file /etc/pki/tls/certs/ambari.crt
+```
+
+- Recently Redhat changed default behaviour for checking SSL certificates (see [here](https://access.redhat.com/articles/2039753) for more details). To get around this there are 2 options:
+  - Option 1: Modify the `SERVER_API_HOST = '127.0.0.1'` line in Ambari's serverUtils.py to `SERVER_API_HOST = 'yourpublichost.domain.com'`
+```
+vi /usr/lib/python2.6/site-packages/ambari_server/serverUtils.py
+```
+
+  - Option 2: Set below to just disable python HTTPS verification before running LDAP sync
 ```
 export PYTHONHTTPSVERIFY=0
 ```
