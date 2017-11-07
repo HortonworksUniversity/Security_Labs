@@ -513,7 +513,7 @@ Ambari Server 'setup-security' completed successfully.
 
 - For this lab we will be generating a self-signed certificate. In production environments you would want to use a signed certificate (either from a public authority or your own CA).
 
-- Generate the certificate & key
+- Generate the certificate & key using CN=<Public hostname of Ambari host> e.g. CN=ec2-52-89-61-196.us-west-2.compute.amazonaws.com
 ```
 openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj "/CN=$(curl icanhazptr.com)"
 ```
