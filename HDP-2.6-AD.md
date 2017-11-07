@@ -575,6 +575,11 @@ sudo ambari-server start
 
 Run below on only Ambari node:
 
+- Set below to disable python HTTPS verification (see [here](https://access.redhat.com/articles/2039753) for more details)
+```
+export PYTHONHTTPSVERIFY=0
+```
+
 - This puts our AD-specific settings into variables for use in the following command
 ```
 ad_host="ad01.lab.hortonworks.net"
