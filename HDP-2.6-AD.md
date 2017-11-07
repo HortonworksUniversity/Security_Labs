@@ -463,7 +463,7 @@ hadoop.proxyuser.ambari-server.hosts=*
 
 ### Run ambari-agent as non-root
 
-- For now we will skip configuring Ambari Agents for Non-Root
+- For now we will skip configuring Ambari Agents for Non-Root but steps outlined in doc [here](https://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/how_to_configure_an_ambari_agent_for_non-root.html)
 
 ### Ambari Encrypt Database and LDAP Passwords
 
