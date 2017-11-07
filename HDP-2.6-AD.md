@@ -1013,7 +1013,9 @@ exit
   - Output should be a simple count. 
   - In case of errors, check the previous step for errors. 
   - If you encounter below error, modeify /etc/my.conf by removing `skip-grant-tables` and then restarting the service by `service mysqld restart`
-  `ERROR 1290 (HY000): The MySQL server is running with the --skip-grant-tables option so it cannot execute this statement`
+  
+`ERROR 1290 (HY000): The MySQL server is running with the --skip-grant-tables option so it cannot execute this statement`
+ 
   - If it still does not work, try creating user admin instead. If you do this, make sure to enter admin insted of root when prompted for "Ranger DB root User" in Ambari
 
 ##### Prepare Ambari for MySQL
