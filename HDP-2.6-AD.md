@@ -400,7 +400,14 @@ usermod -d /var/lib/ambari-server -G hadoop -s /sbin/nologin ambari
 echo 'ambari ALL=(ALL) NOPASSWD:SETENV: /bin/mkdir, /bin/cp, /bin/chmod, /bin/rm, /bin/chown' > /etc/sudoers.d/ambari-server
 ```
 
-- Also confirm your sudoers file has correct defaults, as per https://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/sudo_defaults_server.html
+- Now run `visudo` to edit sudoers file to include below section, right above the line that starts `## Next comes the main part:` (see [doc](here))
+```
+Defaults exempt_group = ambari
+Defaults !env_reset,env_delete-=PATH
+Defaults: ambari !requiretty 
+```
+
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/visudo.png)
 
 - To setup Ambari server as non-root run below on Ambari-server node:
 ```
