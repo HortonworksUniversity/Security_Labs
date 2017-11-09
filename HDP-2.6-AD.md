@@ -1045,13 +1045,7 @@ exit
 - Starting HDP 2.5, if you have deployed Ambari Infra service installed, this can be used for Ranger audits.
 - **Make sure Ambari Infra service is installed and started before starting Ranger install**
 
-
-<---
-##### Install SolrCloud from HDPSearch for Audits (if not already installed)
-
-This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/HortonworksUniversity/Security_Labs#install-solrcloud)
-- **TODO**: add steps to install/configure Banana dashboard for Ranger Audits
---->
+- *TODO*: add steps to install/configure Banana dashboard for Ranger Audits
 
 ## Ranger install
 
