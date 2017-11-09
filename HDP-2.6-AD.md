@@ -1137,7 +1137,8 @@ https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/abo
 - Confirm that audits appear under 'Audit' > 'Access' tab
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audits.png)
 
-  - If audits do not show up here, you may need to restart Solr from Ambari
+  - If audits do not show up here, you may need to restart Ambari Infra Solr from Ambari
+  - In case audits still don't show up and Ranger complains that audit collection not found: try [these steps](https://community.hortonworks.com/articles/96618/how-to-clean-up-recreate-collections-on-ambari-inf.html)
   
 - Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins' tab 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-plugins.png)
