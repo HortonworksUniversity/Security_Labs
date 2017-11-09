@@ -1208,7 +1208,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
     
         
-  - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):
+  - Under Advanced > Custom kms-site, enter below configs (Tip: to avoid adding one at a time, you can use 'bulk add' mode):
       - hadoop.kms.proxyuser.oozie.users=*
       - hadoop.kms.proxyuser.ambari.users=*
       - hadoop.kms.proxyuser.oozie.hosts=*
