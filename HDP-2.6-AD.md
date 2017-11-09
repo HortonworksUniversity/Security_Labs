@@ -872,7 +872,7 @@ sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 
 - Execute the following on the node where the YARN ResourceManager is installed:
 ```
-sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@LAB.HORTONWORKS.NET
+sudo sudo -u yarn kinit -kt /etc/security/keytabs/rm.service.keytab  rm/$(hostname -f)@LAB.HORTONWORKS.NET
 sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
 
@@ -885,7 +885,7 @@ kinit hr1
 - check the group mappings
 ```
 hdfs groups
-yarn rmadmin -getGroups hr1
+sudo sudo -u yarn yarn rmadmin -getGroups hr1
 ```
 
 - output should look like below, indicating both OS-level and hadoop-level group mappings :
