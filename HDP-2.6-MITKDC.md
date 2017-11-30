@@ -568,8 +568,6 @@ vi /usr/lib/python2.6/site-packages/ambari_server/serverUtils.py
 export PYTHONHTTPSVERIFY=0
 ```
 
-Run below on only Ambari node:
-
 - This puts our AD-specific settings into variables for use in the following command
 ```
 ad_host="ad01.lab.hortonworks.net"
