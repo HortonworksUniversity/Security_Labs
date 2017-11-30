@@ -996,7 +996,7 @@ sudo chmod 440 /etc/security/http_secret
   hadoop.http.authentication.signature.secret.file=/etc/security/http_secret
   hadoop.http.authentication.type=kerberos
   hadoop.http.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
-  hadoop.http.authentication.kerberos.principal=HTTP/_HOST@LAB.HORTONWORKS.NET
+  hadoop.http.authentication.kerberos.principal=HTTP/_HOST@KDC.LAB.HORTONWORKS.NET
   hadoop.http.authentication.cookie.domain=lab.hortonworks.net
   hadoop.http.filter.initializers=org.apache.hadoop.security.AuthenticationFilterInitializer
   ```
