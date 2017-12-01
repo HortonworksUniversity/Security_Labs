@@ -2025,6 +2025,8 @@ sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table pe
  java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 ```
 
+- Also note: if the mapreduce job fails saying sales user does not have write access to /apps/hive/warehouse, you will need to create HDFS policy allowing sales1 user and hive access on /apps/hive/warehouse dir 
+
 - Login to beeline
 ```
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
