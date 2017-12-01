@@ -1992,8 +1992,25 @@ beeline> select * from persons;
     - Service type: HIVE
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-audit-persons.png)
 
--  logout as sales1
+##### Drop Encrypted Hive tables 
+
+- From beeline, try to drop the persons table. 
 ```
+beeline> drop table persons;
+```
+- You will get error similar to below
+```
+message:Unable to drop default.persons because it is in an encryption zone and trash is enabled.  Use PURGE option to skip trash.
+```
+
+- To drop a Hive table (when Hive directories are located in EncryptionZone), you need to include `purge` as below:
+```
+beeline> drop table persons purge;
+```
+
+- Destroy the ticket and logout as sales1
+```
+kdestroy
 logout
 ```
 
