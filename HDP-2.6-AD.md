@@ -243,7 +243,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 
 - From Ambari notice you can open the WebUIs without any authentication
   - HDFS > Quicklinks > NameNode UI
-  - Madreduce > Quicklinks > JobHistory UI
+  - Mapreduce > Quicklinks > JobHistory UI
   - YARN > Quicklinks > ResourceManager UI
     
 - This should tell you why kerberos (and other security) is needed on Hadoop :)
