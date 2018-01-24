@@ -2470,7 +2470,7 @@ sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass ch
   - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below:
   
 ```
-beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
+beeline -u "jdbc:hive2://<KnoxserverInternalHostName>:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
 ```
 
 - Notice that in the JDBC connect string for connecting to an secured Hive running in http transport mode:
@@ -2484,7 +2484,7 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
   - hr1/BadPass#1 should *not* work
     - Will fail with:
     ```
-    Could not create http connection to jdbc:hive2://hostname:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
+    Could not create http connection to jdbc:hive2://<hostname>:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
     ```
 
 - Check in Ranger Audits to confirm the requests were audited:
