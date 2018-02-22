@@ -1666,7 +1666,7 @@ beeline> select code, description from sample_07;
     - Policy Name: `sample_07`
     - Hive Database: `default`
     - table: `sample_07`
-    - Hive Column: `code` `description`
+    - Hive Column: `code` `description` `total_emp`
     - Group: `sales`
     - Permissions : `select`
     - Add
@@ -1680,7 +1680,7 @@ beeline> select code, description from sample_07;
   
 - Now try accessing the columns again and now the query works
 ```
-beeline> select code, description from sample_07;
+beeline> select code, description, total_emp from sample_07;
 ```
 
 - Note though, that if instead you try to describe the table or query all columns, it will be denied - because we only gave sales users access to two columns in the table
@@ -1708,6 +1708,61 @@ beeline> select code, description from sample_07;
     
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-policy-details.png)  
+
+- We are able to limit sales1's access to only subset of data by using row-level filter.  Suppose we only want to allow the sales group access to data where `total_emp` is less than 5000. 
+
+- On the Hive Policies page, select the 'Row Level Filter' tab and click on 'Add New Policy'
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-select-row-level-filter-tab.png)  
+	- Please note that in order to apply a row level filter policy the user/group must already have 'select' permissions on the table. 
+
+- Create a policy restricting access to only rows where `total_emp` is less than 5000:
+    - Policy Name: `sample_07_filter_total_emp`
+    - Hive Database: `default`
+    - table: `sample_07`
+    - Group: `sales`
+    - Permissions : `select`
+    - Row Level Filter : `total_emp<5000`
+    	- The filter syntax is similar to what you would write after a 'WHERE' clause in a SQL query
+    - Add
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-row-level-filter-policy.png)
+ 
+- Wait 30s for the new policy to be picked up
+  
+- Now try accessing the columns again and notice how only rows that match the filter criteria are shown
+```
+beeline> select code, description, total_emp from sample_07;
+```
+
+- Go back to the Ranger Audits page and notice how the filter policy was applied to the query
+
+
+- Suppose we would now like to mask `total_emp` column from sales1.  This is different from denying/dis-allowing access in that the user can query the column but cannot see the actual data 
+
+- On the Hive Policies page, select the 'Masking' tab and click on 'Add New Policy'
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-select-masking-tab.png)  
+	- Please note that in order to mask a column, the user/group must already have 'select' permissions to that column.  Creating a masking policy on a column that a user does not have access to will deny the user access
+
+- Create a policy masking the  `total_emp` column for `sales` group users:
+    - Policy Name: `sample_07_total_emp`
+    - Hive Database: `default`
+    - table: `sample_07`
+    - Hive Column: `total_emp`
+    - Group: `sales`
+    - Permissions : `select`
+    - Masking Option : `redact`
+    	- Notice the different masking options available
+    	- The 'Custom' masking option can use any Hive UDF as long as it returns the same data type as that of the column 
+    - Add
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-masking-policy.png)
+ 
+- Wait 30s for the new policy to be picked up
+  
+- Now try accessing the columns again and notice how the results for the `total_emp` column is masked
+```
+beeline> select code, description, total_emp from sample_07;
+```
+
+- Go back to the Ranger Audits page and notice how the masking policy was applied to the query.
 
 - Exit beeline
 ```
