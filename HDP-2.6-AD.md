@@ -1747,7 +1747,7 @@ beeline> select code, description, total_emp from sample_07;
     - Row Level Filter : `total_emp<5000`
     	- The filter syntax is similar to what you would write after a 'WHERE' clause in a SQL query
     - Add
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-row-level-filter-policy.png)
+  ![Image](/screenshots/Ranger-HIVE-create-row-level-filter-policy.png)
  
 - Wait 30s for the new policy to be picked up
   
