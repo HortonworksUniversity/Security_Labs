@@ -1735,7 +1735,7 @@ beeline> select code, description, total_emp from sample_07;
 - We are able to limit sales1's access to only subset of data by using row-level filter.  Suppose we only want to allow the sales group access to data where `total_emp` is less than 5000. 
 
 - On the Hive Policies page, select the 'Row Level Filter' tab and click on 'Add New Policy'
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-select-row-level-filter-tab.png)  
+![Image](/screenshots/Ranger-HIVE-select-row-level-filter-tab.png)  
 	- Please note that in order to apply a row level filter policy the user/group must already have 'select' permissions on the table. 
 
 - Create a policy restricting access to only rows where `total_emp` is less than 5000:
@@ -1762,7 +1762,7 @@ beeline> select code, description, total_emp from sample_07;
 - Suppose we would now like to mask `total_emp` column from sales1.  This is different from denying/dis-allowing access in that the user can query the column but cannot see the actual data 
 
 - On the Hive Policies page, select the 'Masking' tab and click on 'Add New Policy'
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-select-masking-tab.png)  
+![Image](/screenshots/Ranger-HIVE-select-masking-tab.png)  
 	- Please note that in order to mask a column, the user/group must already have 'select' permissions to that column.  Creating a masking policy on a column that a user does not have access to will deny the user access
 
 - Create a policy masking the  `total_emp` column for `sales` group users:
@@ -1777,7 +1777,7 @@ beeline> select code, description, total_emp from sample_07;
     	- The 'Custom' masking option can use any Hive UDF as long as it returns the same data type as that of the column 
 
     - Add
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-masking-policy.png)
+  ![Image](/screenshots/Ranger-HIVE-create-masking-policy.png)
  
 - Wait 30s for the new policy to be picked up
   
