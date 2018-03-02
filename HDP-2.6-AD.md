@@ -28,13 +28,19 @@
 - [Lab 6b](#lab-6b) 
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
-- [Lab 7](#lab-7)
+- [Lab 7a](#lab-7a)
   - Secured Hadoop exercises
     - HDFS
     - Hive
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
+- [Lab 7b](#lab-7b)
+  - Tag-Based Policies (Atlas+Ranger Integration)
+    - Tag-Based Access Control
+    - Attribute-Based Access Control
+    - Time-Based Policies
+    - Tag-Based Masking
 - [Lab 8](#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
@@ -1459,7 +1465,7 @@ sudo -u sales1 kdestroy
 
 ------------------
 
-# Lab 7
+# Lab 7a
 
 ## Secured Hadoop exercises
 
@@ -2123,6 +2129,107 @@ logout
 ```
 
 - This completes the lab. You have now interacted with Hadoop components in secured mode and used Ranger to manage authorization policies and audits
+
+------------------
+
+# Lab 7b
+
+## Tag-Based Policies (Atlas+Ranger Integration)
+
+Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data access and authorization through tags 
+
+#### Atlas Preparation
+
+To create Tag-Based Policies, we will first need to create tags in Atlas and associate them to entities
+
+- Go to https://localhost:21000 and login to the Atlas UI using admin/admin for the username and pass
+![Image](/screenshots/Atlas-login-page.png)
+
+- Select the "TAGS" tab and click on "Create Tag"
+![Image](/screenshots/Atlas-select-create-tag.png)
+
+- Create a new tag by inputing
+	- Name: `Private`
+	- Create
+![Image](/screenshots/Atlas-create-tag.png)
+
+- Repeat the tag creation process above and create an additional tag named "Restricted" 
+
+- Create a third tag named "Sensitive", however, during creation, click on "Add New Attributes" and input:
+	- Attribute Name: `level`
+	- Type: `int`
+![Image](/screenshots/Atlas-sensitive-tag-creation.png)
+
+- Under the "Tags" tab in the main screen you should see the list of newly created tags
+![Image](/screenshots/Atlas-created-tags.png)
+
+- In the search tab search using the following:
+	- Search By Type: `hive_table`
+	- Search By Text: `sample_08`
+	- Search
+![Image](/screenshots/Atlas-search-table.png)
+
+- To associate a tag to the "sample_08" table, click on the "+" under the Tags column in the search results for "sample_08"
+![Image](/screenshots/Atlas-search-result.png)
+
+- From the dropdown select `Private` and click `Add`
+![Image](/screenshots/Atlas-attach-tag.png)
+
+- You should see that the "Private" tag has been associated to the "sample_08" table
+![Image](/screenshots/Atlas-associated-table-tags.png)
+
+- In the search results panel, click on the "sample_08" link
+![Image](/screenshots/Atlas-search-table.png)
+
+- Scroll down and select the "Schema" tab
+![Image](/screenshots/Atlas-select-table-schema.png)
+
+- Select the "+" button under the Tag column for "salary" and associate the `Restricted` tag to it
+
+- Select the "+" button under the Tag column for "total_emp" and associate the `Sensitive` tag to it
+	- When prompted input `5` for the "level"
+![Image](/screenshots/Atlas-tag-item-sensitive.png)
+
+- On the "sample_08" table schema page you should see the table columns with the associated tags
+![Image](/screenshots/Atlas-associated-column-tags.png)
+
+We have now completed our preparation work in Atlas and have created the following tags and associations:
+	- "Private" tag associated to "sample_08" table
+	- "Sensitive" tag with a "level" of '5', associated to "sample_08.total_emp" column
+	- "Restricted" tag associated to "sample_08.salary" column
+
+#### Ranger Preparation
+
+To enable Ranger for Tag-Based Policies complete the following:
+
+- Select "Access Manager" and then "Tag Based Policies" from the upper left hand corner of the main Ranger UI page
+![Image](/screenshots/Ranger-navigate-to-tag-based-policies.png)
+
+- Click on the "+" to create a new tag service
+![Image](/screenshots/Ranger-create-tag-service.png)
+
+- In the tag service page input:
+	- Service Name: `tags`
+	- Save
+![Image](/screenshots/Ranger-save-tag-service.png)
+
+- On the Ranger UI main page, select the edit button next to your (clustername)_hive service
+![Image](/screenshots/Ranger-HIVE-policy.png)
+
+- In the Edit Service page add the below and then click save
+	- Select Tag Service: `tags`
+![Image](/screenshots/Ranger-add-hive-tag-service.png)
+
+We should now be able to create Tag-Based Policies for Hive
+
+#### Tag-Based Access Control
+
+#### Tag-Attribute-Based Access Control
+
+#### Time-Based Policies
+
+#### Tag-Based Masking
+
 
 ------------------
 
