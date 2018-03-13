@@ -902,7 +902,7 @@ kinit hr1@LAB.HORTONWORKS.NET
 - check the group mappings
 ```
 hdfs groups
-yarn rmadmin -getGroups hr1
+sudo sudo -u yarn yarn rmadmin -getGroups hr1
 ```
 
 - output should look like below, indicating both OS-level and hadoop-level group mappings :
