@@ -1124,7 +1124,7 @@ exit
 
 
 
-8 - (Optional) Enable Deny condition in Ranger 
+8 - (Optional) Enable Deny Conditions in Ranger 
 
 The deny condition in policies is optional by default and must be enabled for use.
 
@@ -1707,6 +1707,8 @@ beeline> select code, description from sample_07;
 - Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
   -  This was done using the rangeradmin principal we provided during Ranger install
 
+- Also, notice that permissions are only configurable for allowing access, and you are not able to explicitly deny a user/group access to a resource unless you have enabled Deny Conditions during your Ranger install (step 8).
+
 - Wait 30s for the new policy to be picked up
   
 - Now try accessing the columns again and now the query works
@@ -1739,8 +1741,9 @@ beeline> select code, description, total_emp from sample_07;
     
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-policy-details.png)  
+ 
 
-- We are able to limit sales1's access to only subset of data by using row-level filter.  Suppose we only want to allow the sales group access to data where `total_emp` is less than 5000. 
+- We are also able to limit sales1's access to only subset of data by using row-level filter.  Suppose we only want to allow the sales group access to data where `total_emp` is less than 5000. 
 
 - On the Hive Policies page, select the 'Row Level Filter' tab and click on 'Add New Policy'
 ![Image](/screenshots/Ranger-HIVE-select-row-level-filter-tab.png)  

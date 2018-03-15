@@ -1138,6 +1138,20 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), delete Ranger service from Ambari and retry.
 
 
+
+
+8 - (Optional) Enable Deny Conditions in Ranger 
+
+The deny condition in policies is optional by default and must be enabled for use.
+
+- From Ambari>Ranger>Configs>Advanced>Custom ranger-admin-site, add : 
+`ranger.servicedef.enableDenyAndExceptionsInPolicies=true`
+
+- Restart Ranger
+
+https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/about_ranger_policies.html
+
+
 ##### Check Ranger
 
 - Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/admin
@@ -1484,7 +1498,7 @@ sudo -u sales1 kdestroy
 
 ------------------
 
-# Lab 7
+# Lab 7a
 
 ## Secured Hadoop exercises
 
@@ -1683,6 +1697,8 @@ beeline> select code, description from sample_07;
 - Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
   - This was done using the rangerlookup principal 
   - Note in HDP 2.6.1.0, there is a bug where the lookup for Hive does not work
+
+- Also, notice that permissions are only configurable for allowing access, and you are not able to explicitly deny a user/group access to a resource unless you have enabled Deny Conditions during your Ranger install (step 8).
 
 - Wait 30s for the new policy to be picked up
   
