@@ -3,7 +3,7 @@
 
 - Run below on all nodes of HDP cluster (replace INTERNAL_IP_OF_IPA)
 ```
-echo "INTERNAL_IP_OF_IPA ipa.hortonworks.com" >> /etc/hosts
+echo "INTERNAL_IP_OF_IPA ipa.hortonworks.com ipa" >> /etc/hosts
 ```
 
 ```
