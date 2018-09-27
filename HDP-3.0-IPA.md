@@ -13,7 +13,7 @@ sudo ipa-client-install \
 --realm=HORTONWORKS.COM \
 --domain=hortonworks.com \
 --mkhomedir \
---principal=admin -password BadPass#1 \
+--principal=admin -w BadPass#1 \
 --unattended
 
 ```
