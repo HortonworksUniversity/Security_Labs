@@ -6,6 +6,11 @@
 echo "INTERNAL_IP_OF_IPA ipa.hortonworks.com ipa" >> /etc/hosts
 ```
 
+- Install yum packages
+```
+sudo yum install ipa-client
+```
+
 - Update /etc/resolve.conf (replace INTERNAL_IP_OF_IPA)
 ```
 mv /etc/resolv.conf /etc/resolv.conf.bak 
@@ -14,7 +19,6 @@ echo "nameserver INTERNAL_IP_OF_IPA" >> /etc/resolv.conf
 ```
 - Install IPA client
 ```
-sudo yum install ipa-client
 sudo ipa-client-install \
 --server=ipa.hortonworks.com \
 --realm=HORTONWORKS.COM \
