@@ -29,4 +29,9 @@ sudo ipa-client-install \
 
 ```
 
+- Make sure you don't see below message from the output of previous command
+```
+Missing A/AAAA record(s) for host demo.hortonworks.com
+```
+
 - Note by changing the DNS the node will not be able to connect to public internet. When you need to do so (e.g. for yum install, you can temporarily revert back the /etc/resolv.conf.bak)
