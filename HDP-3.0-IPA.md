@@ -19,6 +19,8 @@ echo "nameserver $INTERNAL_IP_OF_IPA" >> /etc/resolv.conf
 ```
 - Install IPA client
 ```
+service dbus restart
+
 sudo ipa-client-install \
 --server=ipa.hortonworks.com \
 --realm=HORTONWORKS.COM \
