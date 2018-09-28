@@ -6,9 +6,9 @@
 echo "INTERNAL_IP_OF_IPA ipa.hortonworks.com ipa" >> /etc/hosts
 ```
 
-- Update /etc/resolve.conf
+- Update /etc/resolve.conf (replace INTERNAL_IP_OF_IPA)
 ```
-mv /etc/resolv.conf /etc/resolv.conf.bak (replace INTERNAL_IP_OF_IPA)
+mv /etc/resolv.conf /etc/resolv.conf.bak 
 echo "search hortonworks.com" > /etc/resolv.conf
 echo "nameserver INTERNAL_IP_OF_IPA" >> /etc/resolv.conf
 ```
