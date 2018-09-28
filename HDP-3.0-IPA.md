@@ -1,21 +1,21 @@
 
 ## Rough instuctions for IPA Lab 
 
-- Run below on all nodes of HDP cluster (replace INTERNAL_IP_OF_IPA)
+- Run below on all nodes of HDP cluster (replace $INTERNAL_IP_OF_IPA)
 ```
-echo "INTERNAL_IP_OF_IPA ipa.hortonworks.com ipa" >> /etc/hosts
+echo "$INTERNAL_IP_OF_IPA ipa.hortonworks.com ipa" >> /etc/hosts
 ```
 
 - Install yum packages
 ```
-sudo yum install ipa-client
+sudo yum install -y ipa-client
 ```
 
 - Update /etc/resolve.conf (replace INTERNAL_IP_OF_IPA)
 ```
 mv /etc/resolv.conf /etc/resolv.conf.bak 
 echo "search hortonworks.com" > /etc/resolv.conf
-echo "nameserver INTERNAL_IP_OF_IPA" >> /etc/resolv.conf
+echo "nameserver $INTERNAL_IP_OF_IPA" >> /etc/resolv.conf
 ```
 - Install IPA client
 ```
@@ -28,3 +28,5 @@ sudo ipa-client-install \
 --unattended
 
 ```
+
+- Note by changing the DNS the node will not be able to connect to public internet. When you need to do so (e.g. for yum install, you can temporarily revert back the /etc/resolv.conf.bak)
