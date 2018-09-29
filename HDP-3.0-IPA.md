@@ -2,10 +2,12 @@
 ## Instuctions for IPA Lab 
 
 ### Pre-reqs
-Need to have access to an IPA server that has been setup as descibed in [Hortonworks documentation](https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html)
+Need to have
+- HDP 3.x / Ambari 2.7.x cluster
+-Access to an IPA server that has been setup as descibed in [Hortonworks documentation](https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html)
 
 ### Register cluster as IPA client
-- Run below on all nodes of HDP cluster (replace $INTERNAL_IP_OF_IPA)
+- Run below on *all nodes of HDP cluster* (replace $INTERNAL_IP_OF_IPA)
 ```
 echo "$INTERNAL_IP_OF_IPA ipa.hortonworks.com ipa" >> /etc/hosts
 ```
