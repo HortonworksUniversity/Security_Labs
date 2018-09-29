@@ -36,4 +36,9 @@ sudo ipa-client-install \
 Missing A/AAAA record(s) for host demo.hortonworks.com
 ```
 
-- Note by changing the DNS the node will not be able to connect to public internet. When you need to do so (e.g. for yum install, you can temporarily revert back the /etc/resolv.conf.bak)
+- To uninstall in case of issues:
+```
+sudo ipa-client-install --uninstall
+```
+
+- Note by changing the DNS the node may not be able to connect to public internet. When you need to do so (e.g. for yum install, you can temporarily revert back the /etc/resolv.conf.bak)
