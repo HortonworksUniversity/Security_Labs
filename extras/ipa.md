@@ -2,6 +2,8 @@
 
 ### Sample script to setup FreeIPA on CentOS 7 on AWS
 
+Based on steps [here](https://www.evernote.com/client/snv?noteGuid=f7eed2f9-5255-4f7c-b0d8-ecee1dba3c9f&noteKey=d2b6e968a783fd5e&var=b&sn=https%3A%2F%2Fwww.evernote.com%2Fshard%2Fs337%2Fsh%2Ff7eed2f9-5255-4f7c-b0d8-ecee1dba3c9f%2Fd2b6e968a783fd5e&exp=ENB3538)
+
 ```
 
 #set name of instance to ipa.hortonworks.com
