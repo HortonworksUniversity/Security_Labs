@@ -1,5 +1,8 @@
 
-## Rough instuctions for IPA Lab 
+## Instuctions for IPA Lab 
+
+### Pre-reqs
+Need to have access to an IPA server that has been setup as descibed in [Hortonworks documentation](https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html)
 
 ### Register cluster as IPA client
 - Run below on all nodes of HDP cluster (replace $INTERNAL_IP_OF_IPA)
@@ -34,7 +37,7 @@ sudo ipa-client-install \
 
 - Make sure you don't see below message from the output of previous command
 ```
-Missing A/AAAA record(s) for host demo.hortonworks.com
+Missing A/AAAA record(s) for host xxxxxxxxx
 ```
 
 - To uninstall in case of issues:
@@ -59,5 +62,6 @@ kinit -V hadoopadmin
 
 ## Enable kerberos on the cluster
 
+-Start Ambari 2.7.x security wizard and select IPA option and pass in below:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/IPA-SecurityWizard.png)
   
