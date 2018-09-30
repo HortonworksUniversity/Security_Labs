@@ -1,4 +1,4 @@
-# Contents (HDP 2.6 using MIT KDC)
+# Contents (HDP 2.6.5.0 using MIT KDC)
 
 - [Lab 1](#lab-1)
   - Access cluster
