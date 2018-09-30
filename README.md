@@ -4,11 +4,11 @@
 
 ## HDP 3.0.1
 
-[HDP 3.0 using Active Directory](./HDP-2.6-AD.md)
+[HDP 3.0.1 using Active Directory](./HDP-2.6-AD.md)
 
-[HDP 3.0 using MIT KDC](./HDP-2.6-MITKDC.md)
+[HDP 3.0.1 using MIT KDC](./HDP-2.6-MITKDC.md)
 
-[HDP 2.6 using FreeIPA](./HDP-2.6-MITKDC.md)
+[HDP 3.0.1 using FreeIPA](./HDP-2.6-MITKDC.md)
 
 ## HDF 3.2.0
 
@@ -18,9 +18,9 @@
 
 ## HDP2.6.5.0
 
-[HDP 2.6 using Active Directory](./HDP-2.6-AD.md)
+[HDP 2.6.5.0 using Active Directory](./HDP-2.6-AD.md)
 
-[HDP 2.6 using MIT KDC](./HDP-2.6-MITKDC.md)
+[HDP 2.6.5.0 using MIT KDC](./HDP-2.6-MITKDC.md)
 
 ## HDF 3.0
 
