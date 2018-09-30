@@ -12,9 +12,9 @@
 
 ## HDF 3.2.0
 
-[HDF 3.2.0 using Active Directory](./HDF-3.0-AD.md)
+[HDF 3.2.0 using Active Directory](./HDF-3.2.0-AD.md)
 
-[HDF 3.2.0 using MIT KDC](./HDF-3.0-MITKDC.md)
+[HDF 3.2.0 using MIT KDC](./HDF-3.2.0-MITKDC.md)
 
 ## HDP2.6.5.0
 
