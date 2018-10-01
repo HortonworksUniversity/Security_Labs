@@ -7,9 +7,10 @@ Based on steps [here](https://www.evernote.com/client/snv?noteGuid=f7eed2f9-5255
 ```
 
 #set name of instance to ipa.someawsdomain
-NAME=ipa
-DOMAIN=us-west-1.compute.internal
-IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+export NAME=ipa
+export DOMAIN=us-west-1.compute.internal
+export IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+
 echo "IP is ${IP}"
 
 echo "${IP} ${NAME}.${DOMAIN} ${NAME} $(hostname -f) $(hostname -s)" >> /etc/hosts
