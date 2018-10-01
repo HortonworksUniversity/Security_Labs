@@ -330,6 +330,7 @@ Handling behavior for username collisions [convert/skip] for LDAP sync (skip):
 Force lower-case user names [true/false]:
 Results from LDAP are paginated when requested [true/false]:
 ```
+- Then enter Ambari credentials (admin/BadPass#1)
 
 ### 4.2 Sync users
 LDAP Users must be synced by invoked a command on the Ambari Server host. User additions, and group associations made on the LDAP server will not propagate to Ambari automatically, only when this command is invoked. 
@@ -361,7 +362,8 @@ Summary:
 
 Ambari Server 'sync-ldap' completed successfully.
 ```
-Sometimes restarting Ambari Server again helps. 
+
+- Now restart ambari-server
 
 ### 4.2.1 Verify user group associations in Ambari
 
