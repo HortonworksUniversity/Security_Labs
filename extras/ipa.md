@@ -9,7 +9,7 @@ Based on steps [here](https://www.evernote.com/client/snv?noteGuid=f7eed2f9-5255
 #set name of instance to ipa.someawsdomain
 export NAME=ipa
 export DOMAIN=us-west-2.compute.internal
-export REALM=echo ${DOMAIN} | awk '{print toupper($0)}'
+export REALM=$(echo ${DOMAIN} | awk '{print toupper($0)}')
 export IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
 echo "IP is ${IP}"
