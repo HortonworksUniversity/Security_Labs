@@ -12,7 +12,7 @@
       },
     { "name" : "host_group_3",
       "hosts" :[ { "fqdn" : "node2" } ]
-    }
+    },
     { "name" : "host_group_4",
       "hosts" :[ { "fqdn" : "node3" } ]
     }
