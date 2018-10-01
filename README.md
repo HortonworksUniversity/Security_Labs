@@ -8,7 +8,7 @@
 
 [HDP 3.0.1 using MIT KDC](./HDP-3.0.1-MITKDC.md)
 
-[HDP 3.0.1 using FreeIPA](./HDP-3.0.1-FREEIPA.md)
+[HDP 3.0.1 using FreeIPA](./HDP-3.0-IPA.md)
 
 ## HDF 3.2.0
 
