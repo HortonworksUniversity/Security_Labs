@@ -1,0 +1,20 @@
+{
+  "blueprint" : "testblueprint1",
+  "default_password" : "BadPass#1",
+  "configurations" : [
+  ],
+  "host_groups" :[
+    { "name" : "host_group_1",
+      "hosts" :[ { "fqdn" : "AmbariNode"} ]
+      },
+    { "name" : "host_group_2",
+      "hosts" :[ { "fqdn" : "node1" } ]
+      },
+    { "name" : "host_group_3",
+      "hosts" :[ { "fqdn" : "node2" } ]
+    }
+    { "name" : "host_group_4",
+      "hosts" :[ { "fqdn" : "node3" } ]
+    }
+  ]
+}
