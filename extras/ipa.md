@@ -56,6 +56,9 @@ ipa role-add hadoopadminrole
 ipa role-add-privilege hadoopadminrole --privileges="User Administrators" 
 ipa role-add-privilege hadoopadminrole --privileges="Service Administrators"
 
+#add the hadoopadmin user to the role
+ipa role-add-member hadoopadminrole --users=hadoopadmin
+
 #create users/groups
 ipa group-add analyst --desc analyst
 ipa group-add hr --desc hr
