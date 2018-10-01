@@ -128,7 +128,45 @@ It's recommended to use an "etherpad" to share:
 
 You can create your own, or use a hosted version such as TitanPad. You should create this account in advance.
 
-########
+
+-----------
+## Alternative Install using Cloudbreak
+-----------
+
+To deploy using Cloudbreak, use the blueprint "Security_HA_3.0.1_blueprint.json" in this repository.
+
+### Set up Cloudbreak with the blueprint and recipe
+
+- Import the blueprint "Security_HA_3.0.1_blueprint.json" to Cloudbreak using the RAW URL
+- Import the pre-ambari-start recipe "pre-ambari-start-mysql-connector.sh" to Cloudbreak using the RAW URL
+
+### Create a cluster for the course
+
+- Using the credentials of your choice, select an HDP 3.0 ClusterType (3.0.1 if available)
+- Select a base (not prewarmed) image (only tested with CentOS7.4 images)
+- If HDP 3.0.1 is not available in your version of Cloudbreak, override the Ambari and HDP versions this way:
+
+  ```
+  Ambari Version: 2.7.1.0
+  Base Url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.1.0
+  GPG Key Url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.1.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+
+  HDP Version: 3.0
+  Stack Repo Id: HDP
+  Stack Repository Version: 3.0.1.0-187
+  Stack Vdf Url: http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/3.x/BUILDS/3.0.1.0-187/HDP-3.0.1.0-187.xml
+  ```
+  
+- Select a node size of at least 2vCPUs and 8GB RAM for all hostgroups (e.g., n1-highmem-2 for GCP)
+- Select hostgroup 1 as the Ambari hostgroup
+- Attach the recipe "pre-ambari-start-mysql-connector.sh" to hostgroup 1
+- Disable all proxy and SSO (there should be no Knox setup at all)
+- Create the cluster
+
+NOTE: If running on AWS Linux, you may need to add a recipe to install MySQL server as well.
+
+-----------
+-----------
 
 ## Issues: Deployment
 
