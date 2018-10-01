@@ -1922,79 +1922,6 @@
                     "name": "ZKFC"
                 },
                 {
-                    "name": "HISTORYSERVER"
-                },
-                {
-                    "name": "METRICS_MONITOR"
-                },
-                {
-                    "name": "INFRA_SOLR_CLIENT"
-                },
-                {
-                    "name": "NAMENODE"
-                },
-                {
-                    "name": "TEZ_CLIENT"
-                },
-                {
-                    "name": "ZOOKEEPER_CLIENT"
-                },
-                {
-                    "name": "YARN_REGISTRY_DNS"
-                },
-                {
-                    "name": "PIG"
-                },
-                {
-                    "name": "TIMELINE_READER"
-                },
-                {
-                    "name": "MAPREDUCE2_CLIENT"
-                },
-                {
-                    "name": "ZOOKEEPER_SERVER"
-                },
-                {
-                    "name": "HBASE_REGIONSERVER"
-                },
-                {
-                    "name": "DATANODE"
-                },
-                {
-                    "name": "HBASE_CLIENT"
-                },
-                {
-                    "name": "JOURNALNODE"
-                },
-                {
-                    "name": "APP_TIMELINE_SERVER"
-                },
-                {
-                    "name": "HIVE_CLIENT"
-                },
-                {
-                    "name": "RESOURCEMANAGER"
-                }
-            ],
-            "configurations": [],
-            "name": "host_group_2",
-            "cardinality": "1"
-        },
-        {
-            "components": [
-                {
-                    "name": "NODEMANAGER"
-                },
-                {
-                    "name": "YARN_CLIENT"
-                },
-                {
-                    "name": "HDFS_CLIENT"
-                },
-                {
-                    "name": "ZKFC"
-                },
-                {
                     "name": "METRICS_MONITOR"
                 },
                 {
@@ -2051,6 +1978,79 @@
             ],
             "configurations": [],
             "name": "host_group_1",
+            "cardinality": "1"
+        },
+        {
+            "components": [
+                {
+                    "name": "NODEMANAGER"
+                },
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "ZKFC"
+                },
+                {
+                    "name": "HISTORYSERVER"
+                },
+                {
+                    "name": "METRICS_MONITOR"
+                },
+                {
+                    "name": "INFRA_SOLR_CLIENT"
+                },
+                {
+                    "name": "NAMENODE"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "YARN_REGISTRY_DNS"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "TIMELINE_READER"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "JOURNALNODE"
+                },
+                {
+                    "name": "APP_TIMELINE_SERVER"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                },
+                {
+                    "name": "RESOURCEMANAGER"
+                }
+            ],
+            "configurations": [],
+            "name": "host_group_2",
             "cardinality": "1"
         },
         {
