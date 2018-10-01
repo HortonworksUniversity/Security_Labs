@@ -9,6 +9,7 @@ Based on steps [here](https://www.evernote.com/client/snv?noteGuid=f7eed2f9-5255
 #set name of instance to ipa.someawsdomain
 export NAME=ipa
 export DOMAIN=us-west-2.compute.internal
+export REALM=echo ${DOMAIN} | awk '{print toupper($0)}'
 export IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
 echo "IP is ${IP}"
@@ -24,6 +25,9 @@ ethtool -K eth0 tso off
 hostname -f
 cat /etc/hosts
 
+mv /etc/resolv.conf /etc/resolv.conf.bak 
+echo "search $DOMAIN" > /etc/resolv.conf
+echo "nameserver 127.0.0.1" >> /etc/resolv.conf
 
 #install packages
 sudo yum install ipa-server ipa-server-dns -y
@@ -38,13 +42,13 @@ cat /proc/sys/kernel/random/entropy_avail
 service dbus restart
 
 #sudo ipa-server-install \
-#--realm HORTONWORKS.COM --domain hortonworks.com \
+#--realm ${REALM} --domain ${DOMAIN} \
 #-a BadPass#1 -p BadPass#1 --unattended
 #ipa-server-install --uninstall
 
 #install IPA server
 sudo ipa-server-install \
---realm HORTONWORKS.COM --domain hortonworks.com \
+--realm ${REALM} --domain ${DOMAIN} \
 -a BadPass#1 -p BadPass#1 \
 --setup-dns \
 --forwarder=8.8.8.8 --allow-zone-overlap --no-host-dns \
