@@ -25,10 +25,6 @@ ethtool -K eth0 tso off
 hostname -f
 cat /etc/hosts
 
-mv /etc/resolv.conf /etc/resolv.conf.bak 
-echo "search $DOMAIN" > /etc/resolv.conf
-echo "nameserver 127.0.0.1" >> /etc/resolv.conf
-
 #install packages
 sudo yum install ipa-server ipa-server-dns -y
 
@@ -40,6 +36,11 @@ cat /proc/sys/kernel/random/entropy_avail
 
 #sometimes needed to avoid server install failing
 service dbus restart
+
+mv /etc/resolv.conf /etc/resolv.conf.bak 
+echo "search $DOMAIN" > /etc/resolv.conf
+echo "nameserver 127.0.0.1" >> /etc/resolv.conf
+
 
 #sudo ipa-server-install \
 #--realm ${REALM} --domain ${DOMAIN} \
