@@ -28,13 +28,21 @@
 - [Lab 6b](#lab-6b) 
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
-- [Lab 7](#lab-7)
+- [Lab 7a](#lab-7a)
   - Secured Hadoop exercises
     - HDFS
     - Hive
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
+- [Lab 7b](#lab-7b)
+  - Tag-Based Policies (Atlas+Ranger Integration)
+    - Tag-Based Access Control
+    - Attribute-Based Access Control
+    - Tag-Based Masking
+	- Location-Based Access Control
+    - Time-Based Policies
+  - Policy Evaluation and Precedence
 - [Lab 8](#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
@@ -1116,7 +1124,7 @@ exit
 
 
 
-8 - (Optional) Enable Deny condition in Ranger 
+8 - (Optional) Enable Deny Conditions in Ranger 
 
 The deny condition in policies is optional by default and must be enabled for use.
 
@@ -1459,7 +1467,7 @@ sudo -u sales1 kdestroy
 
 ------------------
 
-# Lab 7
+# Lab 7a
 
 ## Secured Hadoop exercises
 
@@ -1686,11 +1694,11 @@ beeline> select code, description from sample_07;
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-policy.png)
   - This will open the list of HIVE policies
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-edit-policy.png)
-  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code` and `description` columns in `sample_07` dir:
+  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code`, `description` and `total_emp` columns in `sample_07` dir:
     - Policy Name: `sample_07`
     - Hive Database: `default`
     - table: `sample_07`
-    - Hive Column: `code` `description`
+    - Hive Column: `code` `description` `total_emp`
     - Group: `sales`
     - Permissions : `select`
     - Add
@@ -1699,11 +1707,13 @@ beeline> select code, description from sample_07;
 - Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
   -  This was done using the rangeradmin principal we provided during Ranger install
 
+- Also, notice that permissions are only configurable for allowing access, and you are not able to explicitly deny a user/group access to a resource unless you have enabled Deny Conditions during your Ranger install (step 8).
+
 - Wait 30s for the new policy to be picked up
   
 - Now try accessing the columns again and now the query works
 ```
-beeline> select code, description from sample_07;
+beeline> select code, description, total_emp from sample_07;
 ```
 
 - Note though, that if instead you try to describe the table or query all columns, it will be denied - because we only gave sales users access to two columns in the table
@@ -1731,6 +1741,63 @@ beeline> select code, description from sample_07;
     
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-policy-details.png)  
+ 
+
+- We are also able to limit sales1's access to only subset of data by using row-level filter.  Suppose we only want to allow the sales group access to data where `total_emp` is less than 5000. 
+
+- On the Hive Policies page, select the 'Row Level Filter' tab and click on 'Add New Policy'
+![Image](/screenshots/Ranger-HIVE-select-row-level-filter-tab.png)  
+	- Please note that in order to apply a row level filter policy the user/group must already have 'select' permissions on the table. 
+
+- Create a policy restricting access to only rows where `total_emp` is less than 5000:
+    - Policy Name: `sample_07_filter_total_emp`
+    - Hive Database: `default`
+    - table: `sample_07`
+    - Group: `sales`
+    - Permissions : `select`
+    - Row Level Filter : `total_emp<5000`
+    	- The filter syntax is similar to what you would write after a 'WHERE' clause in a SQL query
+    - Add
+  ![Image](/screenshots/Ranger-HIVE-create-row-level-filter-policy.png)
+ 
+- Wait 30s for the new policy to be picked up
+  
+- Now try accessing the columns again and notice how only rows that match the filter criteria are shown
+```
+beeline> select code, description, total_emp from sample_07;
+```
+
+- Go back to the Ranger Audits page and notice how the filter policy was applied to the query
+
+
+- Suppose we would now like to mask `total_emp` column from sales1.  This is different from denying/dis-allowing access in that the user can query the column but cannot see the actual data 
+
+- On the Hive Policies page, select the 'Masking' tab and click on 'Add New Policy'
+![Image](/screenshots/Ranger-HIVE-select-masking-tab.png)  
+	- Please note that in order to mask a column, the user/group must already have 'select' permissions to that column.  Creating a masking policy on a column that a user does not have access to will deny the user access
+
+- Create a policy masking the  `total_emp` column for `sales` group users:
+    - Policy Name: `sample_07_total_emp`
+    - Hive Database: `default`
+    - table: `sample_07`
+    - Hive Column: `total_emp`
+    - Group: `sales`
+    - Permissions : `select`
+    - Masking Option : `redact`
+    	- Notice the different masking options available
+    	- The 'Custom' masking option can use any Hive UDF as long as it returns the same data type as that of the column 
+
+    - Add
+  ![Image](/screenshots/Ranger-HIVE-create-masking-policy.png)
+ 
+- Wait 30s for the new policy to be picked up
+  
+- Now try accessing the columns again and notice how the results for the `total_emp` column is masked
+```
+beeline> select code, description, total_emp from sample_07;
+```
+
+- Go back to the Ranger Audits page and notice how the masking policy was applied to the query.
 
 - Exit beeline
 ```
@@ -2067,6 +2134,242 @@ logout
 ```
 
 - This completes the lab. You have now interacted with Hadoop components in secured mode and used Ranger to manage authorization policies and audits
+
+------------------
+
+# Lab 7b
+
+## Tag-Based Policies (Atlas+Ranger Integration)
+
+Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data access and authorization through tags 
+
+#### Atlas Preparation
+
+To create Tag-Based Policies, we will first need to create tags in Atlas and associate them to entities
+
+- Go to https://localhost:21000 and login to the Atlas UI using admin/admin for the username and pass
+![Image](/screenshots/Atlas-login-page.png)
+
+- Select the "TAGS" tab and click on "Create Tag"
+![Image](/screenshots/Atlas-select-create-tag.png)
+
+- Create a new tag by inputing
+	- Name: `Private`
+	- Create
+![Image](/screenshots/Atlas-create-tag.png)
+
+- Repeat the tag creation process above and create an additional tag named "Restricted" 
+
+- Create a third tag named "Sensitive", however, during creation, click on "Add New Attributes" and input:
+	- Attribute Name: `level`
+	- Type: `int`
+![Image](/screenshots/Atlas-sensitive-tag-creation.png)
+
+- Create a fourth tag named "EXPIRES_ON", and during creation, click on "Add New Attributes" and input:
+	- Attribute Name: `expiry_date`
+	- Type: `int`
+![Image](/screenshots/Atlas-expires-on-tag-creation.png)
+
+- Under the "Tags" tab in the main screen you should see the list of newly created tags
+![Image](/screenshots/Atlas-created-tags.png)
+
+- In the search tab search using the following:
+	- Search By Type: `hive_table`
+	- Search By Text: `sample_08`
+	- Search
+![Image](/screenshots/Atlas-search-table.png)
+
+- To associate a tag to the "sample_08" table, click on the "+" under the Tags column in the search results for "sample_08"
+![Image](/screenshots/Atlas-search-result.png)
+
+- From the dropdown select `Private` and click `Add`
+![Image](/screenshots/Atlas-attach-tag.png)
+
+- You should see that the "Private" tag has been associated to the "sample_08" table
+![Image](/screenshots/Atlas-associated-table-tags.png)
+
+- Now, in the same manner, associate the "EXPIRES_ON" tag to the "sample_08" table
+	When prompted, select a date in the past for "expiry_date"
+![Image](/screenshots/Atlas-tag-item-expires-on.png)
+
+- In the search results panel, click on the "sample_08" link
+![Image](/screenshots/Atlas-search-table.png)
+
+- Scroll down and select the "Schema" tab
+![Image](/screenshots/Atlas-select-table-schema.png)
+
+- Select the "+" button under the Tag column for "salary" and associate the `Restricted` tag to it
+
+- Select the "+" button under the Tag column for "total_emp" and associate the `Sensitive` tag to it
+	- When prompted, input `5` for the "level"
+![Image](/screenshots/Atlas-tag-item-sensitive.png)
+
+- On the "sample_08" table schema page you should see the table columns with the associated tags
+![Image](/screenshots/Atlas-associated-column-tags.png)
+
+We have now completed our preparation work in Atlas and have created the following tags and associations:
+	- "Private" tag associated to "sample_08" table
+	- "Sensitive" tag with a "level" of '5', associated to "sample_08.total_emp" column
+	- "Restricted" tag associated to "sample_08.salary" column
+
+#### Ranger Preparation
+
+To enable Ranger for Tag-Based Policies complete the following:
+
+- Select "Access Manager" and then "Tag Based Policies" from the upper left hand corner of the main Ranger UI page
+![Image](/screenshots/Ranger-navigate-to-tag-based-policies.png)
+
+- Click on the "+" to create a new tag service
+![Image](/screenshots/Ranger-create-tag-service.png)
+
+- In the tag service page input:
+	- Service Name: `tags`
+	- Save
+![Image](/screenshots/Ranger-save-tag-service.png)
+
+- On the Ranger UI main page, select the edit button next to your (clustername)_hive service
+![Image](/screenshots/Ranger-HIVE-policy.png)
+
+- In the Edit Service page add the below and then click save
+	- Select Tag Service: `tags`
+![Image](/screenshots/Ranger-add-hive-tag-service.png)
+
+We should now be able to create Tag-Based Policies for Hive
+
+#### Tag-Based Access Control
+Goal: Create a Tag-Based policy for sales to access all entities tagged as "Private"
+
+- Select "Access Manager" and then "Tag Based Policies" from the upper left hand corner of the main Ranger UI page
+![Image](/screenshots/Ranger-navigate-to-tag-based-policies.png)
+
+- Select the "tags" service that you had previously created
+
+- On the "tags Policies" page, click on "Add New Policy"
+![Image](/screenshots/Ranger-Tags-policy-list-1.png)
+
+- Input the following to create the new policy
+	- Policy Name: `Private Data Access`
+	- TAG: `Private`
+	- Under "Allow Conditions"
+		- Select Group: `sales`
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-tbac.png)
+![Image](/screenshots/Ranger-Tags-component-permissions.png)
+
+- Run these steps from node where Hive (or client) is installed 
+
+- From node where Hive (or client) is installed, login as sales1 and connect to beeline:
+```
+su - sales1
+klist
+## Default principal: sales1@LAB.HORTONWORKS.NET
+```
+```
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
+```
+- Now try accessing table "sample_08" and notice how you have access to all the contents of the table
+```
+beeline> select * from sample_08;
+```
+
+#### Attribute-Based Access Control
+Goal: Disallow everybody's access to data tagged as "Sensitive" and has an attribute "level" 5 or above
+
+- Return to the Ranger "tags Policies" page and "Add New Policy" with the below parameters
+	- Policy Name: `Sensitive Data Access`
+	- TAG: `Sensitive`
+	- Under "Deny Conditions" 
+		- Select Group: `public`
+		- Policy Conditions/Enter boolean expression: `level>=5`
+			- Note: Boolean expressions are written in Javascript
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-abac-1.png)
+![Image](/screenshots/Ranger-Tags-create-abac-2.png)
+
+- Wait 30 seconds before trying to access the "total_emp" column in table "sample_08" and notice how you are denied access
+```
+beeline> select total_emp from sample_08;
+```
+
+- Now try to access the other columns and notice how you are allowed access to them access
+```
+beeline> select code, description, salary from sample_08;
+```
+
+#### Tag-Based Masking 
+Goal: Mask data tagged as "Restricted"
+
+- Return to the Ranger "tags Policies" page, click on the "Masking" tab in the upper right hand 
+![Image](/screenshots/Ranger-Tags-tbm-tab.png)
+
+- Click on "Add New Policy" and input the below parameters
+	- Policy Name: `Restricted Data Access`
+	- TAG: `Restricted`
+	- Under "Mask Conditions" 
+		- Select Group: `public`
+		- Component Permissions: (select `Hive` and enable all actions)
+		- Select Masking Option: `Redact`	
+	- Add
+
+- Wait 30 seconds and try run the below query.  Notice how salary data has been masked
+```
+beeline> select code, description, salary from sample_08;
+```
+
+#### Location-Based Access Control
+Goal: Restrict access to data based on a user's physical location at the time.
+
+- Return to the Ranger "tags Policies" page ("Access" tab) and "Add New Policy" with the below parameters
+	- Policy Name: `Geo-Location Access`
+	- TAG: `Restricted`
+	- Under "Deny Conditions" 
+		- Select Group: `public`
+		- Policy Conditions/Enter boolean expression: `country_code=='USA'`
+			- If you are outside of USA use `country_code!='USA'` instead
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-lba-1.png)
+![Image](/screenshots/Ranger-Tags-create-lba-2.png)
+
+- Wait 30 seconds and try run the below query.  Notice how you are now denied access to the "salary" column because of your location
+```
+beeline> select code, description, salary from sample_08;
+```
+
+#### Time-Based Policies
+Goal: To place an expiry date on sales' access policy to data tagged as "Private" after which access will be denied
+
+- Return to the Ranger "tags Policies" page ("Access" tab)and "Add New Policy" with the below parameters.  You may already have default policy named "EXPIRES_ON", if so, please delete it before clicking "Add New Policy" 
+	- Policy Name: `EXPIRES_ON`
+	- TAG: `EXPIRES_ON`
+	- Under "Deny Conditions" 
+		- Select Group: `public`
+		- Policy Conditions/Accessed after expiry_date: `yes`
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-eo-1.png)
+![Image](/screenshots/Ranger-Tags-create-eo-2.png)
+
+- Wait 30 seconds and try run the below query.  Notice how you are now denied access to the entire "sample_08" table because it is accessed after the expiry date tagged in Atlas
+```
+beeline> select code, description from sample_08;
+```
+
+- Exit beeline
+```
+!q
+```
+- Logoff as sales1
+```
+logout
+```
+
+## Policy Evaluation and Precedence
+
+Notice how in the policies above, ones that deny access always take precedence over ones that allow access.  For example, even though sales had access to "Private" data in the Tag-Based Access Control section, they were gradually disallowed access over the following sections as we set up "Deny" policies.  This applies to both, Tag-Based as well as Resource-Based policies.  To understand better the sequence of policy evaluation, take a look at the following flow-chart.
+![Image](/screenshots/Ranger-Policy-Evaluation-Flow-with-Tags.png)
 
 ------------------
 
