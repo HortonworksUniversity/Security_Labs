@@ -6,15 +6,23 @@ Based on steps [here](https://www.evernote.com/client/snv?noteGuid=f7eed2f9-5255
 
 ```
 
-#set name of instance to ipa.hortonworks.com
-export vm_name=ipa
-curl -sSL https://gist.github.com/abajwa-hw/9d7d06b8d0abf705ae311393d2ecdeec/raw | sudo -E sh
+#set name of instance to ipa.someawsdomain
+NAME=ipa
+DOMAIN=us-west-1.compute.internal
+IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+echo "IP is ${IP}"
+
+echo "${IP} ${NAME}.${DOMAIN} ${NAME} $(hostname -f) $(hostname -s)" >> /etc/hosts
+hostnamectl set-hostname ${NAME}.${DOMAIN}
+hostnamectl --transient set-hostname ${NAME}
+hostname ${NAME}.${DOMAIN}
+echo 0 > /proc/sys/kernel/hung_task_timeout_secs
+ethtool -K eth0 tso off
+
 
 hostname -f
 cat /etc/hosts
 
-IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
-echo "IP is ${IP}"
 
 #install packages
 sudo yum install ipa-server ipa-server-dns -y
