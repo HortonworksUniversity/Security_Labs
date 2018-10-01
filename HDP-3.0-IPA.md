@@ -49,8 +49,9 @@ Note: restarting dbus seems to be required sometimes `service dbus restart`
 Missing A/AAAA record(s) for host xxxxxxxxx
 ```
 
-- To uninstall in case of issues:
+- If you do, uninstall and try again:
 ```
+service dbus restart
 sudo ipa-client-install --uninstall
 ```
 
