@@ -17,7 +17,7 @@
 - Run below on *all nodes of HDP cluster* (replace $INTERNAL_IP_OF_IPA)
 
 ```
-echo "$INTERNAL_IP_OF_IPA ipa.hortonworks.com ipa" >> /etc/hosts
+echo "$INTERNAL_IP_OF_IPA ipa.us-west-1.compute.internal ipa" >> /etc/hosts
 ```
 
 - Install yum packages
@@ -28,16 +28,16 @@ sudo yum install -y ipa-client
 - Update /etc/resolve.conf (replace INTERNAL_IP_OF_IPA)
 ```
 mv /etc/resolv.conf /etc/resolv.conf.bak 
-echo "search hortonworks.com" > /etc/resolv.conf
+echo "search us-west-1.compute.internal" > /etc/resolv.conf
 echo "nameserver $INTERNAL_IP_OF_IPA" >> /etc/resolv.conf
 ```
 - Install IPA client
 
   ```	
 	sudo ipa-client-install \
-	--server=ipa.hortonworks.com \
-	--realm=HORTONWORKS.COM \
-	--domain=hortonworks.com \
+	--server=ipa.us-west-1.compute.internal \
+	--realm=US-WEST-1.COMPUTE.INTERNAL \
+	--domain=us-west-1.compute.internal \
 	--mkhomedir \
 	--principal=admin -w BadPass#1 \
 	--unattended
@@ -178,14 +178,14 @@ Setting up the truststore ahead of time and restarting Ambari seems to make the 
 Ambari can leverage the `/etc/pki/java/cacerts` truststore managed by IPA Clients on the hosts. This truststore contains the public CAs, along with the IPA CA, which should be the only certificates needed.    
 
 ```
-# Example for ipa hostname: ipa.hortonworks.com
+# Example for ipa hostname: ipa.us-west-1.compute.internal
 
 [root@demo ~]# /usr/java/default/bin/keytool -list \
 -keystore /etc/pki/java/cacerts \
 -v -storepass changeit | grep ipa
 
 Alias name: hortonworks.comipaca
-   accessLocation: URIName: http://ipa-ca.hortonworks.com/ca/ocsp
+   accessLocation: URIName: http://ipa-ca.us-west-1.compute.internal/ca/ocsp
 ```
 
 
@@ -223,7 +223,7 @@ ambari-server restart
 
 # <a name="section-3"></a>3. Enable kerberos on the cluster
 
-Enable Kerberos for cluster services via the wizard in Ambari, located in the Cluster Admin menu in the bottom left navigation panel. https://demo.hortonworks.com:8444/#/main/admin/kerberos
+Enable Kerberos for cluster services via the wizard in Ambari, located in the Cluster Admin menu in the bottom left navigation panel. https://demo.us-west-1.compute.internal:8444/#/main/admin/kerberos
 
  
   
@@ -241,11 +241,11 @@ If all goes well, go grab a beer.
 Useful CLI for verifying the newly created Service Principals:
 
 	#Usage: ipa service-show <principal>
-	[root@demo ~]# ipa service-show spark/demo.hortonworks.com@HORTONWORKS.COM
-	  Principal name: spark/demo.hortonworks.com@HORTONWORKS.COM
-	  Principal alias: spark/demo.hortonworks.com@HORTONWORKS.COM
+	[root@demo ~]# ipa service-show spark/demo.us-west-1.compute.internal@US-WEST-1.COMPUTE.INTERNAL
+	  Principal name: spark/demo.us-west-1.compute.internal@US-WEST-1.COMPUTE.INTERNAL
+	  Principal alias: spark/demo.us-west-1.compute.internal@US-WEST-1.COMPUTE.INTERNAL
 	  Keytab: True
-	  Managed by: demo.hortonworks.com
+	  Managed by: demo.us-west-1.compute.internal
 
 ---  
 
@@ -257,10 +257,10 @@ Useful CLI for verifying the newly created Service Principals:
 - IPA Clients contain `/etc/ipa/default.conf` with various ldap server properties 
 
 		[root@demo ~]# cat /etc/ipa/default.conf 
-		basedn = dc=hortonworks,dc=com
-		realm = HORTONWORKS.COM
-		domain = hortonworks.com
-		server = ipa.hortonworks.com
+		basedn = dc=us-west-1,dc=compute,dc=internal
+		realm = US-WEST-1.COMPUTE.INTERNAL
+		domain = us-west-1.compute.internal
+		server = ipa.us-west-1.compute.internal
 
 - Determining valid **user** attributes (posixaccount, uid, etc):
 		
@@ -275,10 +275,10 @@ Useful CLI for verifying the newly created Service Principals:
 		[root@demo ~]# yum install -y openldap-clients 
 		
 		# Test ldap bind properties
-		AM_LDAP_SEARCHBASE="cn=accounts,dc=hortonworks,dc=com"
-		AM_LDAP_BINDDN="uid=ldapbind,cn=users,cn=accounts,dc=hortonworks,dc=com"
+		AM_LDAP_SEARCHBASE="cn=accounts,dc=us-west-1,dc=compute,dc=internal"
+		AM_LDAP_BINDDN="uid=ldapbind,cn=users,cn=accounts,dc=us-west-1,dc=compute,dc=internal"
 		AM_LDAP_BINDDN_PW="BadPass#1"
-		AM_LDAP_URL=ldaps://ipa.hortonworks.com:636
+		AM_LDAP_URL=ldaps://ipa.us-west-1.compute.internal:636
 		
 		# Search for a valid uid and ensure the searchbase, bind dn, and ldapurl resolve properly
 		[root@demo ~]# ldapsearch -D ${AM_LDAP_BINDDN} \
@@ -301,7 +301,7 @@ On the ambari-server host:
 [root@demo certificates]# ambari-server setup-ldap
 Currently 'no auth method' is configured, do you wish to use LDAP instead [y/n] (y)?  
 Please select the type of LDAP you want to use (AD, IPA, Generic LDAP):IPA
-Primary LDAP Host (ipa.ambari.apache.org): ipa.hortonworks.com
+Primary LDAP Host (ipa.ambari.apache.org): ipa.us-west-1.compute.internal
 Primary LDAP Port (636):
 Secondary LDAP Host <Optional>:
 Secondary LDAP Port <Optional>:
