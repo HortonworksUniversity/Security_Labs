@@ -2206,6 +2206,7 @@
         }
     ],
     "Blueprints": {
+        "blueprint_name": "hdp301-security_ha",
         "stack_name": "HDP",
         "stack_version": "3.0"
     }
