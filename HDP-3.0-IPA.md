@@ -312,20 +312,20 @@ Use SSL [true/false] (true):
 Do you want to provide custom TrustStore for Ambari [y/n] (y)?
 TrustStore type [jks/jceks/pkcs12] (jks):
 Path to TrustStore file (/etc/pki/java/cacerts):
-Password for TrustStore:
-Re-enter password:
+Password for TrustStore: changeit
+Re-enter password: changeit
 User object class (posixUser): posixaccount
 User ID attribute (uid):
 Group object class (posixGroup):
 Group name attribute (cn):
 Group member attribute (memberUid): member
 Distinguished name attribute (dn):
-Search Base (dc=ambari,dc=apache,dc=org): cn=accounts,dc=hortonworks,dc=com
+Search Base (dc=ambari,dc=apache,dc=org): cn=accounts,dc=us-west-1,dc=compute,dc=internal
 Referral method [follow/ignore] (follow):
 Bind anonymously [true/false] (false):
-Bind DN (uid=ldapbind,cn=users,cn=accounts,dc=ambari,dc=apache,dc=org): uid=ldapbind,cn=users,cn=accounts,dc=hortonworks,dc=com
-Enter Bind DN Password:
-Confirm Bind DN Password:
+Bind DN (uid=ldapbind,cn=users,cn=accounts,dc=ambari,dc=apache,dc=org): uid=ldapbind,cn=users,cn=accounts,dc=us-west-1,dc=compute,dc=internal
+Enter Bind DN Password: BadPass#1
+Confirm Bind DN Password: BadPass#1
 Handling behavior for username collisions [convert/skip] for LDAP sync (skip):
 Force lower-case user names [true/false]:
 Results from LDAP are paginated when requested [true/false]:
