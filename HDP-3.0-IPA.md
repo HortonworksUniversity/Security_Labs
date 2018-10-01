@@ -120,7 +120,7 @@ total 8
 
 
 ### 2.1 Enable HTTPS for Ambari server
-If you are running knox on this host (which is highly not recommended) changing the default port from 8443 will avoid the port conflict. 
+If you are running Knox on this host (which is highly not recommended) changing the default port from 8443 will avoid the port conflict. 
 
 ```
 Security setup options...
@@ -143,7 +143,7 @@ Please enter password for Private Key: changeit
 ```
 
 ### Verify
-Restart ambari-server. Curl ambari on the new https port **without** specifying the "-k" flag.
+Restart ambari-server. Curl Ambari on the new https port **without** specifying the "-k" flag.
 ```
 [root@demo ~]$ curl -u admin:"password" https://`hostname -f`:8444/api/v1/clusters
 ```
@@ -211,7 +211,7 @@ Ambari Server 'setup-security' completed successfully.
 ```
 
 
-### 2.4 Restart ambari for changes to take effect
+### 2.4 Restart Ambari for changes to take effect
 
 ```
 ambari-server restart
@@ -229,7 +229,7 @@ Enable Kerberos for cluster services via the wizard in Ambari, located in the Cl
   
 ![Ambari-IPA-kerberos-1](./screenshots/Ambari-IPA-kerberos-1.png)
 
-At this point, requirements are met.The ambari-managed principals group is no required and password expiration policies should not affect the service keytabs as they have not been given passwords. The `hadoopadmin` and `ldapbind` user password will expire and need to be changed in 90 days (along with the rest of the users), but that's a good thing. See the docs for explanations https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html 
+At this point, requirements are met.The ambari-managed principals group is not required and password expiration policies should not affect the service keytabs as they have not been given passwords. The `hadoopadmin` and `ldapbind` user password will expire and need to be changed in 90 days (along with the rest of the users), but that's a good thing. See the docs for explanations https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html 
 
 
 ![Ambari-IPA-kerberos-2](./screenshots/Ambari-IPA-kerberos-2.png)
@@ -329,7 +329,7 @@ Results from LDAP are paginated when requested [true/false]:
 ```
 
 ### 4.2 Sync users
-LDAP Users must be synced by invoked a command on the Ambari Server Host. User additions, and group associations made on the LDAP server will not propagate to Ambari automatically, only when this command is invoked. 
+LDAP Users must be synced by invoked a command on the Ambari Server host. User additions, and group associations made on the LDAP server will not propagate to Ambari automatically, only when this command is invoked. 
 
 ```
 [root@demo ~]# ambari-server sync-ldap --all
@@ -358,7 +358,7 @@ Summary:
 
 Ambari Server 'sync-ldap' completed successfully.
 ```
-Sometimes restarting ambari server again helps. 
+Sometimes restarting Ambari Server again helps. 
 
 ### 4.2.1 Verify user group associations in Ambari
 
