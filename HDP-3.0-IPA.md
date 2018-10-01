@@ -124,6 +124,8 @@ total 8
 If you are running Knox on this host (which is highly not recommended) changing the default port from 8443 will avoid the port conflict. 
 
 ```
+[root@demo ~]$ambari-server setup-security
+ 
 Security setup options...
 ===========================================================================
 Choose one of the following options:
