@@ -52,6 +52,7 @@ sudo ipa-server-install \
 --auto-forwarders --auto-reverse --unattended
 
 
+#not needed as IPA install will do this
 #mv /etc/resolv.conf /etc/resolv.conf.bak 
 #echo "search $DOMAIN" > /etc/resolv.conf
 #echo "nameserver 127.0.0.1" >> /etc/resolv.conf
