@@ -1,4 +1,4 @@
-# Contents (HDP 3.0.1 using Active Directory)
+# Contents  (HDP 3.0.1 using Active Directory)
 
 - [Lab 1](#lab-1)
   - Access cluster
@@ -28,13 +28,21 @@
 - [Lab 6b](#lab-6b) 
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
-- [Lab 7](#lab-7)
+- [Lab 7a](#lab-7a)
   - Secured Hadoop exercises
     - HDFS
     - Hive
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
+- [Lab 7b](#lab-7b)
+  - Tag-Based Policies (Atlas+Ranger Integration)
+    - Tag-Based Access Control
+    - Attribute-Based Access Control
+    - Tag-Based Masking
+	- Location-Based Access Control
+    - Time-Based Policies
+  - Policy Evaluation and Precedence
 - [Lab 8](#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
@@ -195,6 +203,9 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
 ```
 load data local inpath '/tmp/sample_08.csv' into table sample_08;
 ```
+```
+!q
+```
 
 - Notice that in the JDBC connect string for connecting to an unsecured Hive while its running in default (ie binary) transport mode :
   - port is 10000
@@ -293,7 +304,7 @@ Use case: Customer has an existing cluster which they would like you to secure f
 - Goals:
   - Integrate Ambari with AD - so that hadoopadmin can administer the cluster
   - Integrate Hadoop nodes OS with AD - so business users are recognized and can submit Hadoop jobs
-  - Enable kerberos using KDC - to secured the cluster and enable authentication
+  - Enable kerberos - to secured the cluster and enable authentication
   - Install Ranger and enable Hadoop plugins - to allow admin to setup authorization policies and review audits across Hadoop components
   - Install Ranger KMS and enable HDFS encryption - to be able to create encryption zones
   - Encrypt Hive backing dirs - to protect hive tables
@@ -306,7 +317,7 @@ Use case: Customer has an existing cluster which they would like you to secure f
 
 We will run through a series of labs and step by step, achieve all of the above goals
   
-### KDC and AD overview
+### AD overview
 
 - Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been pre-created to look something like the below:
   - CorpUsers OU, which contains:
@@ -316,24 +327,21 @@ We will run through a series of labs and step by step, achieve all of the above 
   
   - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-serviceusers.png)
-    
+  
+  - HadoopServices OU: hadoop service principals (will be created by Ambari)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-hadoopservices.png)  
+  
   - HadoopNodes OU: list of nodes registered with AD
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-hadoopnodes.png)
 
-  - HadoopServices will be created in Ambari in KDC (not AD)
-  
 - In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.2.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
-  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the MIT KDC and AD Domain Controllers.
+  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
+  - Active Directory secure LDAP (LDAPS) connectivity has been configured.
+  - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
+  - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
+
 
 - For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/hh831484(v=ws.11).aspx) 
-
-- MIT KDC will already be setup by the instructor using the steps in the documentation [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_optional_install_a_new_mit_kdc.html)
-  - Here is a screenshot of what the /etc/krb5.conf on the MIT KDC 
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/MIT-KDC-krb5.png)
-
-- A one way trust between KDC realm and Active Directory domain has already been created by the administrator. You can review the steps [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/kerb-oneway-trust.html)
-
-- For general info on Kerberos, KDC, Principals, Keytabs, Realms etc see doc [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_kerberos_overview.html)
 
 
 ### Configure name resolution & certificate to Active Directory
@@ -346,13 +354,36 @@ We will run through a series of labs and step by step, achieve all of the above 
 ad_ip=GET_THE_AD_IP_FROM_YOUR_INSTRUCTOR
 echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
-2. Add your KDC's internal IP to /etc/hosts (if not in DNS). Make sure you replace the IP address of your KDC from your instructor below.
-  - **Change the IP to match your KDCs internal IP**
+
+2. Add your CA certificate (if using self-signed & not already configured)
+  - In this case we have pre-exported the CA cert from our AD and made available for download. 
    ```
-kdc_ip=GET_THE_KDC_IP_FROM_YOUR_INSTRUCTOR
-echo "${kdc_ip} kdc-server.hdp.hortonworks.net kdc-server" | sudo tee -a /etc/hosts
+cert_url=https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/extras/ca.crt
+sudo yum -y install openldap-clients ca-certificates
+sudo curl -sSL "${cert_url}" -o /etc/pki/ca-trust/source/anchors/hortonworks-net.crt
+
+sudo update-ca-trust force-enable
+sudo update-ca-trust extract
+sudo update-ca-trust check
    ```
-      
+
+3. Test certificate & name resolution with `ldapsearch`
+
+```
+## Update ldap.conf with our defaults
+sudo tee -a /etc/openldap/ldap.conf > /dev/null << EOF
+TLS_CACERT /etc/pki/tls/cert.pem
+URI ldaps://ad01.lab.hortonworks.net ldap://ad01.lab.hortonworks.net
+BASE dc=lab,dc=hortonworks,dc=net
+EOF
+
+##test connection to AD using openssl client
+openssl s_client -connect ad01:636 </dev/null
+
+## test connection to AD using ldapsearch (when prompted for password, enter: BadPass#1)
+ldapsearch -W -D ldap-reader@lab.hortonworks.net
+```
+
 **Make sure to repeat the above steps on all nodes**
 
 # Lab 3
@@ -377,11 +408,18 @@ usermod -d /var/lib/ambari-server -G hadoop -s /sbin/nologin ambari
 echo 'ambari ALL=(ALL) NOPASSWD:SETENV: /bin/mkdir, /bin/cp, /bin/chmod, /bin/rm, /bin/chown' > /etc/sudoers.d/ambari-server
 ```
 
-- Also confirm your sudoers file has correct defaults, as per https://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/sudo_defaults_server.html
+- Now run `visudo` to edit sudoers file to include below section, right above the line that starts `## Next comes the main part:` (see [doc](here))
+```
+Defaults exempt_group = ambari
+Defaults !env_reset,env_delete-=PATH
+Defaults: ambari !requiretty 
+```
+
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/visudo.png)
 
 - To setup Ambari server as non-root run below on Ambari-server node:
 ```
-ambari-server setup
+sudo ambari-server setup
 ```
 - Then enter the below at the prompts:
   - OK to continue? y
@@ -389,38 +427,31 @@ ambari-server setup
   - Enter user account for ambari-server daemon (root):ambari
   - Do you want to change Oracle JDK [y/n] (n)? n
   - Enter advanced database configuration [y/n] (n)? n
+  - Proceed with configuring remote database connection properties [y/n] (y)? y
 
 - Sample output:
 ```
-# ambari-server setup
-Using python  /usr/bin/python2
+# sudo ambari-server setup
+Using python  /usr/bin/python
 Setup ambari-server
 Checking SELinux...
-SELinux status is 'enabled'
-SELinux mode is 'permissive'
-WARNING: SELinux is set to 'permissive' mode and temporarily disabled.
-OK to continue [y/n] (y)? y
+SELinux status is 'disabled'
 Customize user account for ambari-server daemon [y/n] (n)? y
 Enter user account for ambari-server daemon (root):ambari
 Adjusting ambari-server permissions and ownership...
 Checking firewall status...
-Redirecting to /bin/systemctl status  iptables.service
-
 Checking JDK...
 Do you want to change Oracle JDK [y/n] (n)? n
 Completing setup...
 Configuring database...
 Enter advanced database configuration [y/n] (n)? n
 Configuring database...
-Default properties detected. Using built-in database.
 Configuring ambari database...
-Checking PostgreSQL...
-Configuring local database...
-Connecting to local database...done.
-Configuring PostgreSQL...
-Backup for pg_hba found, reconfiguration not required
+Configuring remote database connection properties...
+WARNING: Before starting Ambari Server, you must run the following DDL against the database to create the schema: /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql
+Proceed with configuring remote database connection properties [y/n] (y)? y
 Extracting system views...
-.......
+............
 Adjusting ambari-server permissions and ownership...
 Ambari Server 'setup' completed successfully.
 ```
@@ -440,7 +471,7 @@ hadoop.proxyuser.ambari-server.hosts=*
 
 ### Run ambari-agent as non-root
 
-- For now we will skip configuring Ambari Agents for Non-Root
+- For now we will skip configuring Ambari Agents for Non-Root but steps outlined in doc [here](https://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/how_to_configure_an_ambari_agent_for_non-root.html)
 
 ### Ambari Encrypt Database and LDAP Passwords
 
@@ -448,8 +479,8 @@ hadoop.proxyuser.ambari-server.hosts=*
 
 - To encrypt password, run below
 ```
-ambari-server stop
-ambari-server setup-security
+sudo ambari-server stop
+sudo ambari-server setup-security
 ```
 - Then enter the below at the prompts:
   - enter choice: 2
@@ -459,11 +490,11 @@ ambari-server setup-security
 
 - Then start ambari
 ```
-ambari-server start
+sudo ambari-server start
 ```  
 - Sample output
 ```
-# ambari-server setup-security
+$ sudo ambari-server setup-security
 Using python  /usr/bin/python2
 Security setup options...
 ===========================================================================
@@ -490,9 +521,10 @@ Ambari Server 'setup-security' completed successfully.
 
 - For this lab we will be generating a self-signed certificate. In production environments you would want to use a signed certificate (either from a public authority or your own CA).
 
-- Generate the certificate & key
+- Generate the certificate & key using CN=(Public hostname of Ambari host) e.g. CN=ec2-52-89-61-196.us-west-2.compute.amazonaws.com
 ```
-openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj "/CN=$(curl icanhazptr.com)"
+public_hostname=$(curl icanhazptr.com)  ## on public cloud, this can be used to fetch public hostname
+openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000 -nodes -subj "/CN=${public_hostname}"
 ```
 
 - Move & secure the certificate & key
@@ -507,12 +539,12 @@ openssl req -x509 -newkey rsa:4096 -keyout ambari.key -out ambari.crt -days 1000
 
 - Stop Ambari server
 ```
-ambari-server stop
+sudo ambari-server stop
 ```
 
 - Setup HTTPS for Ambari 
 ```
-ambari-server setup-security
+# sudo ambari-server setup-security
 Using python  /usr/bin/python2
 Security setup options...
 ===========================================================================
@@ -535,7 +567,7 @@ Adjusting ambari-server permissions and ownership...
 
 - Start Ambari
 ```
-ambari-server start
+sudo ambari-server start
 ```
 
 - Now you can access Ambari on **HTTPS** on port 8443 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8443
@@ -549,6 +581,7 @@ ambari-server start
 
 
 ### Setup Ambari/AD sync
+
 Run below on only Ambari node:
 
 - Trust the ambari certificate on Ambari host
@@ -578,7 +611,7 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 - Execute the following to configure Ambari to sync with LDAP.
 - Use the default password used throughout this course.
   ```
-  ambari-server setup-ldap \
+  sudo ambari-server setup-ldap \
     --ldap-url=${ad_host}:389 \
     --ldap-secondary-url= \
     --ldap-ssl=false \
@@ -599,14 +632,14 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 
 - Restart Ambari server
   ```
-   ambari-server restart
+   sudo ambari-server restart
   ```
 
 - Run LDAPsync to sync only the groups we want
   - When prompted for user/password, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
-  ambari-server sync-ldap --groups groups.txt
+  sudo ambari-server sync-ldap --groups groups.txt
   ```
   
   - This should show a summary of what objects were created
@@ -639,43 +672,33 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
 - Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos > Enable kerberos > proceed). 
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-start-kerberos-wizard.png)
 
-- Select "Existing MIT KDC" and check all the boxes
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-1-MIT.png)
+- Select "Existing Active Directory" and check all the boxes
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-1.png)
   
 - Enter the below details:
 
 - KDC:
-    - KDC hosts: `kdc-server.hdp.hortonworks.net`
-    - Realm name: `KDC.LAB.HORTONWORKS.NET`
+    - KDC host: `ad01.lab.hortonworks.net`
+    - Realm name: `LAB.HORTONWORKS.NET`
+    - LDAP url: `ldaps://ad01.lab.hortonworks.net`
+    - Container DN: `ou=HadoopServices,dc=lab,dc=hortonworks,dc=net`
     - Domains: `us-west-2.compute.internal,.us-west-2.compute.internal`
 - Kadmin:
-    - Kadmin host: `kdc-server.hdp.hortonworks.net`
-    - Admin principal: `admin/admin@KDC.LAB.HORTONWORKS.NET`
+    - Kadmin host: `ad01.lab.hortonworks.net`
+    - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
     - Admin password: `BadPass#1`
 
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-KDC-wizard-2.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-2.png)
   - Notice that the "Save admin credentials" checkbox is available, clicking the check box will save the "admin principal".
   - Sometimes the "Test Connection" button may fail (usually related to AWS issues), but if you previously ran the "Configure name resolution & certificate to Active Directory" steps *on all nodes*, you can proceed.
   
-- As part of the security wizard, Ambari will also create krb5.conf files on all cluster hosts. Since we are doing one way trust with AD, we need to update the krb5.conf template to include the AD domain entry show below
-```
-LAB.HORTONWORKS.NET = {
-kdc = ad01.lab.hortonworks.net
-admin_server = ad01.lab.hortonworks.net
-default_domain = lab.hortonworks.net
-}
-```
-
-  - Scroll down to 'Advanced krb5-conf template' and scroll down to bottom of the text box. Then paste the entry for the Active Dirctory
-
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-KDC-wizard-2-krb.png)
 - Now click Next on all the following screens to proceed with all the default values  
 
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-3.png)
 
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-KDC-wizard-4.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-4.png)
 
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-KDC-wizard-5.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-5.png)
 
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-6.png)
 
@@ -726,38 +749,6 @@ KVNO Timestamp           Principal
 ```
 {name of entity}-{cluster}@{REALM}. 
 ```
-- Notice we can now successfully kinit as the KDC admin 
-```
-kinit admin/admin
-klist
-```
-- To view the principals created in KDC, run below to run listprincs query to the remote KDC (passwords are BadPass#1)
-```
-kadmin  -q listprincs
-```
-  - Sample output:
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/MIT-KDC-principals.png)
-
-- Also notice you can also successfully kinit as a user defined in the Active Directory
-  - This is enabled by the one way trust that was setup between KDC and AD
-```
-kinit hadoopadmin@LAB.HORTONWORKS.NET
-klist
-```
-- For general info on Kerberos, KDC, Principals, Keytabs, Realms etc see doc [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/_kerberos_overview.html)
-
-### Setup auth_to_local
-
-- Why? 
-    - This is needed for Hadoop to recognize users defined in AD i.e. it maps hadoopadmin@LAB.HORTONWORKS.NET to hadoopadmin, so we can later set policies in Ranger using just the userid, without including the full domain.
-- How?    
-  - In Ambari, click HDFS > Configs > Advanced and filter for 'auth' to expose the hadoop.security.auth_to_local property and expand the text field size so its easier to read
-  - Find the line that reads ```RULE:[1:$1@$0](.*@KDC.LAB.HORTONWORKS.NET)s/@.*//```
-  - **Above** that line, paste a line that reads: ```RULE:[1:$1@$0](.*@LAB.HORTONWORKS.NET)s/@.*//```
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KDC-authtolocal.png)  
-  - Save but do not restart HDFS yet (we will do this in next section)
-  
-- For more details on auth_to_local see [here](https://community.hortonworks.com/content/kbentry/14463/auth-to-local-rules-syntax.html)
 
 ### Setup AD/OS integration via SSSD
 
@@ -784,7 +775,7 @@ ad_root="dc=lab,dc=hortonworks,dc=net"
 ad_ou="ou=HadoopNodes,${ad_root}"
 ad_realm=${ad_domain^^}
 
-sudo kinit ${ad_user}@${ad_realm}
+sudo kinit ${ad_user}
 ## enter BadPass#1 for password
 ```
 
@@ -813,7 +804,7 @@ sudo adcli join -v \
 
 
 ```
-#paste all the lines in this block together, in one shot - to create the sssd.conf file
+#paste all the lines in this block together, in one shot
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
 ## master & data nodes only require nss. Edge nodes require pam.
@@ -874,7 +865,7 @@ groups sales1
 
 - **Restart HDFS service via Ambari**. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
-- Once HDFS has been restarted, execute the following on the Ambari node:
+- Execute the following on the Ambari node:
 ```
 export PASSWORD=BadPass#1
 
@@ -889,14 +880,14 @@ sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 
 - Execute the following on the node where the YARN ResourceManager is installed:
 ```
-sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@KDC.LAB.HORTONWORKS.NET
+sudo sudo -u yarn kinit -kt /etc/security/keytabs/rm.service.keytab  rm/$(hostname -f)@LAB.HORTONWORKS.NET
 sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
 
 
 - kinit as an end user (password is BadPass#1)
 ```
-kinit hr1@LAB.HORTONWORKS.NET
+kinit hr1
 ```
 
 - check the group mappings
@@ -909,12 +900,11 @@ sudo sudo -u yarn yarn rmadmin -getGroups hr1
 ```
 $ hdfs groups
 hr1@LAB.HORTONWORKS.NET : domain_users hr hadoop-users
-$ sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@KDC.LAB.HORTONWORKS.NET
 $ sudo sudo -u yarn yarn rmadmin -getGroups hr1
-hr1 : domain_users hr hadoop-users
+hr1 : domain_users hadoop-users hr
 ```
-- remove kerberos ticket
 
+- remove kerberos ticket
 ```
 kdestroy
 ```
@@ -929,7 +919,7 @@ hdfs dfs -ls /tmp/hive
 ## since we did not authenticate, this fails with GSSException: No valid credentials provided
 
 #authenticate
-kinit sales1@LAB.HORTONWORKS.NET
+kinit
 ##enter BadPass#1
 
 klist
@@ -942,7 +932,6 @@ hdfs dfs -ls /tmp/hive
 export HADOOP_USER_NAME=hdfs
 hdfs dfs -ls /tmp/hive 
 
-unset HADOOP_USER_NAME
 #log out as sales1
 logout
 ```
@@ -996,7 +985,7 @@ sudo chmod 440 /etc/security/http_secret
   hadoop.http.authentication.signature.secret.file=/etc/security/http_secret
   hadoop.http.authentication.type=kerberos
   hadoop.http.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
-  hadoop.http.authentication.kerberos.principal=HTTP/_HOST@KDC.LAB.HORTONWORKS.NET
+  hadoop.http.authentication.kerberos.principal=HTTP/_HOST@LAB.HORTONWORKS.NET
   hadoop.http.authentication.cookie.domain=lab.hortonworks.net
   hadoop.http.filter.initializers=org.apache.hadoop.security.AuthenticationFilterInitializer
   ```
@@ -1031,8 +1020,7 @@ Prepare MySQL DB for Ranger use.
   - Just run `mysql` on each node: if it returns `mysql: command not found`, move onto next node
 
 - `sudo mysql`
-- Execute following in the MySQL shell. Change the password to your preference. 
-
+- Execute following in the MySQL shell to create "Ranger DB root User" in MySQL. Ambari will use this user to create rangeradmin user.
 ```sql
 CREATE USER 'root'@'%';
 GRANT ALL PRIVILEGES ON *.* to 'root'@'%' WITH GRANT OPTION;
@@ -1043,7 +1031,13 @@ exit
 ```
 
 - Confirm MySQL user: `mysql -u root -h $(hostname -f) -p -e "select count(user) from mysql.user;"`
-  - Output should be a simple count. Check the last step if there are errors.
+  - Output should be a simple count. 
+  - In case of errors, check the previous step for errors. 
+  - If you encounter below error, modeify /etc/my.conf by removing `skip-grant-tables` and then restarting the service by `service mysqld restart`
+  
+`ERROR 1290 (HY000): The MySQL server is running with the --skip-grant-tables option so it cannot execute this statement`
+ 
+  - If it still does not work, try creating user admin instead. If you do this, make sure to enter admin insted of root when prompted for "Ranger DB root User" in Ambari
 
 ##### Prepare Ambari for MySQL
 - Run this on Ambari node
@@ -1052,15 +1046,14 @@ exit
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
 
 
-This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/HortonworksUniversity/Security_Labs#install-solrcloud)
 
 
 ###### Setup Solr for Ranger audit 
 
-- Starting HDP 2.5, if you have deployed Ambari Infra services, you can just use the embedded Solr for Ranger audits.
-  - Just make sure Ambari Infra service is installed/started and proceed
-  - **TODO**: add steps to install/configure Banana dashboard for Ranger Audits
+- Starting HDP 2.5, if you have deployed Ambari Infra service installed, this can be used for Ranger audits.
+- **Make sure Ambari Infra service is installed and started before starting Ranger install**
 
+- *TODO*: add steps to install/configure Banana dashboard for Ranger Audits
 
 ## Ranger install
 
@@ -1099,7 +1092,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 4. Ranger User info tab 
   - Group configs subtab
-    - Disable Group sync
+    - Make sure Group sync is disabled
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
@@ -1109,7 +1102,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 6. Ranger Audits tab 
   - SolrCloud = ON
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-8.png)
-
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-9.png)
 
 7.Advanced tab
   - No changes needed (skipping configuring Ranger authentication against AD for now)
@@ -1118,7 +1111,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - Click Next > Proceed Anyway to proceed
     
 - If prompted, on Configure Identities page, you may have to enter your AD admin credentials:
-  - Admin principal: `admin/admin@KDC.LAB.HORTONWORKS.NET`
+  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Notice that you can now save the admin credentials. Check this box too
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-configureidentities.png)
@@ -1130,6 +1123,19 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), delete Ranger service from Ambari and retry.
 
 
+
+8 - (Optional) Enable Deny Conditions in Ranger 
+
+The deny condition in policies is optional by default and must be enabled for use.
+
+- From Ambari>Ranger>Configs>Advanced>Custom ranger-admin-site, add : 
+`ranger.servicedef.enableDenyAndExceptionsInPolicies=true`
+
+- Restart Ranger
+
+https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/about_ranger_policies.html
+
+
 ##### Check Ranger
 
 - Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/admin
@@ -1139,7 +1145,8 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - Confirm that audits appear under 'Audit' > 'Access' tab
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audits.png)
 
-  - If audits do not show up here, you may need to restart 'Ambari Infra' from Ambari
+  - If audits do not show up here, you may need to restart Ambari Infra Solr from Ambari
+  - In case audits still don't show up and Ranger complains that audit collection not found: try [these steps](https://community.hortonworks.com/articles/96618/how-to-clean-up-recreate-collections-on-ambari-inf.html)
   
 - Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins' tab 
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-plugins.png)
@@ -1148,11 +1155,29 @@ This should already be installed on your cluster. If not, refer to appendix [her
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-groups.png)
 
 - Confirm HDFS audits working by querying the audits dir in HDFS:
+
 ```
+#### 1 authenticate
+export PASSWORD=BadPass#1
+
+#detect name of cluster
+output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
+cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+echo $cluster
+## this should show the name of your cluster
+
+## if not you can manully set this as below
+## cluster=Security-HWX-LabTesting-XXXX
+
+#then kinit as hdfs using the headless keytab and the principal name
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluster,,}"
+    
+#### 2 read audit dir in hdfs 
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
 
-<!--- TODO 
+<!---
 - Confirm Solr audits working by querying Solr REST API *from any solr node* - SKIP 
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
@@ -1190,19 +1215,22 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - KMS master secret password: `BadPass#1`
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig1.png) 
      ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
-       
-  - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):      
+    
+        
+  - Under Advanced > Custom kms-site, enter below configs (Tip: to avoid adding one at a time, you can use 'bulk add' mode):
+      - hadoop.kms.proxyuser.oozie.users=*
       - hadoop.kms.proxyuser.ambari.users=*
+      - hadoop.kms.proxyuser.oozie.hosts=*
       - hadoop.kms.proxyuser.ambari.hosts=*
       - hadoop.kms.proxyuser.keyadmin.groups=*
       - hadoop.kms.proxyuser.keyadmin.hosts=*
-      - hadoop.kms.proxyuser.keyadmin.users=*      
+      - hadoop.kms.proxyuser.keyadmin.users=*     
         ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-proxy.png) 
 
 - Click Next > Proceed Anyway to proceed with the wizard
 
 - If prompted, on Configure Identities page, you may have to enter your AD admin credentials:
-  - Admin principal: `admin/admin@KDC.LAB.HORTONWORKS.NET`
+  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Check the "Save admin credentials" checkbox
   
@@ -1216,10 +1244,6 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     
 - Restart the services that require it e.g. HDFS, Mapreduce, YARN via Actions > Restart All Required
 
-- Make sire the auth_to_local value we added before was propogated to RangerKMS
-  - Under RangerKMS > Configs > Advanced >Advanced kms-site, check for below entry:
-       - ```RULE:[1:$1@$0](.*@LAB.HORTONWORKS.NET)s/@.*//```
-       
 - Restart Ranger and RangerKMS services.
 
 - (Optional) Add another KMS:
@@ -1262,39 +1286,6 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - Your policies now includes hadoopadmin
      ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
      
-  - Add policy for keyadmin to be able to access /ranger/audit/kms
-    - First Create the hdfs directory for Ranger KMS Audit
-    ```
-    #run below on Ambari node
-
-    export PASSWORD=BadPass#1
-
-    #detect name of cluster
-    output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8443/api/v1/clusters`
-    cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
-
-    echo $cluster
-    ## this should show the name of your cluster
-
-    ## if not you can manully set this as below
-    ## cluster=Security-HWX-LabTesting-XXXX
-
-    #then kinit as hdfs using the headless keytab and the principal name
-    sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluster,,}"
-    
-    #Create the Ranger KMS Audit Directory 
-    sudo -u hdfs hdfs dfs -mkdir -p /ranger/audit/kms
-    sudo -u hdfs hdfs dfs -chown -R kms:hdfs /ranger/audit/kms
-    sudo -u hdfs hdfs dfs -chmod 700 /ranger/audit/kms
-    sudo -u hdfs hdfs dfs -ls /ranger/audit/kms
-    ```
-    - Access Manager > HDFS > (clustername)_hdfs   
-    - This will open the list of HDFS policies
-    - Create a new policy for keyadmin to be able to access /ranger/audit/kms and Save 
-     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
-    - Your policy has been added
-     ![Image](screenshots/Ranger-KMS-HDFS-keyadmin.png) 
-  
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
      ![Image](screenshots/Ranger-user-permissions.png)
@@ -1368,9 +1359,9 @@ echo $cluster
 #first we will run login 3 different users: hdfs, hadoopadmin, sales1
 
 #kinit as hadoopadmin and sales using BadPass#1 
-sudo -u hadoopadmin kinit hadoopadmin@LAB.HORTONWORKS.NET
+sudo -u hadoopadmin kinit
 ## enter BadPass#1
-sudo -u sales1 kinit sales1@LAB.HORTONWORKS.NET
+sudo -u sales1 kinit
 ## enter BadPass#1
 
 #then kinit as hdfs using the headless keytab and the principal name
@@ -1416,9 +1407,9 @@ sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 
 - Now lets test deleting and copying files between EZs - ([Reference doc](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/copy-to-from-encr-zone.html))
 ```
-#Notice that removing file from EZ using usual -rm command woks (note: Prior to HDP2.4.3, you would need to pass the -skipTrash option)
+#try to remove file from EZ using usual -rm command 
 sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
-
+## This works because as of HDP2.4.3 -skipTrash option no longer needs to be specified
 
 #confirm that test2.log was deleted and that zone_encr only contains test1.log
 sudo -u hadoopadmin hdfs dfs -ls  /zone_encr/
@@ -1476,7 +1467,7 @@ sudo -u sales1 kdestroy
 
 ------------------
 
-# Lab 7
+# Lab 7a
 
 ## Secured Hadoop exercises
 
@@ -1493,6 +1484,14 @@ In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbas
  
  
 - Login to Ranger (using admin/admin) and confirm the HDFS repo was setup correctly in Ranger
+  - In Ranger > Under Service Manager > HDFS > Click the Edit icon (next to the trash icon) to edit the HDFS repo
+  - Click 'Test connection' 
+  - if it fails re-enter below fields and re-try:
+    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
+    - Password: BadPass#1
+    - RPC Protection type: Authentication
+  - Once the test passes, click Save  
+  
    
 - Create /sales dir in HDFS as hadoopadmin
 ```
@@ -1505,21 +1504,27 @@ sudo -u hadoopadmin hdfs dfs -mkdir /sales
 sudo -u hadoopadmin hdfs dfs -chmod 000 /sales
 ```  
 
-- Now login as sales1 and notice it obtained a ticket for you under the covers
+- Now login as sales1 and attempt to access it before adding any Ranger HDFS policy
 ```
-su - sales1
+sudo su - sales1
+
+hdfs dfs -ls /sales
+```
+- This fails with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
+
+- Authenticate as sales1 user and check the ticket
+```
+kinit
+# enter password: BadPass#1
 
 klist
 ## Default principal: sales1@LAB.HORTONWORKS.NET
 ```
-
-- If you did not have a valid ticket, this would have failed with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
-
-- Now try accessing the dir again as sales1 before adding any Ranger HDFS policy
+- Now try accessing the dir again as sales1
 ```
 hdfs dfs -ls /sales
 ```
-- Notice fails with authorization error: 
+- This time it fails with authorization error: 
   - `Permission denied: user=sales1, access=READ_EXECUTE, inode="/sales":hadoopadmin:hdfs:d---------`
 
 - Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
@@ -1577,11 +1582,15 @@ hdfs dfs -ls /sales
 
 - Logout as sales1 and log back in as hr1
 ```
+kdestroy
 #logout as sales1
 logout
 
-#login as hr1 and authenticate using password BadPass#1
-su - hr1
+#login as hr1 and authenticate
+sudo su - hr1
+
+kinit
+# enter password: BadPass#1
 
 klist
 ## Default principal: hr1@LAB.HORTONWORKS.NET
@@ -1605,6 +1614,7 @@ hdfs dfs -ls /sales
 
 - Logout as hr1
 ```
+kdestroy
 logout
 ```
 - We have successfully setup an HDFS dir which is only accessible by sales group (and admins)
@@ -1613,8 +1623,19 @@ logout
 
 - Goal: Setup Hive authorization policies to ensure sales users only have access to code, description columns in default.sample_07
 
+- Enable Hive on tez by setting below and restarting Hive 
+  - Ambari > Hive > Configs  	
+    - Execution Engine = Tez
 
-- Run these steps from node where Hive (or client) is installed 
+- Confirm the HIVE repo was setup correctly in Ranger
+  - In Ranger > Service Manager > HIVE > Click the Edit icon (next to the trash icon) to edit the HIVE repo
+  - Click 'Test connection' 
+  - if it fails re-enter below fields and re-try:
+    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
+    - Password: BadPass#1
+  - Once the test passes, click Save  
+
+- Now run these steps from node where Hive (or client) is installed 
 
 - Login as sales1 and attempt to connect to default database in Hive via beeline and access sample_07 table
 
@@ -1622,26 +1643,37 @@ logout
   - port remains 10000
   - *now a kerberos principal needs to be passed in*
 
-- Login as sales1 and notice it automatically provided a kerberos ticket:
+- Login as sales1 without kerberos ticket and try to open beeline connection:
 ```
-su - sales1
+sudo su - sales1
+kdestroy
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
+```
+- This fails with `GSS initiate failed` because the cluster is kerberized and we have not authenticated yet
+
+- To exit beeline:
+```
+!q
+```
+- Authenticate as sales1 user and check the ticket
+```
+kinit
+# enter password: BadPass#1
+
 klist
 ## Default principal: sales1@LAB.HORTONWORKS.NET
 ```
-
 - Now try connect to Hive via beeline as sales1
 ```
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
 ```
 
-  - If you did not have a valid ticket, it would have thrown a `GSS initiate failed` because the cluster is kerberized and we have not authenticated yet
-
-  - If you get the below error, it is because you did not add hive to the global KMS policy in an earlier step (along with nn, hadoopadmin). Go back and add it in.
+- If you get the below error, it is because you did not add hive to the global KMS policy in an earlier step (along with nn, hadoopadmin). Go back and add it in.
 ```
 org.apache.hadoop.security.authorize.AuthorizationException: User:hive not allowed to do 'GET_METADATA' on 'testkey'
 ```
 
-- Now try to run a query
+- This time it connects. Now try to run a query
 ```
 beeline> select code, description from sample_07;
 ```
@@ -1662,25 +1694,26 @@ beeline> select code, description from sample_07;
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-policy.png)
   - This will open the list of HIVE policies
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-edit-policy.png)
-  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code` and `description` columns in `sample_07` dir:
+  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code`, `description` and `total_emp` columns in `sample_07` dir:
     - Policy Name: `sample_07`
     - Hive Database: `default`
     - table: `sample_07`
-    - Hive Column: `code` `description`
+    - Hive Column: `code` `description` `total_emp`
     - Group: `sales`
     - Permissions : `select`
     - Add
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy.png)
   
 - Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
-  - This was done using the rangerlookup principal 
-  - Note in HDP 2.6.1.0, there is a bug where the lookup for Hive does not work
+  -  This was done using the rangeradmin principal we provided during Ranger install
+
+- Also, notice that permissions are only configurable for allowing access, and you are not able to explicitly deny a user/group access to a resource unless you have enabled Deny Conditions during your Ranger install (step 8).
 
 - Wait 30s for the new policy to be picked up
   
 - Now try accessing the columns again and now the query works
 ```
-beeline> select code, description from sample_07;
+beeline> select code, description, total_emp from sample_07;
 ```
 
 - Note though, that if instead you try to describe the table or query all columns, it will be denied - because we only gave sales users access to two columns in the table
@@ -1708,6 +1741,63 @@ beeline> select code, description from sample_07;
     
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-HIVE-policy-details.png)  
+ 
+
+- We are also able to limit sales1's access to only subset of data by using row-level filter.  Suppose we only want to allow the sales group access to data where `total_emp` is less than 5000. 
+
+- On the Hive Policies page, select the 'Row Level Filter' tab and click on 'Add New Policy'
+![Image](/screenshots/Ranger-HIVE-select-row-level-filter-tab.png)  
+	- Please note that in order to apply a row level filter policy the user/group must already have 'select' permissions on the table. 
+
+- Create a policy restricting access to only rows where `total_emp` is less than 5000:
+    - Policy Name: `sample_07_filter_total_emp`
+    - Hive Database: `default`
+    - table: `sample_07`
+    - Group: `sales`
+    - Permissions : `select`
+    - Row Level Filter : `total_emp<5000`
+    	- The filter syntax is similar to what you would write after a 'WHERE' clause in a SQL query
+    - Add
+  ![Image](/screenshots/Ranger-HIVE-create-row-level-filter-policy.png)
+ 
+- Wait 30s for the new policy to be picked up
+  
+- Now try accessing the columns again and notice how only rows that match the filter criteria are shown
+```
+beeline> select code, description, total_emp from sample_07;
+```
+
+- Go back to the Ranger Audits page and notice how the filter policy was applied to the query
+
+
+- Suppose we would now like to mask `total_emp` column from sales1.  This is different from denying/dis-allowing access in that the user can query the column but cannot see the actual data 
+
+- On the Hive Policies page, select the 'Masking' tab and click on 'Add New Policy'
+![Image](/screenshots/Ranger-HIVE-select-masking-tab.png)  
+	- Please note that in order to mask a column, the user/group must already have 'select' permissions to that column.  Creating a masking policy on a column that a user does not have access to will deny the user access
+
+- Create a policy masking the  `total_emp` column for `sales` group users:
+    - Policy Name: `sample_07_total_emp`
+    - Hive Database: `default`
+    - table: `sample_07`
+    - Hive Column: `total_emp`
+    - Group: `sales`
+    - Permissions : `select`
+    - Masking Option : `redact`
+    	- Notice the different masking options available
+    	- The 'Custom' masking option can use any Hive UDF as long as it returns the same data type as that of the column 
+
+    - Add
+  ![Image](/screenshots/Ranger-HIVE-create-masking-policy.png)
+ 
+- Wait 30s for the new policy to be picked up
+  
+- Now try accessing the columns again and notice how the results for the `total_emp` column is masked
+```
+beeline> select code, description, total_emp from sample_07;
+```
+
+- Go back to the Ranger Audits page and notice how the masking policy was applied to the query.
 
 - Exit beeline
 ```
@@ -1717,11 +1807,15 @@ beeline> select code, description from sample_07;
 
 - Logout as sales1 and log back in as hr1
 ```
+kdestroy
 #logout as sales1
 logout
 
-#login as hr1 and authenticate using password: BadPass#1
-su - hr1
+#login as hr1 and authenticate
+sudo su - hr1
+
+kinit
+# enter password: BadPass#1
 
 klist
 ## Default principal: hr1@LAB.HORTONWORKS.NET
@@ -1763,25 +1857,36 @@ logout
 
 - Login as sales1
 ```
-su - sales1
+sudo su - sales1
 ```
 -  Start the hbase shell
 ```
 hbase shell
+```
+- List tables in default database
+```
+hbase> list 'default'
+```
+- This fails with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
+
+- To exit hbase shell:
+```
+exit
+```
+- Authenticate as sales1 user and check the ticket
+```
+kinit
+# enter password: BadPass#1
 
 klist
 ## Default principal: sales1@LAB.HORTONWORKS.NET
 ```
-- Now try connect to Hbase shell and list tables as sales1. Should return an empty list.
+- Now try connect to Hbase shell and list tables as sales1
 ```
 hbase shell
 hbase> list 'default'
 ```
-  - If you did not have a valid ticket, it would have failed with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
-
-
-- Now try to create a table called `sales` with column family called `cf`
-
+- This time it works. Now try to create a table called `sales` with column family called `cf`
 ```
 hbase> create 'sales', 'cf'
 ```
@@ -1851,11 +1956,15 @@ hbase> exit
 
 - Logout as sales1 and log back in as hr1
 ```
+kdestroy
 #logout as sales1
 logout
 
-#login as hr1 and authenticate using password: BadPass#1
-su - hr1
+#login as hr1 and authenticate
+sudo su - hr1
+
+kinit
+# enter password: BadPass#1
 
 klist
 ## Default principal: hr1@LAB.HORTONWORKS.NET
@@ -1888,6 +1997,7 @@ hbase> exit
 
 - Logout as hr1
 ```
+kdestroy
 logout
 ```
 - We have successfully created a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
@@ -1940,6 +2050,12 @@ logout
   - Access Manager > Hive > (cluster)_hive > Add new policy
   - Create new policy as below and click Add:
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy-persons.png) 
+
+- Create Ranger policy to allow `sales` group `all permissions` on `/ranger/audit/kms` dir in HDFS
+  - Access Manager > HDFS > (cluster)_hdfs > Add new policy
+  - Create new policy as below and click Add:
+  **TODO: add screenshot**
+
   - Log out of Ranger
   
 - Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. the key used to encrypt Hive warehouse directories)
@@ -1949,12 +2065,12 @@ logout
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-create-policy-testkey.png)  
   - Log out of Ranger and re-login as admin/admin
 
-- Login as sales1 using password: BadPass#1
+- Login as sales1
 ```
-su - sales1
+sudo su - sales1
 ```
 
-- As sales1 user, run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL. Below are the details of the arguments passed in:
+- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL. Below are the details of the arguments passed in:
   - Table: MySQL table name
   - username: Mysql username
   - password: Mysql password
@@ -1964,6 +2080,9 @@ su - sales1
   - m: number of mappers
   
 ```
+kinit
+## enter BadPass#1 as password
+
 sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table persons --username sales1 --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
@@ -1972,7 +2091,6 @@ sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table pe
 ```
  java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 ```
-
 
 - Also note: if the mapreduce job fails saying sales user does not have write access to /apps/hive/warehouse, you will need to create HDFS policy allowing sales1 user and hive access on /apps/hive/warehouse dir 
 
@@ -1991,6 +2109,7 @@ beeline> select * from persons;
   - Under Ranger > Audit > query for
     - Service type: HIVE
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-audit-persons.png)
+
 
 ##### Drop Encrypted Hive tables 
 
@@ -2015,6 +2134,242 @@ logout
 ```
 
 - This completes the lab. You have now interacted with Hadoop components in secured mode and used Ranger to manage authorization policies and audits
+
+------------------
+
+# Lab 7b
+
+## Tag-Based Policies (Atlas+Ranger Integration)
+
+Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data access and authorization through tags 
+
+#### Atlas Preparation
+
+To create Tag-Based Policies, we will first need to create tags in Atlas and associate them to entities
+
+- Go to https://localhost:21000 and login to the Atlas UI using admin/admin for the username and pass
+![Image](/screenshots/Atlas-login-page.png)
+
+- Select the "TAGS" tab and click on "Create Tag"
+![Image](/screenshots/Atlas-select-create-tag.png)
+
+- Create a new tag by inputing
+	- Name: `Private`
+	- Create
+![Image](/screenshots/Atlas-create-tag.png)
+
+- Repeat the tag creation process above and create an additional tag named "Restricted" 
+
+- Create a third tag named "Sensitive", however, during creation, click on "Add New Attributes" and input:
+	- Attribute Name: `level`
+	- Type: `int`
+![Image](/screenshots/Atlas-sensitive-tag-creation.png)
+
+- Create a fourth tag named "EXPIRES_ON", and during creation, click on "Add New Attributes" and input:
+	- Attribute Name: `expiry_date`
+	- Type: `int`
+![Image](/screenshots/Atlas-expires-on-tag-creation.png)
+
+- Under the "Tags" tab in the main screen you should see the list of newly created tags
+![Image](/screenshots/Atlas-created-tags.png)
+
+- In the search tab search using the following:
+	- Search By Type: `hive_table`
+	- Search By Text: `sample_08`
+	- Search
+![Image](/screenshots/Atlas-search-table.png)
+
+- To associate a tag to the "sample_08" table, click on the "+" under the Tags column in the search results for "sample_08"
+![Image](/screenshots/Atlas-search-result.png)
+
+- From the dropdown select `Private` and click `Add`
+![Image](/screenshots/Atlas-attach-tag.png)
+
+- You should see that the "Private" tag has been associated to the "sample_08" table
+![Image](/screenshots/Atlas-associated-table-tags.png)
+
+- Now, in the same manner, associate the "EXPIRES_ON" tag to the "sample_08" table
+	When prompted, select a date in the past for "expiry_date"
+![Image](/screenshots/Atlas-tag-item-expires-on.png)
+
+- In the search results panel, click on the "sample_08" link
+![Image](/screenshots/Atlas-search-table.png)
+
+- Scroll down and select the "Schema" tab
+![Image](/screenshots/Atlas-select-table-schema.png)
+
+- Select the "+" button under the Tag column for "salary" and associate the `Restricted` tag to it
+
+- Select the "+" button under the Tag column for "total_emp" and associate the `Sensitive` tag to it
+	- When prompted, input `5` for the "level"
+![Image](/screenshots/Atlas-tag-item-sensitive.png)
+
+- On the "sample_08" table schema page you should see the table columns with the associated tags
+![Image](/screenshots/Atlas-associated-column-tags.png)
+
+We have now completed our preparation work in Atlas and have created the following tags and associations:
+	- "Private" tag associated to "sample_08" table
+	- "Sensitive" tag with a "level" of '5', associated to "sample_08.total_emp" column
+	- "Restricted" tag associated to "sample_08.salary" column
+
+#### Ranger Preparation
+
+To enable Ranger for Tag-Based Policies complete the following:
+
+- Select "Access Manager" and then "Tag Based Policies" from the upper left hand corner of the main Ranger UI page
+![Image](/screenshots/Ranger-navigate-to-tag-based-policies.png)
+
+- Click on the "+" to create a new tag service
+![Image](/screenshots/Ranger-create-tag-service.png)
+
+- In the tag service page input:
+	- Service Name: `tags`
+	- Save
+![Image](/screenshots/Ranger-save-tag-service.png)
+
+- On the Ranger UI main page, select the edit button next to your (clustername)_hive service
+![Image](/screenshots/Ranger-HIVE-policy.png)
+
+- In the Edit Service page add the below and then click save
+	- Select Tag Service: `tags`
+![Image](/screenshots/Ranger-add-hive-tag-service.png)
+
+We should now be able to create Tag-Based Policies for Hive
+
+#### Tag-Based Access Control
+Goal: Create a Tag-Based policy for sales to access all entities tagged as "Private"
+
+- Select "Access Manager" and then "Tag Based Policies" from the upper left hand corner of the main Ranger UI page
+![Image](/screenshots/Ranger-navigate-to-tag-based-policies.png)
+
+- Select the "tags" service that you had previously created
+
+- On the "tags Policies" page, click on "Add New Policy"
+![Image](/screenshots/Ranger-Tags-policy-list-1.png)
+
+- Input the following to create the new policy
+	- Policy Name: `Private Data Access`
+	- TAG: `Private`
+	- Under "Allow Conditions"
+		- Select Group: `sales`
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-tbac.png)
+![Image](/screenshots/Ranger-Tags-component-permissions.png)
+
+- Run these steps from node where Hive (or client) is installed 
+
+- From node where Hive (or client) is installed, login as sales1 and connect to beeline:
+```
+su - sales1
+klist
+## Default principal: sales1@LAB.HORTONWORKS.NET
+```
+```
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
+```
+- Now try accessing table "sample_08" and notice how you have access to all the contents of the table
+```
+beeline> select * from sample_08;
+```
+
+#### Attribute-Based Access Control
+Goal: Disallow everybody's access to data tagged as "Sensitive" and has an attribute "level" 5 or above
+
+- Return to the Ranger "tags Policies" page and "Add New Policy" with the below parameters
+	- Policy Name: `Sensitive Data Access`
+	- TAG: `Sensitive`
+	- Under "Deny Conditions" 
+		- Select Group: `public`
+		- Policy Conditions/Enter boolean expression: `level>=5`
+			- Note: Boolean expressions are written in Javascript
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-abac-1.png)
+![Image](/screenshots/Ranger-Tags-create-abac-2.png)
+
+- Wait 30 seconds before trying to access the "total_emp" column in table "sample_08" and notice how you are denied access
+```
+beeline> select total_emp from sample_08;
+```
+
+- Now try to access the other columns and notice how you are allowed access to them access
+```
+beeline> select code, description, salary from sample_08;
+```
+
+#### Tag-Based Masking 
+Goal: Mask data tagged as "Restricted"
+
+- Return to the Ranger "tags Policies" page, click on the "Masking" tab in the upper right hand 
+![Image](/screenshots/Ranger-Tags-tbm-tab.png)
+
+- Click on "Add New Policy" and input the below parameters
+	- Policy Name: `Restricted Data Access`
+	- TAG: `Restricted`
+	- Under "Mask Conditions" 
+		- Select Group: `public`
+		- Component Permissions: (select `Hive` and enable all actions)
+		- Select Masking Option: `Redact`	
+	- Add
+
+- Wait 30 seconds and try run the below query.  Notice how salary data has been masked
+```
+beeline> select code, description, salary from sample_08;
+```
+
+#### Location-Based Access Control
+Goal: Restrict access to data based on a user's physical location at the time.
+
+- Return to the Ranger "tags Policies" page ("Access" tab) and "Add New Policy" with the below parameters
+	- Policy Name: `Geo-Location Access`
+	- TAG: `Restricted`
+	- Under "Deny Conditions" 
+		- Select Group: `public`
+		- Policy Conditions/Enter boolean expression: `country_code=='USA'`
+			- If you are outside of USA use `country_code!='USA'` instead
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-lba-1.png)
+![Image](/screenshots/Ranger-Tags-create-lba-2.png)
+
+- Wait 30 seconds and try run the below query.  Notice how you are now denied access to the "salary" column because of your location
+```
+beeline> select code, description, salary from sample_08;
+```
+
+#### Time-Based Policies
+Goal: To place an expiry date on sales' access policy to data tagged as "Private" after which access will be denied
+
+- Return to the Ranger "tags Policies" page ("Access" tab)and "Add New Policy" with the below parameters.  You may already have default policy named "EXPIRES_ON", if so, please delete it before clicking "Add New Policy" 
+	- Policy Name: `EXPIRES_ON`
+	- TAG: `EXPIRES_ON`
+	- Under "Deny Conditions" 
+		- Select Group: `public`
+		- Policy Conditions/Accessed after expiry_date: `yes`
+		- Component Permissions: (select `Hive` and enable all actions)
+	- Add
+![Image](/screenshots/Ranger-Tags-create-eo-1.png)
+![Image](/screenshots/Ranger-Tags-create-eo-2.png)
+
+- Wait 30 seconds and try run the below query.  Notice how you are now denied access to the entire "sample_08" table because it is accessed after the expiry date tagged in Atlas
+```
+beeline> select code, description from sample_08;
+```
+
+- Exit beeline
+```
+!q
+```
+- Logoff as sales1
+```
+logout
+```
+
+## Policy Evaluation and Precedence
+
+Notice how in the policies above, ones that deny access always take precedence over ones that allow access.  For example, even though sales had access to "Private" data in the Tag-Based Access Control section, they were gradually disallowed access over the following sections as we set up "Deny" policies.  This applies to both, Tag-Based as well as Resource-Based policies.  To understand better the sequence of policy evaluation, take a look at the following flow-chart.
+![Image](/screenshots/Ranger-Policy-Evaluation-Flow-with-Tags.png)
 
 ------------------
 
@@ -2156,6 +2511,40 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
                     <enabled>true</enabled>
                 </provider>
 
+<!--
+  Knox HaProvider for Hadoop services
+  -->
+<provider>
+     <role>ha</role>
+     <name>HaProvider</name>
+     <enabled>true</enabled>
+     <param>
+         <name>OOZIE</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+     </param>
+     <param>
+         <name>HBASE</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+     </param>
+     <param>
+         <name>WEBHCAT</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+     </param>
+     <param>
+         <name>WEBHDFS</name>
+         <value>maxFailoverAttempts=3;failoverSleep=1000;maxRetryAttempts=300;retrySleep=1000;enabled=true</value>
+     </param>
+     <param>
+        <name>HIVE</name>
+        <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true;zookeeperEnsemble=machine1:2181,machine2:2181,machine3:2181;
+       zookeeperNamespace=hiveserver2</value>
+     </param>
+</provider>
+<!--
+  END Knox HaProvider for Hadoop services
+  -->
+
+
             </gateway>
 
             <service>
@@ -2197,47 +2586,6 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
                 <role>RESOURCEMANAGER</role>
                 <url>http://{{rm_host}}:{{rm_port}}/ws</url>
             </service>
-            
-            <service>
-                <role>DRUID-COORDINATOR-UI</role>
-                {{druid_coordinator_urls}}
-            </service>
-
-            <service>
-                <role>DRUID-COORDINATOR</role>
-                {{druid_coordinator_urls}}
-            </service>
-
-            <service>
-                <role>DRUID-OVERLORD-UI</role>
-                {{druid_overlord_urls}}
-            </service>
-
-            <service>
-                <role>DRUID-OVERLORD</role>
-                {{druid_overlord_urls}}
-            </service>
-
-            <service>
-                <role>DRUID-ROUTER</role>
-                {{druid_router_urls}}
-            </service>
-
-            <service>
-                <role>DRUID-BROKER</role>
-                {{druid_broker_urls}}
-            </service>
-
-            <service>
-                <role>ZEPPELINUI</role>
-                {{zeppelin_ui_urls}}
-            </service>
-
-            <service>
-                <role>ZEPPELINWS</role>
-                {{zeppelin_ws_urls}}
-            </service>
-                        
         </topology>
 ```
 
@@ -2322,14 +2670,14 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     ```
     curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
     ```
-      - You can run below command to create a test file into /tmp as sales1
+      - You can run below command to create a test file into /tmp
       
       ```
       echo "Test file" > /tmp/testfile.txt
-      su - sales1
+      sudo -u sales1 kinit
       ## enter BadPass#1
-      hdfs dfs -put /tmp/testfile.txt /tmp
-      logout
+      sudo -u sales1 hdfs dfs -put /tmp/testfile.txt /tmp
+      sudo -u sales1 kdestroy
       ```
       
     - Open this file via WebHDFS 
@@ -2354,8 +2702,6 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     ```
     sudo java -jar /usr/hdp/current/knox-server/bin/shell.jar /usr/hdp/current/knox-server/samples/ExampleWebHdfsLs.groovy
     ```
-    - **TODO** fix error ```Caused by: javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target```
-
     - Notice output show list of dirs in HDFS
     ```
     [app-logs, apps, ats, hdp, mapred, mr-history, ranger, tmp, user, zone_encr]
@@ -2424,19 +2770,16 @@ openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox
 sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
 ```
 
-  - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below, and run a query:
+  - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below:
   
 ```
-beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
-
-select code, description from sample_07;
+beeline -u "jdbc:hive2://<KnoxserverInternalHostName>:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
 ```
 
 - Notice that in the JDBC connect string for connecting to an secured Hive running in http transport mode:
   - *port changes to Knox's port 8443*
   - *traffic between client and Knox is over HTTPS*
   - *a kerberos principal not longer needs to be passed in*
-  - *we can run the query as any user by passing their AD credentials*
 
 
 - Test these users:
@@ -2444,7 +2787,7 @@ select code, description from sample_07;
   - hr1/BadPass#1 should *not* work
     - Will fail with:
     ```
-    Could not create http connection to jdbc:hive2://hostname:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
+    Could not create http connection to jdbc:hive2://<hostname>:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
     ```
 
 - Check in Ranger Audits to confirm the requests were audited:
@@ -2454,3 +2797,111 @@ select code, description from sample_07;
 
 - This shows how Knox helps end users access Hive securely over HTTPS using Ranger to set authorization policies and for audits
 
+------------------
+
+# Lab 9 - Optional
+
+## Other Security features for Ambari
+
+### Ambari views
+
+- Goal: In this lab we will setup Ambari views on kerborized cluster. 
+
+- Change transport mode back to binary in Hive settings:
+  - In Ambari, under Hive > Configs > set the below and restart Hive component.
+    - hive.server2.transport.mode = binary
+
+- You may also need to change proxy user settings to be less restrictive
+
+- Option 1: Manual setup following [doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.1.0/bk_ambari_views_guide/content/ch_using_ambari_views.html)
+ 
+- Restart HDFS and YARN via Ambari
+
+- Access the views:
+  - Files view
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Files-view.png)
+  - Hive view
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Hive-view.png)
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Hive-view-viz.png)
+  - Pig view
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Pig-view.png)
+  - Tez view
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Tez-view.png)  
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Tez-view-viz.png)
+    
+
+###### Enable users to log into Ambari views
+
+- In Ambari follow steps below:
+  - On top right of page, click "Manage Ambari"
+    - under 'Views': Navigate to Hive > Hive > Under 'Permissions' grant sales1 access to Hive view
+    - similarly you can give sales1 access to Files view   
+    - similarly you can give others users access to various views
+
+- At this point, you should be able to login to Ambari as sales1 user and navigate to the views
+
+- Test access as different users (hadoopadmin, sales1, hr1 etc). You can create Ranger policies as needed to grant access to particular groups to  particular resources
+
+    
+-----------------
+
+
+# Appendix
+
+###### Install SolrCloud
+
+###### Option 1: Install Solr manually
+
+- Manually install Solr *on each node where Zookeeper is running*
+```
+export JAVA_HOME=/usr/java/default   
+sudo yum -y install lucidworks-hdpsearch
+```
+
+###### Option 2: Use Ambari service for Solr
+
+- Install Ambari service for Solr
+```
+VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+sudo git clone https://github.com/HortonworksUniversity/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
+sudo ambari-server restart
+```
+- Login to Ambari as hadoopadmin and wait for all the services to turn green
+- Install Solr by starting the 'Add service' wizard (using 'Actions' dropdown) and choosing Solr. Pick the defaults in the wizard except:
+  - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-placement.png)
+  
+  - On the screen to Customize the Solr service
+    - under 'Advanced solr-config':
+      - set `solr.datadir` to `/opt/ranger_audit_server`    
+      - set `solr.download.location` to `HDPSEARCH`
+      - set `solr.znode` to `/ranger_audits`
+    - under 'Advanced solr-env':
+      - set `solr.port` to `6083`
+  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-configs.png)  
+
+- Under Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
+  - Admin password: BadPass#1
+
+- Then go through the rest of the install wizard by clicking Next to complete installation of Solr
+
+- (Optional) In case of failure, run below from Ambari node to delete the service so you can try again:
+```
+export SERVICE=SOLR
+export AMBARI_HOST=localhost
+export PASSWORD=BadPass#1
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+#attempt to unregister the service
+curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
+#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+sudo service ambari-server restart
+
+#restart agents on all nodes
+sudo service ambari-agent restart
+```
