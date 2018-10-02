@@ -235,14 +235,15 @@ Enable Kerberos for cluster services via the wizard in Ambari, located in the Cl
 At this point, requirements are met.The ambari-managed principals group is not required and password expiration policies should not affect the service keytabs as they have not been given passwords. The `hadoopadmin` and `ldapbind` user password will expire and need to be changed in 90 days (along with the rest of the users), but that's a good thing. See the docs for explanations https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html 
 
 
-KDC host: `ipa.us-west-2.compute.internal`
-Realm name: `US-WEST-2.COMPUTE.INTERNAL`
-Domain: `us-west-2.compute.internal`
 
-Kadmin host: `ipa.us-west-2.compute.internal`
-Admin principal: `hadoopadmin`
-Admin password: `BadPass#1`
-Save Admin Credentials: true
+- KDC host: `ipa.us-west-2.compute.internal`
+- Realm name: `US-WEST-2.COMPUTE.INTERNAL`
+- Domain: `us-west-2.compute.internal`
+
+- Kadmin host: `ipa.us-west-2.compute.internal`
+- Admin principal: `hadoopadmin`
+- Admin password: `BadPass#1`
+- Save Admin Credentials: true
 
 ![Ambari-IPA-kerberos-2](./screenshots/Ambari-IPA-kerberos-2.png)
 
