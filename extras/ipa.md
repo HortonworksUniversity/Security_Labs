@@ -37,10 +37,6 @@ cat /proc/sys/kernel/random/entropy_avail
 #sometimes needed to avoid server install failing
 service dbus restart
 
-mv /etc/resolv.conf /etc/resolv.conf.bak 
-echo "search $DOMAIN" > /etc/resolv.conf
-echo "nameserver 127.0.0.1" >> /etc/resolv.conf
-
 
 #sudo ipa-server-install \
 #--realm ${REALM} --domain ${DOMAIN} \
@@ -54,6 +50,11 @@ sudo ipa-server-install \
 --setup-dns \
 --forwarder=8.8.8.8 --allow-zone-overlap --no-host-dns \
 --auto-forwarders --auto-reverse --unattended
+
+
+#mv /etc/resolv.conf /etc/resolv.conf.bak 
+#echo "search $DOMAIN" > /etc/resolv.conf
+#echo "nameserver 127.0.0.1" >> /etc/resolv.conf
 
 #kinit as admin
 echo BadPass#1 | kinit admin
