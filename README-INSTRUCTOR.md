@@ -31,10 +31,10 @@ For managing multiple clusters (each takes variables for naming & the number of 
 
 1. Get this repo:
 
-   ```
+```
 git clone https://github.com/HortonworksUniversity/Security_Labs
 cd masterclass/generic
-   ```
+```
 
 1. Check for conflicting/existing stacks (same name as what you plan to deploy):
     - Open the CloudFormat Web UI
@@ -42,23 +42,23 @@ cd masterclass/generic
 
 1. Open a 'screen' so the commands continue if you lose connectivity:
 
-    ```
+```
 screen
 
 ## Note: If you get disconnected, SSH back to the host and execute: `screen -x`
-    ```
+```
 
 
 1. Set variables to define the naming & number of clusters to deploy:
     - the following will deploy 2 clusters with name sec100,sec101
     - update 'lab_count' to the number of clusters you want
 
-   ```sh
+```sh
 export AWS_DEFAULT_REGION=us-west-2 ## region to deploy in
 export lab_prefix=sec      ## template for naming the cloudformation stacks
 export lab_first=100                  ## number to start at in naming
 export lab_count=2                  ## number of clusters to create
-   ```
+```
 
 2. Set parameters which are passed to CloudFormation:
   - KeyName: The key (added on the EC2 page) to access the cluster.
@@ -66,7 +66,7 @@ export lab_count=2                  ## number of clusters to create
   - AdditionalInstanceCount: How many additional nodes to deploy. (Setting to 2 will deploy 3 nodes total)
   - SubnetId & SecurityGroups: This CloudFormation deploys in an existing Subnet & Security Group. **You must update this to your environment**.
 
-   ```sh
+```sh
 ## Update with your keypair name, subnet, securitygroups and the number of instances you want
 export cfn_parameters='
 [
@@ -78,44 +78,44 @@ export cfn_parameters='
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"}]
 '
-   ```
+```
 
 1. Provision your clusters
 
-    ```
+```
 ../bin/clusters-create.sh
-    ```
+```
 
 1. Check the build status
     - From the CloudFormation Web UI
     - Or from the command-line:
 
-    ```
+```
 ../bin/cloudformation-status.sh
-    ```
+```
 
 1. Once your clusters are ready, get list of clusters nodes for providing to students:
 
-    ```
+```
 ..bin/clusters-report.sh
-    ```
+```
 
 1. Use the clusters:
    - `ssh centos@ipFromReportAbove` ## use the key which was specified during the build
 
 1. Terminate clusters
 
-    ```
+```
 ..bin/clusters-terminate.sh
-    ```
+```
 
 1. Verify that all clusters are terminated
     - From the AWS CloudFormation Web UI
     - Or from the CLI
 
-    ```
+```
 ../bin/cloudformation-status.sh
-    ```
+```
 
 ########
 
@@ -146,7 +146,7 @@ To deploy using Cloudbreak, use the blueprint "Security_HA_3.0.1_blueprint.json"
 - Select a base (not prewarmed) image (only tested with CentOS7.4 images)
 - If HDP 3.0.1 is not available in your version of Cloudbreak, override the Ambari and HDP versions this way:
 
-  ```
+```
   Ambari Version: 2.7.1.0
   Base Url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.1.0
   GPG Key Url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.1.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
@@ -155,7 +155,7 @@ To deploy using Cloudbreak, use the blueprint "Security_HA_3.0.1_blueprint.json"
   Stack Repo Id: HDP
   Stack Repository Version: 3.0.1.0-187
   Stack Vdf Url: http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/3.x/BUILDS/3.0.1.0-187/HDP-3.0.1.0-187.xml
-  ```
+```
   
 - Select a node size of at least 2vCPUs and 8GB RAM for all hostgroups (e.g., n1-highmem-2 for GCP)
 - Select hostgroup 1 as the Ambari hostgroup
@@ -197,9 +197,9 @@ If you suddenly notice that your instances/cloudformations/etc have vanished fro
 
 * Example using cssh, csshX or tmux-cssh (you'll need to install it)
 
-    ```
+```
 ../bin/clusters-report.sh | grep "^[0-9]" | xargs echo tmux-cssh -u masterclass
-    ```
+```
 
 * After executing you will get a terminal with small windows to all of the clusters.
 * Anything you type will go to all hosts.
@@ -208,9 +208,9 @@ If you suddenly notice that your instances/cloudformations/etc have vanished fro
 
 * Change Ambari to port 8081
 
-  ```
+```
 export TERM=xterm
 echo "client.api.port=8081" | sudo tee -a /etc/ambari-server/conf/ambari.properties
 sudo ambari-server restart
 sudo ambari-agent restart
-  ```
+```
