@@ -168,7 +168,7 @@ Credentials will be provided for these services by the instructor:
   - Now create Hive table in default database by 
     - Start beeline shell from the node where Hive is installed: 
 ```
-beeline -n admin -u "jdbc:hive2://localhost:10000/default"
+beeline -n hive -u "jdbc:hive2://localhost:10000/default"
 ```
 
   - At beeline prompt, run below:
