@@ -694,11 +694,11 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
 
-- Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos > Enable kerberos > proceed). 
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-start-kerberos-wizard.png)
+- Enable kerberos using Ambari security wizard (On the bottom left > Kerberos > Enable). 
+  ![Image](screenshots/hdp3/Ambari-kerberos-1.png)
 
 - Select "Existing Active Directory" and check all the boxes
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-kerberos-wizard-1.png)
+  ![Image](screenshots/Ambari-kerberos-2.png)
   
 - Enter the below details:
 
