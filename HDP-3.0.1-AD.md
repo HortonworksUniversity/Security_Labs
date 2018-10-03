@@ -643,7 +643,7 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
     --ldap-user-class=user \
     --ldap-user-attr=sAMAccountName \
     --ldap-save-settings \
-    --ldap-manager-password=BadPass#1     
+    --ldap-manager-password=BadPass#1    \
     --ldap-sync-username-collisions-behavior=convert  \
     --ldap-force-setup  \
     --ldap-force-lowercase-usernames=false \
