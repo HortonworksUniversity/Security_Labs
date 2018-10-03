@@ -719,7 +719,7 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
   
 - Now click Next on all the following screens to proceed with all the default values  
 
-  ![Image](hscreenshots/hdp3/Ambari-kerberos-3.png)
+  ![Image](screenshots/hdp3/Ambari-kerberos-3.png)
 
   ![Image](screenshots/hdp3/Ambari-kerberos-4.png)
 
