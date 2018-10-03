@@ -1121,11 +1121,14 @@ https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/abo
   - If audits do not show up here, you may need to restart Ambari Infra Solr from Ambari
   - In case audits still don't show up and Ranger complains that audit collection not found: try [these steps](https://community.hortonworks.com/articles/96618/how-to-clean-up-recreate-collections-on-ambari-inf.html)
   
-- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins' tab 
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-plugins.png)
+- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins Status' tab 
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdp3/Ranger-plugins.png)
 
 - Confirm users/group sync from AD into Ranger are working by clicking 'Settings' > 'Users/Groups tab' in Ranger UI and noticing AD users/groups are present
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-groups.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdp3/Ranger-user-groups.png)
+
+You can also see log of usersync history here:
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdp3/Ranger-user-sync.png)
 
 - Confirm HDFS audits working by querying the audits dir in HDFS:
 
