@@ -651,7 +651,9 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
     --ambari-admin-username=admin  \
     --ldap-referral=""
   ```
-   ![Image](screenshots/Ambari-setup-LDAP-new.png)
+   ![Image](screenshots/hdp3/Ambari-setup-LDAP1.png)
+   ![Image](screenshots/hdp3/Ambari-setup-LDAP2.png)
+
 
 - Restart Ambari server
   ```
