@@ -698,7 +698,7 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
   ![Image](screenshots/hdp3/Ambari-kerberos-1.png)
 
 - Select "Existing Active Directory" and check all the boxes
-  ![Image](screenshots/Ambari-kerberos-2.png)
+  ![Image](screenshots/hdp3/Ambari-kerberos-2.png)
   
 - Enter the below details:
 
