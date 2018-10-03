@@ -1113,7 +1113,7 @@ https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/abo
 
 - Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/admin
 - Confirm that repos for HDFS, YARN, Hive, HBase, Knox appear under 'Access Manager tab'
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-AccessManager.png)
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdp3/Ranger-AccessManager.png)
 
 - Confirm that audits appear under 'Audit' > 'Access' tab
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audits.png)
