@@ -1093,7 +1093,7 @@ exit
 - Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
 ![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-11.png)
 
-- (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), delete Ranger service from Ambari and retry.
+- (Optional) In case Ranger fails to install, its usually caused by incorrectly entering the Mysql nodes FQDN in the config above. If this happens, delete Ranger service from Ambari and retry.
 
 
 
