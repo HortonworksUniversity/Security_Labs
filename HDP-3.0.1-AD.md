@@ -713,7 +713,8 @@ Ambari views setup on secure cluster will be covered in later lab so we will ski
     - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
     - Admin password: `BadPass#1`
 
-  ![Image](screenshots/hdp3/Ambari-kerberos-wizard-2.5.png)
+  ![Image](screenshots/hdp3/Ambari-kerberos-2.5.png)
+  
   - Notice that the "Save admin credentials" checkbox is available, clicking the check box will save the "admin principal".
   - Sometimes the "Test Connection" button may fail (usually related to AWS issues), but if you previously ran the "Configure name resolution & certificate to Active Directory" steps *on all nodes*, you can proceed.
   
