@@ -960,15 +960,7 @@ logout
 ```
 - Notice that now that the cluster is kerberized, we were not able to circumvent security by setting the env var 
 
-### Kerberos for Ambari Views
 
-For Ambari Views to access the cluster, Ambari must be configured to use Kerberos to access the cluster. The Kerberos wizard handles this configuration for you (as of Ambari 2.4).
-
-For those configurations to take affect, execute the following on the Ambari Server:
-
-```
-sudo ambari-server restart
-```
 
 ### Enabling SPNEGO Authentication for Hadoop
 
@@ -982,17 +974,15 @@ sudo dd if=/dev/urandom of=/etc/security/http_secret bs=1024 count=1
 sudo chown hdfs:hadoop /etc/security/http_secret
 sudo chmod 440 /etc/security/http_secret
 ```
-- Place the file in Ambari resources dir so it gets pushed to all nodes
-```
-sudo cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
-sudo ambari-server restart
-```
+- We need to copy this file /etc/security/http_secret to /etc/security/ on all the other nodes. We can do this in a few steps
+  - Copy the file into /tmp
+  - Change owner to centos
+  - SCP file from /tmp to local laptop
+  - SCP from local laptop to /tmp dir of other nodes
 
-- Wait 30 seconds for the http_secret file to get pushed to all nodes under /var/lib/ambari-agent/cache/host_scripts
-
-- On non-Ambari nodes, once the above file is available, run below to put it in right dir and correct its permissions
+- Once the above file is available, run below (on all non-ambari nodes) to put it in right dir and correct its permissions
 ```
-sudo cp /var/lib/ambari-agent/cache/host_scripts/http_secret /etc/security/
+sudo cp /tmp/http_secret /etc/security/
 sudo chown hdfs:hadoop /etc/security/http_secret
 sudo chmod 440 /etc/security/http_secret
 ```
