@@ -990,11 +990,12 @@ sudo chmod 440 /etc/security/http_secret
 
 - In Ambari > HDFS > Configs, set the below
   - Under Advanced core-site:
-    - hadoop.http.authentication.simple.anonymous.allowed=false
+    - hadoop.http.authentication.cookie.domain=lab.hortonworks.net
+    - *TODO*: check if this is really needed?
   
-  - Under Custom core-site, add the below properties (using bulk add tab):
-  
+  - The other properties for SPNEGO were automatically setup as part of setting up Kerberos :
   ```
+  hadoop.http.authentication.simple.anonymous.allowed=false
   hadoop.http.authentication.signature.secret.file=/etc/security/http_secret
   hadoop.http.authentication.type=kerberos
   hadoop.http.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
