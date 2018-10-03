@@ -1045,40 +1045,40 @@ exit
   - Ranger DB Host = FQDN of host where Mysql is running (e.g. ip-172-30-0-242.us-west-2.compute.internal)
   - Enter passwords: BadPass#1
   - Click 'Test Connection' button
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-1.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-2.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-1.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-2.png)
 
 2. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
   - Common configs subtab
     - Enter password: BadPass#1
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-3.5.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-5.png)
 
 3. Ranger User info tab 
   - User configs subtab
     - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
     - User Search Filter = `(objectcategory=person)`
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-4.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-5.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-6.png)
+
 
 4. Ranger User info tab 
   - Group configs subtab
     - Make sure Group sync is disabled
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-7.png)
 
 5. Ranger plugins tab
   - Enable all plugins
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-7.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-10.png)
 
 6. Ranger Audits tab 
   - SolrCloud = ON
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-8.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-9.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-9.png)
 
 7.Advanced tab
-  - No changes needed (skipping configuring Ranger authentication against AD for now)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
+  - Complete passwords (BadPass#1)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-3.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-4.png)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-8.png)
 
 - Click Next > Proceed Anyway to proceed
     
@@ -1091,6 +1091,7 @@ exit
 - Click Next > Deploy to install Ranger
 
 - Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
+![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-11.png)
 
 - (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), delete Ranger service from Ambari and retry.
 
