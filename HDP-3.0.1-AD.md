@@ -966,7 +966,7 @@ logout
 
 - This is needed to secure the Hadoop components webUIs (e.g. Namenode UI, JobHistory UI, Yarn ResourceManager UI etc...)
 
-- As of HDP 3.0, this is taken care of by Kerberos Wizard
+- As of HDP 3.0, this is taken care of as part of setting up Kerberos via Ambari Security Wizard
 
 - Now when you try to open any of the web UIs like below you will get `401: Authentication required`
   - HDFS: Namenode UI
