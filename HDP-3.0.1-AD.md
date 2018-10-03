@@ -630,7 +630,8 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
   ```
   sudo ambari-server setup-ldap \
     --ldap-url=${ad_host}:389 \
-    --ldap-secondary-url= \
+    --ldap-secondary-url="" \
+    --ldap-secondary-host=""  \
     --ldap-ssl=false \
     --ldap-base-dn=${ad_root} \
     --ldap-manager-dn=${ad_user} \
@@ -642,8 +643,13 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
     --ldap-user-class=user \
     --ldap-user-attr=sAMAccountName \
     --ldap-save-settings \
-    --ldap-bind-anonym=false \
-    --ldap-referral=
+    --ldap-manager-password=BadPass#1     
+    --ldap-sync-username-collisions-behavior=convert  \
+    --ldap-force-setup  \
+    --ldap-force-lowercase-usernames=false \
+    --ldap-pagination-enabled=false \
+    --ambari-admin-username=admin  \
+    --ldap-referral=""
   ```
    ![Image](screenshots/Ambari-setup-LDAP-new.png)
 
