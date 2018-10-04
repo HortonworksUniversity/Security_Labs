@@ -1098,7 +1098,9 @@ exit
 
 - (Optional) In case Ranger fails to install, its usually caused by incorrectly entering the Mysql nodes FQDN in the config above. If this happens, delete Ranger service from Ambari and retry.
 
-- *TODO* : YARN TLS 2.0 fails to come up due to no YARN policy in Ranger for HTTP user on default queue. Need to manually create HTTP user and create this policy. Bug?
+- **TODO** : 
+- YARN TLS 2.0 fails to come up due to OOM. Set AppTimelineServer Java heap size to 3GB (Need to update BP)
+- Ranger audits shows many Denied audits for YARN as there is no YARN policy in Ranger for HTTP user on default queue. Need to manually create HTTP user and create this policy. (Bug?)
 
 8 - (Optional) Enable Deny Conditions in Ranger 
 
