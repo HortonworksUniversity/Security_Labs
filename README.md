@@ -4,7 +4,7 @@
 
 # Hortonworks Data Platform
 
-## HDP 3.0.1
+## HDP 3.0.1 - Do not use - Under Construction
 
 [HDP 3.0.1 using Active Directory](./HDP-3.0.1-AD.md)
 
