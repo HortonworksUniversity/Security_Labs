@@ -35,7 +35,7 @@
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
-- [Lab 7b](#lab-7b)
+- [Lab 7b](#lab-7b) - DO NOT USE
   - Tag-Based Policies (Atlas+Ranger Integration)
     - Tag-Based Access Control
     - Attribute-Based Access Control
@@ -2137,7 +2137,7 @@ logout
 
 ------------------
 
-# Lab 7b
+# Lab 7b - DO NOT USE
 
 ## Tag-Based Policies (Atlas+Ranger Integration)
 
