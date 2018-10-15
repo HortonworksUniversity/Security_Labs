@@ -386,58 +386,15 @@ Log in to Ambari as an Admin and Navigate to Manage Ambari > Users. Example user
 
 ### Enabling SPNEGO Authentication for Hadoop
 
-- Needed to secure the Hadoop components webUIs (e.g. Namenode UI, JobHistory UI, Yarn ResourceManager UI etc...)
+- This is needed to secure the Hadoop components webUIs (e.g. Namenode UI, JobHistory UI, Yarn ResourceManager UI etc...)
 
-- Run steps on ambari server node
-
-- Create Secret Key Used for Signing Authentication Tokens
-```
-sudo dd if=/dev/urandom of=/etc/security/http_secret bs=1024 count=1
-sudo chown hdfs:hadoop /etc/security/http_secret
-sudo chmod 440 /etc/security/http_secret
-```
-- Place the file in Ambari resources dir so it gets pushed to all nodes
-```
-sudo cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
-sudo ambari-server restart
-```
-
-- Wait 30 seconds for the http_secret file to get pushed to all nodes under /var/lib/ambari-agent/cache/host_scripts
-
-- On non-Ambari nodes, once the above file is available, run below to put it in right dir and correct its permissions
-```
-sudo cp /var/lib/ambari-agent/cache/host_scripts/http_secret /etc/security/
-sudo chown hdfs:hadoop /etc/security/http_secret
-sudo chmod 440 /etc/security/http_secret
-```
-
-
-- In Ambari > HDFS > Configs, set the below
-  - Under Advanced core-site:
-    - hadoop.http.authentication.simple.anonymous.allowed=false
-  
-  - Under Custom core-site, add the below properties (using bulk add tab):
-  
-  ```
-  hadoop.http.authentication.signature.secret.file=/etc/security/http_secret
-  hadoop.http.authentication.type=kerberos
-  hadoop.http.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
-  hadoop.http.authentication.kerberos.principal=HTTP/_HOST@LAB.HORTONWORKS.NET
-  hadoop.http.authentication.cookie.domain=lab.hortonworks.net
-  hadoop.http.filter.initializers=org.apache.hadoop.security.AuthenticationFilterInitializer
-  ```
-- Save configs
-
-- Restart all services that require restart (HDFS, Mapreduce, YARN, HBase). You can use the 'Actions' > 'Restart All Required' button to restart all the services in one shot
-
-
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-restart-services.png)
+- As of HDP 3.0, this is taken care of as part of setting up Kerberos via Ambari Security Wizard
 
 - Now when you try to open any of the web UIs like below you will get `401: Authentication required`
   - HDFS: Namenode UI
   - Mapreduce: Job history UI
   - YARN: Resource Manager UI
-
+  
 ------------------
 
 # Lab 5
