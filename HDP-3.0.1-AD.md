@@ -993,7 +993,9 @@ Prepare MySQL DB for Ranger use.
   - use Ambari UI or
   - Just run `mysql` on each node: if it returns `mysql: command not found`, move onto next node
 
-- `sudo mysql -h $(hostname -f)`
+- On the MySQL node, run below to start mysql shell:
+- `sudo mysql`
+  - If it doesn't work try `sudo mysql -h $(hostname -f)`
 - Execute following in the MySQL shell to create "Ranger DB root User" in MySQL. Ambari will use this user to create rangeradmin user.
 ```sql
 CREATE USER 'root'@'%';
