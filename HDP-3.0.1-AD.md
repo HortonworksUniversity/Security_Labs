@@ -623,6 +623,8 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 ```
 
 - Execute the following to configure Ambari to sync with LDAP.
+  - when prompted for type of LDAP, enter: AD
+  - password: BadPass#1
 - Use the default password used throughout this course.
   ```
   sudo ambari-server setup-ldap \
