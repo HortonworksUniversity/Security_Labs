@@ -426,10 +426,7 @@ sudo ambari-server setup
   - Customize user account for ambari-server daemon? y
   - Enter user account for ambari-server daemon (root):ambari
   - Do you want to change Oracle JDK [y/n] (n)? n
-  - Enter advanced database configuration [y/n] (n)? n
-  - Proceed with configuring remote database connection properties [y/n] (y)? y
-  - Completing setup...
-  - Configuring database...
+  - Enable Ambari Server to download and install GPL Licensed LZO packages [y/n] (n)? y
   - Enter advanced database configuration [y/n] (n)? n
 
 - Sample output:
