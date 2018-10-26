@@ -2,7 +2,6 @@
 
 - [Lab 1](#lab-1)
   - Access cluster
-  - Install Knox
   - Security w/o kerberos
 - [Lab 2](#lab-2)
   - Review use case
@@ -44,6 +43,7 @@
     - Time-Based Policies
   - Policy Evaluation and Precedence
 - [Lab 8](#lab-8)
+  - Install Knox
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
     - WebHDFS
