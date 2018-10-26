@@ -1055,13 +1055,19 @@ exit
 2. Ranger User info tab
   - 'Sync Source' = LDAP/AD 
   - Common configs subtab
-    - Enter password: BadPass#1
+    - LDAP/AD URL: `ldap://ad01.lab.hortonworks.net:389`
+    - Bind User: `cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net`
+    - Binde User password: `BadPass#1`
 ![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-5.png)
 
 3. Ranger User info tab 
   - User configs subtab
-    - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
-    - User Search Filter = `(objectcategory=person)`
+    - Username Attribute: `sAMAccountName`
+    - User Object Class: `person`
+    - User Search Base: `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
+    - User Search Filter: `(objectcategory=person)`
+    - User Search Scope: `sub`
+    - User Group Name Attribute: `memberof, ismemberof`
 ![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-6.png)
 
 
@@ -1076,6 +1082,7 @@ exit
 
 6. Ranger Audits tab 
   - SolrCloud = ON
+  - External SolrCloud = OFF
 ![Image](https://github.com/HortonworksUniversity/Security_Labs/blob/master/screenshots/hdp3/ranger-30-9.png)
 
 7.Advanced tab
