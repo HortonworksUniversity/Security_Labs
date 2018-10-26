@@ -259,20 +259,6 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 
 ### Install Additional Components
 
-#### Install Knox via Ambari
-
-- Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard (under 'Actions' dropdown, near bottom left of page) to install Knox *on a node other than the one running Ambari*
-  - **Make sure not to install Knox on same node as Ambari** (or if you must, change its port from 8443)
-    - Reason: in a later lab after we enable SSL for Ambari, it will run on port 8443
-  - When prompted for the `Knox Master Secret`, set it to `knox`
-  - Do *not* use password with special characters (like #, $ etc) here as seems beeline may have problem with it
-   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-Knox-install.png)
-  - Click Next > Proceed Anyway > Deploy to accept all defaults
-
-- We will use Knox further in a later exercise.
-  
-- After the install completed, Ambari will show that a number of services need to be restarted. Ignore this for now, we will restart them at a later stage.
 
 #### Install Tez on Pig nodes
 
@@ -1124,7 +1110,7 @@ https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/abo
 
 ##### Check Ranger
 
-- Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/admin
+- Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/BadPass#1
 - Confirm that repos for HDFS, YARN, Hive, HBase, Knox appear under 'Access Manager tab'
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdp3/Ranger-AccessManager.png)
 
@@ -2367,6 +2353,21 @@ Notice how in the policies above, ones that deny access always take precedence o
 ## Knox 
 
 Goal: In this lab we will configure Apache Knox for AD authentication and make WebHDFS, Hive requests over Knox (after setting the appropriate Ranger authorization polices for access)
+
+### Install Knox via Ambari
+
+- Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
+- Use the 'Add Service' Wizard (under 'Actions' dropdown) to install Knox *on a node other than the one running Ambari*
+  - **Make sure not to install Knox on same node as Ambari** (or if you must, change its port from 8443)
+    - Reason: in a later lab after we enable SSL for Ambari, it will run on port 8443
+  - When prompted for the `Knox Master Secret`, set it to `knox`
+  - Do *not* use password with special characters (like #, $ etc) here as seems beeline may have problem with it
+   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-Knox-install.png)
+  - Click Next > Proceed Anyway > Deploy to accept all defaults
+
+- We will use Knox further in a later exercise.
+  
+- After the install completed, Ambari will show that a number of services need to be restarted. Ignore this for now, we will restart them at a later stage.
 
 ### Knox Configuration 
 
