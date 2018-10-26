@@ -1795,15 +1795,14 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
    ```
   
 - Now lets configure Knox to use our AD for authentication. Replace below content in Ambari > Knox > Config > Advanced topology. 
-- **TODO** the below sample config is for AD...needs to be updated for IPA based on [these values](https://github.com/HortonworksUniversity/Security_Labs/blob/master/HDP-3.0-IPA.md#41-enable-ldap-for-ambari-server)
   - How to tell what configs were changed from defaults? 
     - Default configs remain indented below
     - Configurations that were added/modified are not indented
 ```
-        <topology>
-
+<topology>
+ 
             <gateway>
-
+ 
                 <provider>
                     <role>authentication</role>
                     <name>ShiroProvider</name>
@@ -1814,63 +1813,63 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
                     </param>
                     <param>
                         <name>main.ldapRealm</name>
-                        <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value> 
+                        <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value>
                     </param>
-
+ 
 <!-- changes for AD/user sync -->
-
+ 
 <param>
     <name>main.ldapContextFactory</name>
     <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapContextFactory</value>
 </param>
-
+ 
 <!-- main.ldapRealm.contextFactory needs to be placed before other main.ldapRealm.contextFactory* entries  -->
 <param>
     <name>main.ldapRealm.contextFactory</name>
     <value>$ldapContextFactory</value>
 </param>
-
-<!-- AD url -->
+ 
+<!-- IPA url -->
 <param>
     <name>main.ldapRealm.contextFactory.url</name>
-    <value>ldap://ad01.lab.hortonworks.net:389</value> 
+    <value>ldap://ipa.us-west-2.compute.internal:389</value>
 </param>
-
+ 
 <!-- system user -->
 <param>
     <name>main.ldapRealm.contextFactory.systemUsername</name>
-    <value>cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net</value>
+    <value>uid=hadoopadmin,cn=users,cn=accounts,dc=us-west-2,dc=compute,dc=internal</value>
 </param>
-
+ 
 <!-- pass in the password using the alias created earlier -->
 <param>
     <name>main.ldapRealm.contextFactory.systemPassword</name>
     <value>${ALIAS=knoxLdapSystemPassword}</value>
 </param>
-
+ 
                     <param>
                         <name>main.ldapRealm.contextFactory.authenticationMechanism</name>
                         <value>simple</value>
                     </param>
                     <param>
                         <name>urls./**</name>
-                        <value>authcBasic</value> 
+                        <value>authcBasic</value>
                     </param>
-
+ 
 <!--  AD groups of users to allow -->
 <param>
     <name>main.ldapRealm.searchBase</name>
-    <value>ou=CorpUsers,dc=lab,dc=hortonworks,dc=net</value>
+    <value>cn=accounts,dc=us-west-2,dc=compute,dc=internal</value>
 </param>
 <param>
     <name>main.ldapRealm.userObjectClass</name>
-    <value>person</value>
+    <value>posixAccount</value>
 </param>
 <param>
     <name>main.ldapRealm.userSearchAttributeName</name>
-    <value>sAMAccountName</value>
+    <value>uid</value>
 </param>
-
+ 
 <!-- changes needed for group sync-->
 <param>
     <name>main.ldapRealm.authorizationEnabled</name>
@@ -1878,32 +1877,32 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
 </param>
 <param>
     <name>main.ldapRealm.groupSearchBase</name>
-    <value>ou=CorpUsers,dc=lab,dc=hortonworks,dc=net</value>
+    <value>cn=accounts,dc=us-west-2,dc=compute,dc=internal</value>
 </param>
 <param>
     <name>main.ldapRealm.groupObjectClass</name>
-    <value>group</value>
+    <value>posixGroup</value>
 </param>
 <param>
     <name>main.ldapRealm.groupIdAttribute</name>
     <value>cn</value>
 </param>
-
-
+ 
+ 
                 </provider>
-
+ 
                 <provider>
                     <role>identity-assertion</role>
                     <name>Default</name>
                     <enabled>true</enabled>
                 </provider>
-
+ 
                 <provider>
                     <role>authorization</role>
                     <name>XASecurePDPKnox</name>
                     <enabled>true</enabled>
                 </provider>
-
+ 
 <!--
   Knox HaProvider for Hadoop services
   -->
@@ -1936,45 +1935,45 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
 <!--
   END Knox HaProvider for Hadoop services
   -->
-
-
+ 
+ 
             </gateway>
-
+ 
             <service>
                 <role>NAMENODE</role>
                 <url>hdfs://{{namenode_host}}:{{namenode_rpc_port}}</url>
             </service>
-
+ 
             <service>
                 <role>JOBTRACKER</role>
                 <url>rpc://{{rm_host}}:{{jt_rpc_port}}</url>
             </service>
-
+ 
             <service>
                 <role>WEBHDFS</role>
                 <url>http://{{namenode_host}}:{{namenode_http_port}}/webhdfs</url>
             </service>
-
+ 
             <service>
                 <role>WEBHCAT</role>
                 <url>http://{{webhcat_server_host}}:{{templeton_port}}/templeton</url>
             </service>
-
+ 
             <service>
                 <role>OOZIE</role>
                 <url>http://{{oozie_server_host}}:{{oozie_server_port}}/oozie</url>
             </service>
-
+ 
             <service>
                 <role>WEBHBASE</role>
                 <url>http://{{hbase_master_host}}:{{hbase_master_port}}</url>
             </service>
-
+ 
             <service>
                 <role>HIVE</role>
                 <url>http://{{hive_server_host}}:{{hive_http_port}}/{{hive_http_path}}</url>
             </service>
-
+ 
             <service>
                 <role>RESOURCEMANAGER</role>
                 <url>http://{{rm_host}}:{{rm_port}}/ws</url>
