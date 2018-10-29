@@ -331,7 +331,7 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
   - OU=LAB.HORTONWORKS.NET (instead of CLOUD.HORTONWORKS.COM)
   - hadoopadmin (instead of nifiadmin)
   - path to the nifi toolkit is also different
-  - token password must be 16 chars e.g. StrongPassword1
+  - token password must be 16 chars e.g. BadPass#1BadPass#1
   - add the identity mappings by default
     - nifi.security.identity.mapping.pattern.dn=`^CN=(.*?), OU=(.*?)$`
     - nifi.security.identity.mapping.value.dn=`$1@$2`
