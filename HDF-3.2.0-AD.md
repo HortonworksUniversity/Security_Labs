@@ -342,6 +342,16 @@ Screenshots:
 
 - ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/hdf3/nifi-ssl-2.png)
 
+When generating cert:
+- If Ambari HTTPS is enabled, below commandline is required:
+ - `wget --no-check-certificate https://localhost:8443/resources/common-services/NIFI/1.0.0/package/archive.zip`
+- Command to generate keystore
+  - `./files/nifi-toolkit-*/bin/tls-toolkit.sh  client -c $(hostname -f) -D "CN=hadoopadmin, OU=LAB.HORTONWORKS.NET" -p 10443 -t BadPass#1BadPass#1 -T pkcs12`
+- Command to copy keystore to /tmp:
+  - `mv keystore.pkcs12 keystore.p12`
+  - `chmod 755 /tmp/keystore.p12`
+- Command to transfer keystore to MacBook:
+  - `scp -i ~/.ssh/mykeypair.pem centos@IP_ADDRESS:/tmp/keystore.p12 ~/Downloads/`
 
 ## Install Ranger
 
