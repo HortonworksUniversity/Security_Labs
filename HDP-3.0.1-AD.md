@@ -1165,6 +1165,166 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 --->
 ------------------
 
+# Nifi Lab
+
+## Install NiFi
+
+- Enable Ambari to recognize HDF components by installing HDF management pack:
+```
+export mpack_url="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.2.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.2.0.0-520.tar.gz"
+sudo ambari-server install-mpack --verbose --mpack=${mpack_url}
+sudo ambari-server restart
+```
+
+- Install NiFi via Ambari
+  - select "Add service"
+  - select NiFi 
+  - choose any node
+  - under clients, select Nifi CA certification
+  - set a long password for each required password: BadPass#1BadPass#1
+  
+- Notice that NiFi UI comes up on port 9090 without any security
+  
+## Enable SSL/TLS for NiFi
+  
+- Assuming Nifi CA is already installed (via Ambari when you installed NiFi), you can make the below config changes in Ambari under Nifi > Configs > “Advanced nifi-ambari-ssl-config” and click Save to commit the changes:
+
+a) Enable SSL? Check box
+b) Clients need to authenticate? Check box
+c) NiFi CA Token - Set this to long, random value (at least 16 chars) = `BadPass#1BadPass#1`
+d) Initial Admin Identity - set this to the long form (full DN) of identity for who your nifi admin user should be =  `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
+e) Node Identities - set this to the long form (full DN) of identity for each node running Nifi (replace CN entries below with FQDNs of nodes running Nifi...also note the space after the comma) e.g.
+```
+<property name="Node Identity 1">CN=FQDN_OF_NODE1, OU=LAB.HORTONWORKS.NET</property>
+<property name="Node Identity 2">CN=FQDN_OF_NODE2, OU=LAB.HORTONWORKS.NET</property>
+<property name="Node Identity 3">CN=FQDN_OF_NODE3, OU=LAB.HORTONWORKS.NET</property>
+```
+  - By default the node identities are commented out using <!-- and --> tags. As you are updating this field, make sure you remove these or you changes will not take affect.
+  
+- once the above changes have been made, Ambari will prompt you to restart Nifi.
+
+- After restarting, it may take a minute for Nifi UI to come up. You can track the progress by monitoring nifi-app.log
+```
+tail -f /var/log/nifi/nifi-app.log
+```
+
+## Generate client certificate to login
+
+In order to login to SSL-enabled Nifi, you will need to generate a client certificate and import into your browser. If you used the CA, you can use tls-toolkit that comes with Nifi CA:
+
+First run below from Ambari node to download  the toolkit:
+```
+wget --no-check-certificate https://localhost:8443/resources/common-services/NIFI/1.0.0/package/archive.zip
+```
+- If you have not enabled SSL for Ambari, use below instead:
+```
+wget http://localhost:8080/resources/common-services/NIFI/1.0.0/package/archive.zip
+```
+- Install toolkit
+```
+unzip archive.zip
+```
+
+- Then run below to generate keystore. You will need to pass in your values for :
+  - -D : pass in your “Initial Admin Identity” value
+  - -t: pass in your “CA token” value.
+  - -c: pass in the hostname of the node where Nifi CA is running:
+```
+export JAVA_HOME=/usr/java/default
+./files/nifi-toolkit-*/bin/tls-toolkit.sh client -c $(hostname -f) -D "CN=hadoopadmin, OU=LAB.HORTONWORKS.NET" -p 10443 -t BadPass#1BadPass#1 -T pkcs12
+```
+
+- If you pass in the wrong password, you will see an error like:
+```
+Service client error: Received response code 403 with payload {"hmac":null,"pemEncodedCertificate":null,"error":"forbidden"}
+```
+
+- Before we can import the certificate, we will need to find the password to import. To do this, run below:
+```
+cat config.json | grep keyStorePassword
+```
+
+- The password generated above will be a long randomly generated string. If you want to change this password to one of your choosing instead, first run the below to remove the keystore/truststore:
+```
+rm -f keystore.pkcs12 truststore.pkcs12
+```
+
+- Then edit config.json by modifying the value of “keyStorePassword" to your desired password: `BadPass#1`
+```
+vi config.json
+```
+
+Then re-run tls-toolkit.sh as below:
+```
+./files/nifi-toolkit-*/bin/tls-toolkit.sh  client -F
+```
+
+At this point the keystore.pkcs12 has been generated. Rename it to keystore.p12 and transfer it (e.g. via scp) over to your local laptop.
+
+- Command to copy keystore to /tmp:
+```
+mv keystore.pkcs12 keystore.p12
+chmod 755 /tmp/keystore.p12
+```
+
+- Command to transfer keystore to MacBook - run this on your local MacBook, not Linux instance:
+```
+scp -i ~/.ssh/mykeypair.pem centos@IP_ADDRESS:/tmp/keystore.p12 ~/Downloads/
+```
+
+## Import certificate to your browser
+The exact steps depend on your OS and browser.
+
+For example if using Chrome on Mac, use “Keychain Access” app: File > Import items > Enter password from above (you will need to type it out)
+For Firefox example see [here](https://blog.rosander.ninja/nifi/toolkit/tls/2016/09/19/tls-toolkit-intro.html)
+
+
+## Check Nifi access
+
+Now you open Nifi UI using the Quicklink in Ambari. After selecting the certificate you imported earlier, follow the below screens to get through Chrome warnings and access the Nifi UI - the exact steps will depend on your browser:
+
+a) Select the certificate you just imported
+b) Choose "Always Allow"
+c) Since the certificate was self-signed, Chrome will warn you that the connection is not private. Click "Show Advanced" and click the "Proceed to <hostname>" link
+d) At this point, the Nifi UI should come up.  Note that on the top right, it shows you are logged in as "CN=hadoopadmin, OU=LAB.HORTONWORKS.NET"
+
+e) The /var/log/nifi/nifi-user.log log file will also confirm the user you are getting logged in as:
+```
+o.a.n.w.s.NiFiAuthenticationFilter Authentication success for CN=hadoopadmin, OU=LAB.HORTONWORKS.NET
+```
+f) Notice also that users.xml and authorizations.xml were created. Checking their content reveals that Nifi auto-created users and access policies for the 'Initial Admin Identity' and 'Node Identities'. More details on these files can be found here
+```
+cat /var/lib/nifi/conf/users.xml
+cat /var/lib/nifi/conf/authorizations.xml
+```
+With this you have successfully enabled SSL for Apache Nifi on your HDF cluster and logged in as `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET`
+
+## Setup Identity mappings
+
+- Recall that the admin user in AD/Ranger is hadoopadmin, so we will need to use identity mappings to fine-tune the user string
+
+- First let's remove the authorization.xml on all nifi nodes to force Nifi to re-generate them. Without doing this, you will encounter an error at login saying: "Unable to perform the desired action due to insufficient permissions"
+```
+rm /var/lib/nifi/conf/authorizations.xml
+```
+
+- Now make the below changes in Ambari under Nifi > Configs and click Save. (Tip: Type .dn in the textbox to Filter the fields to easily find these fields)
+```
+nifi.security.identity.mapping.pattern.dn = ^CN=(.*?), OU=(.*?)$
+nifi.security.identity.mapping.value.dn = $1
+```
+
+- From Ambari, restart Nifi and wait for the Nifi nodes to join back the cluster
+- After about a minute, refresh the Nifi UI and notice now you are logged in as hadoopadmin instead
+- Opening /var/log/nifi/nifi-user.log confirms this:
+```
+o.a.n.w.s.NiFiAuthenticationFilter Authentication success for hadoopadmin
+```
+
+
+
+------------------
+
 # Lab 6a
 
 ## Ranger KMS/Data encryption setup
