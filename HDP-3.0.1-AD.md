@@ -21,6 +21,12 @@
 - [Lab 5](#lab-5)
   - Ranger install pre-reqs
   - Ranger install
+- [NiFi lab](#nifi-lab)
+  - NiFi install
+  - NiFi SSL/TLS
+  - NiFi login via browser certificate
+  - Nifi identity mappings
+  - NiFi Ranger plugin
 - [Lab 6a](#lab-6a)
   - Ranger KMS install
   - Add a KMS on another node
@@ -1096,16 +1102,14 @@ exit
 - YARN TLS 2.0 fails to come up due to OOM. Set AppTimelineServer Java heap size to 3GB (Need to update BP)
 - Ranger audits shows many Denied audits for YARN as there is no YARN policy in Ranger for HTTP user on default queue. Need to manually create HTTP user and create this policy. (Bug?)
 
-8 - (Optional) Enable Deny Conditions in Ranger 
+- (Optional) Enable Deny Conditions in Ranger 
 
 The deny condition in policies is optional by default and must be enabled for use.
+  - From Ambari>Ranger>Configs>Advanced>Custom ranger-admin-site, add: `ranger.servicedef.enableDenyAndExceptionsInPolicies=true`
+  - Restart Ranger
+  - More info [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/about_ranger_policies.html)
 
-- From Ambari>Ranger>Configs>Advanced>Custom ranger-admin-site, add : 
-`ranger.servicedef.enableDenyAndExceptionsInPolicies=true`
 
-- Restart Ranger
-
-https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/about_ranger_policies.html
 
 
 ##### Check Ranger
@@ -1208,6 +1212,16 @@ e) Node Identities - set this to the long form (full DN) of identity for each no
 tail -f /var/log/nifi/nifi-app.log
 ```
 
+- Also notice that since we installed NiFi on kerberized cluster, Ambari has automatically created its keytab and configured NiFi to run kerberos mode:
+  - Run below on Node running NiFi
+```
+# klist -kt /etc/security/keytabs/nifi.service.keytab
+
+# cat /etc/nifi/conf/nifi.properties | grep kerberos
+
+# tail /etc/nifi/conf/login-identity-providers.xml  
+```
+
 ## Generate client certificate to login
 
 In order to login to SSL-enabled Nifi, you will need to generate a client certificate and import into your browser. If you used the CA, you can use tls-toolkit that comes with Nifi CA:
@@ -1301,7 +1315,7 @@ With this you have successfully enabled SSL for Apache Nifi on your HDF cluster 
 
 ## Setup Identity mappings
 
-- Recall that the admin user in AD/Ranger is hadoopadmin, so we will need to use identity mappings to fine-tune the user string
+- Recall that the admin user in AD/Ranger is hadoopadmin, so we will need to use identity mappings to fine-tune the user string i.e. to map `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` to `hadoopadmin` (so it matches the user we have in Ranger/AD.
 
 - First let's remove the authorization.xml on all nifi nodes to force Nifi to re-generate them. Without doing this, you will encounter an error at login saying: "Unable to perform the desired action due to insufficient permissions"
 ```
@@ -1313,7 +1327,8 @@ rm /var/lib/nifi/conf/authorizations.xml
 nifi.security.identity.mapping.pattern.dn = ^CN=(.*?), OU=(.*?)$
 nifi.security.identity.mapping.value.dn = $1
 ```
-
+  - More info/examples of identity mapping/conversion [here](https://community.hortonworks.com/articles/61729/nifi-identity-conversion.html)
+  
 - From Ambari, restart Nifi and wait for the Nifi nodes to join back the cluster
 - After about a minute, refresh the Nifi UI and notice now you are logged in as hadoopadmin instead
 - Opening /var/log/nifi/nifi-user.log confirms this:
@@ -1321,7 +1336,84 @@ nifi.security.identity.mapping.value.dn = $1
 o.a.n.w.s.NiFiAuthenticationFilter Authentication success for hadoopadmin
 ```
 
+## Enable Ranger plugin
 
+-  In Ambari > Ranger > Ranger Plugin tab: enable plugins for NiFi
+- In Nifi configs, double check that
+  - ranger-nifi-plugin-enabled is checked
+  - xasecure.audit.destination.solr is checked
+  - xasecure.audit.destination.solr.zookeepers is not blank
+- Restart NiFi
+
+Attempting to open Nifi UI results in "Access denied" due to insufficient permissions:
+
+Navigate to the ‘Audit’ tab in Ranger UI and notice that the requesting user showed up on Ranger audit. This shows the Ranger Nifi plugin is working
+
+
+- Notice how Ranger is showing details such as below for multiple HDF components:
+  - what time access attempt occurred
+  - user/IP who attempted the access
+  - resource that was attempted to be accessed
+  - whether access for allowed or denied
+  - Also notice that Nifi now shows up as one of the registered plugins (under ‘Plugins’ tab)
+
+
+## Create Ranger uses and policies
+
+To be able to access the Nifi U we will need to create a number of objects. The details below assume you have already setup identity mappings for Nifi (as described in previous article), but you should be able follow similar steps even if you have not.
+
+- Ranger users node identities (in a real customer env, you would not be manually creating these: they would be synced over from Active Directory/LDAP)
+  - hadoopadmin (already exists)
+  - users corresponding to FQDNs of instances where NiFi is running (depending on how many nodes in your NiFi cluster)
+
+- Read policy on /flow for node1-3 identities
+
+- Read/write policy on /proxy for node1-3 identities
+
+- Read/write policy on /data/* for node1-3 identities (needed to list/delete queue)
+
+- Read/write policy on /* for nifiadmin identity (needed to make nifiadmin an admin)
+
+- After creating the above, Open Nifi UI via Quicklink and confirm it now opens.
+
+
+## Auth via login page instead of certificate
+
+When kerberos is enabled, NiFi can also authenticate via login page (instead of SSL cert). In order to do so, the Kerberos principal (e.g. hadoopadmin@LAB.HORTONWORKS.NET) would need to be converted to a username (e.g hadoopadmin) using another identity mapping.
+
+- First, if the file exists, let's remove the authorization.xml from all nifi nodes to force Nifi to re-generate them. Without doing this, you will encounter an error at login saying: "Unable to perform the desired action due to insufficient permissions"
+```
+rm /var/lib/nifi/conf/authorizations.xml
+```
+
+- Delete the certificate you imported into your browser e.g on Mac you can use Keychain Access app
+  - Note there will be multiple entries: one for hadoopadmin and one for the host you are logging into
+  
+- In Ambari > NiFi > Advance Nifi properties, make below changes. (Tip: Type .kerb in the textbox to Filter the fields to easily find these fields)
+```
+nifi.security.identity.mapping.pattern.kerb=^(.*?)@(.*?)$
+nifi.security.identity.mapping.value.kerb=$1
+```
+  - More info/examples of identity mapping/conversion [here](https://community.hortonworks.com/articles/61729/nifi-identity-conversion.html)
+  
+- Restart Nifi via Ambari
+
+- Now when you open NiFi UI, it should prompt you for user/password (if not, try to open in Incognito browser window)
+
+- You should be able to login as hadoopadmin/BadPass#1
+  - If not, use the nifi-user.log and Ranger audits to see what went wrong
+```
+tail -f  /var/log/nifi/nifi-user.log
+```
+
+- Log out and try to login as hr1/BadPass#1. Notice that the authetication worked (because the correct kerberos credentials were provided) but authorization failed (i.e. hr1 user has not been given any permissions in NiFi via Ranger):
+
+```
+2018-10-30 04:19:53,893 INFO [NiFi Web Server-33] o.a.n.w.s.NiFiAuthenticationFilter Authentication success for hr1
+2018-10-30 04:19:53,914 INFO [NiFi Web Server-33] o.a.n.w.a.c.AccessDeniedExceptionMapper identity[hr1], groups[none] does not have permission to access the requested resource. Unable to view the user interface. Returning Forbidden response.
+```
+
+- This concludes the NiFi lab. We have shown how to enable Ranger plugin and kerberos for NiFi and login with both options: TLS certificate or kerberos credentials
 
 ------------------
 
