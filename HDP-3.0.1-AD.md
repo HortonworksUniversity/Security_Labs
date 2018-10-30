@@ -1189,29 +1189,6 @@ sudo ambari-server restart
   
 - Notice that NiFi UI comes up on port 9090 without any security
   
-## Enable SSL/TLS for NiFi
-  
-- Assuming Nifi CA is already installed (via Ambari when you installed NiFi), you can make the below config changes in Ambari under Nifi > Configs > “Advanced nifi-ambari-ssl-config” and click Save to commit the changes:
-  - a) Enable SSL? Check box
-  - b) Clients need to authenticate? Check box
-  - c) NiFi CA Token - Set this to long, random password (at least 16 chars) = `BadPass#1BadPass#1`
-  - d) Initial Admin Identity - set this to the long form (full DN) of identity for who your nifi admin user should be =  `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
-  - e) NiFi CA DN suffix- `, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
-  - e) Node Identities - set this to the long form (full DN) of identity for each node running Nifi (replace CN entries below with FQDNs of nodes running Nifi...also note the space after the comma) e.g. if NiFi is running on 3 nodes:
-```
-<property name="Node Identity 1">CN=FQDN_OF_NODE1, OU=LAB.HORTONWORKS.NET</property>
-<property name="Node Identity 2">CN=FQDN_OF_NODE2, OU=LAB.HORTONWORKS.NET</property>
-<property name="Node Identity 3">CN=FQDN_OF_NODE3, OU=LAB.HORTONWORKS.NET</property>
-```
-  - Note: By default, the node identities are commented out using <!-- and --> tags. As you are updating this field, make sure you remove these or you changes will not take affect.
-  
-- once the above changes have been made, Ambari will prompt you to restart Nifi.
-
-- After restarting, it may take a minute for Nifi UI to come up. You can track the progress by monitoring nifi-app.log
-```
-tail -f /var/log/nifi/nifi-app.log
-```
-
 - Also notice that since we installed NiFi on kerberized cluster, Ambari has automatically created its keytab and configured NiFi to run kerberos mode:
   - Run below on Node running NiFi
 ```
@@ -1221,6 +1198,42 @@ tail -f /var/log/nifi/nifi-app.log
 
 # tail /etc/nifi/conf/login-identity-providers.xml  
 ```
+
+## Enable SSL/TLS for NiFi
+  
+- Assuming Nifi CA is already installed (via Ambari when you installed NiFi), you can make the below config changes in Ambari under Nifi > Configs > “Advanced nifi-ambari-ssl-config” and click Save to commit the changes:
+  - a) Enable SSL? Check box
+  - b) Clients need to authenticate? Check box
+  - c) NiFi CA Token - Set this to long, random password (at least 16 chars) = `BadPass#1BadPass#1`
+  - d) Initial Admin Identity - set this to the long form (full DN) of identity for who your nifi admin user should be =  `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
+  - e) NiFi CA DN suffix- `, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
+  - f) Node Identities - set this to the long form (full DN) of identity for each node running Nifi (replace CN entries below with FQDNs of nodes running Nifi...also note the space after the comma) e.g. if NiFi is running on 3 nodes:
+```
+<property name="Node Identity 1">CN=FQDN_OF_NODE1, OU=LAB.HORTONWORKS.NET</property>
+<property name="Node Identity 2">CN=FQDN_OF_NODE2, OU=LAB.HORTONWORKS.NET</property>
+<property name="Node Identity 3">CN=FQDN_OF_NODE3, OU=LAB.HORTONWORKS.NET</property>
+```
+  - Note: By default, the node identities are commented out using <!-- and --> tags. As you are updating this field, *make sure you remove these* or you changes will not take affect.
+  
+- once the above changes have been made, Ambari will prompt you to restart Nifi.
+
+- After restarting, it may take a minute for Nifi UI to come up. You can track the progress by monitoring nifi-app.log
+```
+tail -f /var/log/nifi/nifi-app.log
+```
+
+
+### Troubleshooting node identities issues
+
+How will you know you made a mistake while setting node identities? Usually if the node identities field was not correctly set, when you attempt to open the Nifi UI, you will see an untrusted proxy error similar to below:
+
+You will see some a similar 'Untrusted proxy' error in /var/log/nifi/nifi-user.log:
+```
+[NiFi Web Server-172] o.a.n.w.s.NiFiAuthenticationFilter Rejecting access to web api: Untrusted proxy CN=FQDN_OF_NODE_X, OU=LAB.HORTONWORKS.NET
+```
+In the above case, you would need to double check that the 'Node identity' values you provided in Ambari match the one from the log file (e.g. CN=FQDN_OF_NODE_X, OU=LAB.HORTONWORKS.NET) and ensure the values are not commented out. Next, you would manually delete /var/lib/nifi/conf/authorizations.xml from *all nodes running Nifi* and then restart Nifi service via Ambari.
+
+
 
 ## Generate client certificate to login
 
@@ -1306,16 +1319,16 @@ e) The /var/log/nifi/nifi-user.log log file will also confirm the user you are g
 ```
 o.a.n.w.s.NiFiAuthenticationFilter Authentication success for CN=hadoopadmin, OU=LAB.HORTONWORKS.NET
 ```
-f) Notice also that users.xml and authorizations.xml were created. Checking their content reveals that Nifi auto-created users and access policies for the 'Initial Admin Identity' and 'Node Identities'. More details on these files can be found here
+f) Notice also that users.xml and authorizations.xml were created. Checking their content reveals that Nifi auto-created users and access policies for the 'Initial Admin Identity' and 'Node Identities'. More details on these files can be found [here](https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html#multi-tenant-authorization)
 ```
 cat /var/lib/nifi/conf/users.xml
-cat /var/lib/nifi/conf/authorizations.xml
 ```
+
 With this you have successfully enabled SSL for Apache Nifi on your HDF cluster and logged in as `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET`
 
 ## Setup Identity mappings
 
-- Recall that the admin user in AD/Ranger is hadoopadmin, so we will need to use identity mappings to fine-tune the user string i.e. to map `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` to `hadoopadmin` (so it matches the user we have in Ranger/AD.
+- Recall that the admin user in Ranger/AD is hadoopadmin, so we will need to use identity mappings to fine-tune the user string i.e. to map `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` to `hadoopadmin` (so it matches the user we have in Ranger/AD)
 
 - First let's remove the authorization.xml on all nifi nodes to force Nifi to re-generate them. Without doing this, you will encounter an error at login saying: "Unable to perform the desired action due to insufficient permissions"
 ```
