@@ -1194,9 +1194,10 @@ sudo ambari-server restart
 - Assuming Nifi CA is already installed (via Ambari when you installed NiFi), you can make the below config changes in Ambari under Nifi > Configs > “Advanced nifi-ambari-ssl-config” and click Save to commit the changes:
   - a) Enable SSL? Check box
   - b) Clients need to authenticate? Check box
-  - c) NiFi CA Token - Set this to long, random value (at least 16 chars) = `BadPass#1BadPass#1`
+  - c) NiFi CA Token - Set this to long, random password (at least 16 chars) = `BadPass#1BadPass#1`
   - d) Initial Admin Identity - set this to the long form (full DN) of identity for who your nifi admin user should be =  `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
-  - e) Node Identities - set this to the long form (full DN) of identity for each node running Nifi (replace CN entries below with FQDNs of nodes running Nifi...also note the space after the comma) e.g.
+  - e) NiFi CA DN suffix- `, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
+  - e) Node Identities - set this to the long form (full DN) of identity for each node running Nifi (replace CN entries below with FQDNs of nodes running Nifi...also note the space after the comma) e.g. if NiFi is running on 3 nodes:
 ```
 <property name="Node Identity 1">CN=FQDN_OF_NODE1, OU=LAB.HORTONWORKS.NET</property>
 <property name="Node Identity 2">CN=FQDN_OF_NODE2, OU=LAB.HORTONWORKS.NET</property>
