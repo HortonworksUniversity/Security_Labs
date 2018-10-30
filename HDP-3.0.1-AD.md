@@ -1192,18 +1192,17 @@ sudo ambari-server restart
 ## Enable SSL/TLS for NiFi
   
 - Assuming Nifi CA is already installed (via Ambari when you installed NiFi), you can make the below config changes in Ambari under Nifi > Configs > “Advanced nifi-ambari-ssl-config” and click Save to commit the changes:
-
-a) Enable SSL? Check box
-b) Clients need to authenticate? Check box
-c) NiFi CA Token - Set this to long, random value (at least 16 chars) = `BadPass#1BadPass#1`
-d) Initial Admin Identity - set this to the long form (full DN) of identity for who your nifi admin user should be =  `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
-e) Node Identities - set this to the long form (full DN) of identity for each node running Nifi (replace CN entries below with FQDNs of nodes running Nifi...also note the space after the comma) e.g.
+  - a) Enable SSL? Check box
+  - b) Clients need to authenticate? Check box
+  - c) NiFi CA Token - Set this to long, random value (at least 16 chars) = `BadPass#1BadPass#1`
+  - d) Initial Admin Identity - set this to the long form (full DN) of identity for who your nifi admin user should be =  `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET` (note the space after the comma)
+  - e) Node Identities - set this to the long form (full DN) of identity for each node running Nifi (replace CN entries below with FQDNs of nodes running Nifi...also note the space after the comma) e.g.
 ```
 <property name="Node Identity 1">CN=FQDN_OF_NODE1, OU=LAB.HORTONWORKS.NET</property>
 <property name="Node Identity 2">CN=FQDN_OF_NODE2, OU=LAB.HORTONWORKS.NET</property>
 <property name="Node Identity 3">CN=FQDN_OF_NODE3, OU=LAB.HORTONWORKS.NET</property>
 ```
-  - By default the node identities are commented out using <!-- and --> tags. As you are updating this field, make sure you remove these or you changes will not take affect.
+  - Note: By default, the node identities are commented out using <!-- and --> tags. As you are updating this field, make sure you remove these or you changes will not take affect.
   
 - once the above changes have been made, Ambari will prompt you to restart Nifi.
 
