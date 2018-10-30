@@ -1217,20 +1217,24 @@ sudo ambari-server restart
   
 - once the above changes have been made, Ambari will prompt you to restart Nifi.
 
-- After restarting, it may take a minute for Nifi UI to come up. You can track the progress by monitoring nifi-app.log
+- After restarting, it may take a minute for Nifi UI to come up. Now that we have enabled TLS, the NiFi url has changed from:
+  - http://nifi_hostname:9090 to
+  - https://nifi_hostname:9091  
+
+- You can track the progress of NiFi startup by monitoring nifi-app.log
 ```
 tail -f /var/log/nifi/nifi-app.log
 ```
-
+- If you are not able to access the webUI, double check you are using *HTTPS://* and pointing to port *9091*
 
 ### Troubleshooting node identities issues
 
-How will you know you made a mistake while setting node identities? Usually if the node identities field was not correctly set, when you attempt to open the Nifi UI, you will see an untrusted proxy error similar to below:
-
-You will see some a similar 'Untrusted proxy' error in /var/log/nifi/nifi-user.log:
+How will you know you made a mistake while setting node identities? 
+- Usually if the node identities field was not correctly set, when you attempt to open the Nifi UI, you will see an untrusted proxy error similar to below in /var/log/nifi/nifi-user.log:
 ```
 [NiFi Web Server-172] o.a.n.w.s.NiFiAuthenticationFilter Rejecting access to web api: Untrusted proxy CN=FQDN_OF_NODE_X, OU=LAB.HORTONWORKS.NET
 ```
+
 In the above case, you would need to double check that the 'Node identity' values you provided in Ambari match the one from the log file (e.g. CN=FQDN_OF_NODE_X, OU=LAB.HORTONWORKS.NET) and ensure the values are not commented out. Next, you would manually delete /var/lib/nifi/conf/authorizations.xml from *all nodes running Nifi* and then restart Nifi service via Ambari.
 
 
