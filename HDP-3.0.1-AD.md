@@ -1239,7 +1239,7 @@ In the above case, you would need to double check that the 'Node identity' value
 
 
 
-## Generate client certificate to login
+## Authenticate to secured NiFi using certificate
 
 In order to login to SSL-enabled Nifi, you will need to generate a client certificate and import into your browser. If you used the CA, you can use tls-toolkit that comes with Nifi CA:
 
@@ -1303,7 +1303,7 @@ chmod 755 /tmp/keystore.p12
 scp -i ~/.ssh/mykeypair.pem centos@IP_ADDRESS:/tmp/keystore.p12 ~/Downloads/
 ```
 
-## Import certificate to your browser
+- Now import certificate to your browser
 The exact steps depend on your OS and browser.
 
 For example if using Chrome on Mac, use “Keychain Access” app: File > Import items > Enter password from above (you will need to type it out)
@@ -1312,7 +1312,12 @@ For Firefox example see [here](https://blog.rosander.ninja/nifi/toolkit/tls/2016
 
 ## Check Nifi access
 
-Now you open Nifi UI using the Quicklink in Ambari. After selecting the certificate you imported earlier, follow the below screens to get through Chrome warnings and access the Nifi UI - the exact steps will depend on your browser:
+Now lets test that we can login to secured NiFi using the certificate we just imported. Recall that after enabling TLS, the NiFi webUI url has changed from:
+  - http://nifi_hostname:9090 to
+  - https://nifi_hostname:9091  
+
+
+After selecting the certificate you imported earlier, follow the below screens to get through Chrome warnings and access the Nifi UI - the exact steps will depend on your browser:
 
 - a) Select the certificate you just imported
 - b) Choose "Always Allow"
