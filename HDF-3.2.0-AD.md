@@ -334,7 +334,7 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
   - token password must be 16 chars e.g. BadPass#1BadPass#1
   - add the identity mappings by default
     - nifi.security.identity.mapping.pattern.dn=`^CN=(.*?), OU=(.*?)$`
-    - nifi.security.identity.mapping.value.dn=`$1@$2`
+    - nifi.security.identity.mapping.value.dn=`$1`
 
 
 Screenshots:
