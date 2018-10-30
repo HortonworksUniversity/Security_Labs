@@ -1310,12 +1310,11 @@ For Firefox example see [here](https://blog.rosander.ninja/nifi/toolkit/tls/2016
 
 Now you open Nifi UI using the Quicklink in Ambari. After selecting the certificate you imported earlier, follow the below screens to get through Chrome warnings and access the Nifi UI - the exact steps will depend on your browser:
 
-a) Select the certificate you just imported
-b) Choose "Always Allow"
-c) Since the certificate was self-signed, Chrome will warn you that the connection is not private. Click "Show Advanced" and click the "Proceed to <hostname>" link
-d) At this point, the Nifi UI should come up.  Note that on the top right, it shows you are logged in as "CN=hadoopadmin, OU=LAB.HORTONWORKS.NET"
-
-e) The /var/log/nifi/nifi-user.log log file will also confirm the user you are getting logged in as:
+- a) Select the certificate you just imported
+- b) Choose "Always Allow"
+- c) Since the certificate was self-signed, Chrome will warn you that the connection is not private. Click "Show Advanced" and click the "Proceed to <hostname>" link
+- d) At this point, the Nifi UI should come up.  Note that on the top right, it shows you are logged in as "CN=hadoopadmin, OU=LAB.HORTONWORKS.NET"
+- e) The /var/log/nifi/nifi-user.log log file will also confirm the user you are getting logged in as:
 ```
 o.a.n.w.s.NiFiAuthenticationFilter Authentication success for CN=hadoopadmin, OU=LAB.HORTONWORKS.NET
 ```
