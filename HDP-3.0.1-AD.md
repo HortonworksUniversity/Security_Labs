@@ -667,8 +667,10 @@ ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
     - Click the dropdown on top right of Ambari UI
     - Click 'Manage Ambari'
     - Under 'Users', select 'hadoopadmin'
+    ![Image](screenshots/hdp3/hdp3-hadoopadmin.png)
     - Change 'Ambari Admin' to Yes 
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-make-user-admin.png)    
+    ![Image](screenshots/hdp3/hdp3-hadoopadmin2.png)
+    
     
 - Sign out and then log back into Ambari, this time as 'hadoopadmin' and verify the user has rights to monitor/manage the cluster
 
@@ -1028,6 +1030,8 @@ exit
 ##### Install Ranger
 
 - Start the Ambari 'Add Service' wizard and select Ranger
+![Image](screenshots/hdp3/hdp3-addservice.png)
+![Image](screenshots/hdp3/hdp3-addranger.png)
 
 - When prompted for where to install it, choose any node you like
 
