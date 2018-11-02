@@ -143,15 +143,15 @@ Credentials will be provided for these services by the instructor:
   
   - From Ambari how do I check the cluster name?
     - It is displayed on the top left of the Ambari dashboard, next to the Ambari logo. If the name appears truncated, you can hover over it to produce a helptext dialog with the full name
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/clustername.png)
+    ![Image](screenshots/hdp3/hdp3-clustername.png)
   
   - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager or Hive) is installed?
     - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-RM-public-host.png)  
+    ![Image](screenshots/hdp3/hdp3-hostname.png)
 
   - From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager or Hive) is installed?
     - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
-    ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-YARN-internal-host.png)  
+    ![Image](screenshots/hdp3/hdp3-internalhostname.png)  
   
   - In future labs you may need to provide private or public hostname of nodes running a particular component (e.g. YARN RM or Mysql or HiveServer)
   
