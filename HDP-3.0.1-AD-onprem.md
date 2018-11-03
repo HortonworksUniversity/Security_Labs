@@ -1046,8 +1046,7 @@ exit
 - (Optional) In case Ranger fails to install, its usually caused by incorrectly entering the Mysql nodes FQDN in the config above. If this happens, delete Ranger service from Ambari and retry.
 
 - (Optional) Enable Deny Conditions in Ranger 
-
-The deny condition in policies is optional by default and must be enabled for use.
+  - The deny condition in policies is optional by default and must be enabled for use.
   - From Ambari>Ranger>Configs>Advanced>Custom ranger-admin-site, add: `ranger.servicedef.enableDenyAndExceptionsInPolicies=true`
   - Restart Ranger
   - More info [here](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/about_ranger_policies.html)
