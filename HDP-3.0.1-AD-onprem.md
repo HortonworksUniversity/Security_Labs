@@ -1246,6 +1246,7 @@ At this point the keystore.pkcs12 has been generated. Rename it to keystore.p12 
 - Command to copy keystore to /tmp:
 ```
 mv keystore.pkcs12 keystore.p12
+mv keystore.p12 /tmp/
 chmod 755 /tmp/keystore.p12
 ```
 
