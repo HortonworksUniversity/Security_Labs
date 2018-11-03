@@ -978,7 +978,7 @@ exit
 
 - When prompted for where to install it, choose any node you like
 
-- On the Ranger Requirements popup windows, you can check the box and continue as we have already completed the pre-requisite steps
+- On "Assigning slaves and clients", click Next to select Ranger tagsync component
 
 - On the 'Customize Services' page of the wizard there are a number of tabs that need to be configured as below
 
