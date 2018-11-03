@@ -1326,6 +1326,7 @@ Attempting to open Nifi UI results in "Access denied" due to insufficient permis
 
 Navigate to the ‘Audit’ tab in Ranger UI and notice that the requesting user showed up on Ranger audit. This shows the Ranger Nifi plugin is working
 
+![Image](screenshots/hdp3/nifi-ranger-auditspage.png)   
 
 - Notice how Ranger is showing details such as below for multiple HDF components:
   - what time access attempt occurred
