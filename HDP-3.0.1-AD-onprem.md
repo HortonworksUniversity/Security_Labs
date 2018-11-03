@@ -1251,7 +1251,7 @@ chmod 755 /tmp/keystore.p12
 
 - Command to transfer keystore to MacBook - run this on your local MacBook, not Linux instance:
 ```
-scp -i ~/.ssh/mykeypair.pem centos@IP_ADDRESS:/tmp/keystore.p12 ~/Downloads/
+scp root@IP_ADDRESS:/tmp/keystore.p12 ~/Downloads/
 ```
 
 - Now import certificate to your browser
