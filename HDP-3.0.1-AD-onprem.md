@@ -1045,10 +1045,6 @@ exit
 
 - (Optional) In case Ranger fails to install, its usually caused by incorrectly entering the Mysql nodes FQDN in the config above. If this happens, delete Ranger service from Ambari and retry.
 
-- **TODO** : 
-- YARN TLS 2.0 fails to come up due to OOM. Set AppTimelineServer Java heap size to 3GB (Need to update BP)
-- Ranger audits shows many Denied audits for YARN as there is no YARN policy in Ranger for HTTP user on default queue. Need to manually create HTTP user and create this policy. (Bug?)
-
 - (Optional) Enable Deny Conditions in Ranger 
 
 The deny condition in policies is optional by default and must be enabled for use.
@@ -1083,7 +1079,7 @@ You can also see log of usersync history here:
 - Confirm HDFS audits working by querying the audits dir in HDFS:
 
 ```
-#### 1 authenticate
+####  1.authenticate
 export PASSWORD=BadPass#1
 
 #detect name of cluster
@@ -1099,7 +1095,7 @@ echo $cluster
 #then kinit as hdfs using the headless keytab and the principal name
 sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluster,,}"
     
-#### 2 read audit dir in hdfs 
+#### 2.read audit dir in hdfs 
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
 
