@@ -1124,7 +1124,9 @@ sudo ambari-server restart
 
 - Install NiFi via Ambari
   - select "Add service"
+![Image](screenshots/hdp3/hdp3-addservice.png)  
   - select NiFi 
+![Image](screenshots/hdp3/hdp3-addnifi.png)    
   - choose any node
   - under clients, select Nifi CA certification
   - set a long password for each required password: BadPass#1BadPass#1
