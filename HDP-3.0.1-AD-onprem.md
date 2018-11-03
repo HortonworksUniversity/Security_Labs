@@ -1139,11 +1139,13 @@ sudo ambari-server restart
 - Also notice that since we installed NiFi on kerberized cluster, Ambari has automatically created its keytab and configured NiFi to run in kerberos mode:
   - Run below on Node running NiFi
 ```
-# klist -kt /etc/security/keytabs/nifi.service.keytab
-
-# cat /etc/nifi/conf/nifi.properties | grep kerberos
-
-# tail /etc/nifi/conf/login-identity-providers.xml  
+klist -kt /etc/security/keytabs/nifi.service.keytab
+```
+```
+cat /etc/nifi/conf/nifi.properties | grep kerberos
+```
+```
+tail /etc/nifi/conf/login-identity-providers.xml  
 ```
 
 ## Enable SSL/TLS for NiFi
@@ -1161,6 +1163,8 @@ sudo ambari-server restart
 <property name="Node Identity 3">CN=FQDN_OF_NODE3, OU=LAB.HORTONWORKS.NET</property>
 ```
   - Note: By default, the node identities are commented out using <!-- and --> tags. As you are updating this field, *make sure you remove these* or you changes will not take affect.
+  
+![Image](screenshots/hdp3/nifi-ssl.png)   
   
 - once the above changes have been made, Ambari will prompt you to restart Nifi.
 
@@ -1296,6 +1300,7 @@ nifi.security.identity.mapping.pattern.dn = ^CN=(.*?), OU=(.*?)$
 nifi.security.identity.mapping.value.dn = $1
 ```
   - More info/examples of identity mapping/conversion [here](https://community.hortonworks.com/articles/61729/nifi-identity-conversion.html)
+![Image](screenshots/hdp3/nifi-idmapping.png)     
   
 - From Ambari, restart Nifi and wait for the Nifi nodes to join back the cluster
 - After about a minute, refresh the Nifi UI and notice now you are logged in as hadoopadmin instead
