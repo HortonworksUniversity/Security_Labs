@@ -1393,6 +1393,7 @@ nifi.security.identity.mapping.value.kerb=$1
 - Restart Nifi via Ambari
 
 - Now when you open NiFi UI, it should prompt you for user/password (if not, try to open in Incognito browser window)
+![Image](screenshots/hdp3/nifi-loginpage.png) 
 
 - You should be able to login as hadoopadmin/BadPass#1
   - If not, use the nifi-user.log and Ranger audits to see what went wrong
