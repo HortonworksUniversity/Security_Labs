@@ -964,8 +964,8 @@ exit
 
 ###### Setup Solr for Ranger audit 
 
-- Starting HDP 2.5, if you have deployed Ambari Infra service installed, this can be used for Ranger audits.
-- **Make sure Ambari Infra service is installed and started before starting Ranger install**
+- Starting HDP 2.5, if you have deployed Ambari Infra Solr service installed, this can be used for Ranger audits.
+- **Make sure Ambari Infra Solr service is installed and started before starting Ranger install**
 
 
 ## Ranger install
