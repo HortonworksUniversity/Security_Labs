@@ -1129,13 +1129,14 @@ sudo ambari-server restart
 ![Image](screenshots/hdp3/hdp3-addnifi.png)    
   - choose any node
   - under "Assign Slaves and clients", ensure "Nifi Certificate Authority" is selected
-  - under "Customize services", under "Advanced-nifi-ambari-config", set a long password for each of the required passwords: `BadPass#1BadPass#1`
+  - under "Customize services", under "Advanced-nifi-ambari-config", set a long password for each of the required passwords: `BadPass#1BadPass#1` then click Next
 ![Image](screenshots/hdp3/hdp3-addnifi-passwords.png)      
+  - Click Proceed anyway (you can ignore the warning about the token not being set for now)   
   
 - After Nifi installs, you can use the Ambari quicklink to open its UI
   - Notice that NiFi UI comes up on port 9090 without any security
   
-- Also notice that since we installed NiFi on kerberized cluster, Ambari has automatically created its keytab and configured NiFi to run kerberos mode:
+- Also notice that since we installed NiFi on kerberized cluster, Ambari has automatically created its keytab and configured NiFi to run in kerberos mode:
   - Run below on Node running NiFi
 ```
 # klist -kt /etc/security/keytabs/nifi.service.keytab
