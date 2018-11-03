@@ -1340,19 +1340,35 @@ Navigate to the ‘Audit’ tab in Ranger UI and notice that the requesting user
 
 To be able to access the Nifi U we will need to create a number of objects. The details below assume you have already setup identity mappings for Nifi (as described in previous article), but you should be able follow similar steps even if you have not.
 
-- Ranger users node identities (in a real customer env, you would not be manually creating these: they would be synced over from Active Directory/LDAP)
+- 1. Ranger users node identities (in a real customer env, you would not be manually creating these: they would be synced over from Active Directory/LDAP)
   - hadoopadmin (already exists)
   - users corresponding to FQDNs of instances where NiFi is running (depending on how many nodes in your NiFi cluster)
 
-- Read policy on /flow for node1-3 identities
+To add user:
+ - Ranger > Settings > User/groups
+![Image](screenshots/hdp3/ranger-users.png)
+- Create user with username corresponding to your hosts hostnames e.g. hdp-training-2.bluemix.net
+![Image](screenshots/hdp3/ranger-addhost.png)   
 
-- Read/write policy on /proxy for node1-3 identities
+- 2. Read policy on /flow for each host identities 
+  - Open Ranger > Nifi repo > Add new policy and create /flow policy as below
+![Image](screenshots/hdp3/nifi-repo.png) 
+![Image](screenshots/hdp3/nifi-policies.png) 
+![Image](screenshots/hdp3/nifi-flow-policy.png) 
 
-- Read/write policy on /data/* for node1-3 identities (needed to list/delete queue)
+- 3. Read/write policy on /proxy for each host identities
+  - Similarly, create /proxy policy as below
+![Image](screenshots/hdp3/nifi-proxy-policy.png) 
 
-- Read/write policy on /* for nifiadmin identity (needed to make nifiadmin an admin)
+- 4. Read/write policy on /data/* for each host identities (needed to list/delete queue)
+  - Similarly, create /data/* policy as below
+![Image](screenshots/hdp3/nifi-data-policy.png) 
 
-- After creating the above, Open Nifi UI via Quicklink and confirm it now opens.
+- 5. Read/write policy on /* for hadoopadmin identity (needed to make hadoopadmin a NiFi admin)
+  - Edit the default NiFi policy (i.e. the first one) and add hadoopadmin
+![Image](screenshots/hdp3/nifi-admin-policy.png) 
+
+- After creating the above, Open Nifi UI via Quicklink and confirm you are now able to login
 
 
 ## Auth via login page instead of certificate
