@@ -1235,6 +1235,7 @@ rm -f keystore.pkcs12 truststore.pkcs12
 ```
 vi config.json
 ```
+![Image](screenshots/hdp3/nifi-toolkit-config-json.png)   
 
 Then re-run tls-toolkit.sh as below:
 ```
@@ -1317,6 +1318,8 @@ o.a.n.w.s.NiFiAuthenticationFilter Authentication success for hadoopadmin
   - ranger-nifi-plugin-enabled is checked
   - xasecure.audit.destination.solr is checked
   - xasecure.audit.destination.solr.zookeepers is not blank
+![Image](screenshots/hdp3/nifi-ranger-audits.png)   
+  
 - Restart NiFi
 
 Attempting to open Nifi UI results in "Access denied" due to insufficient permissions:
