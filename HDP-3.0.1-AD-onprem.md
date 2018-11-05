@@ -1210,12 +1210,14 @@ unzip archive.zip
 - Then run below to generate keystore. You will need to pass in your values for :
   - -D : pass in your “Initial Admin Identity” value
   - -t: pass in your “CA token” value.
-  - -c: pass in the hostname of the node where Nifi CA is running:
+  - -c: pass in the hostname of the node where Nifi CA is running 
 ```
 export JAVA_HOME=/usr/java/default
 ./files/nifi-toolkit-*/bin/tls-toolkit.sh client -c $(hostname -f) -D "CN=hadoopadmin, OU=LAB.HORTONWORKS.NET" -p 10443 -t BadPass#1BadPass#1 -T pkcs12
 ```
 
+  - Note: the hostname provided above, will be the same name you will use to login to NiFi UI via browser, so it should be resolvable by your laptop. If it is not, you can create a hosts entry on your local laptop to enable this.
+  
 - If you pass in the wrong password, you will see an error like:
 ```
 Service client error: Received response code 403 with payload {"hmac":null,"pemEncodedCertificate":null,"error":"forbidden"}
@@ -1286,6 +1288,13 @@ cat /var/lib/nifi/conf/users.xml
 ```
 
 With this you have successfully enabled SSL for Apache Nifi on your HDF cluster and logged in as `CN=hadoopadmin, OU=LAB.HORTONWORKS.NET`
+
+
+#### Troubleshooting Nifi access
+
+If instead of getting logged in to NiFi webUI, you are being shown a login page and prompted for a username and password, it could mean you are entering the wrong hostname into the browser or the hostname you provided while running the tls-toolkit is not resolvable from your laptop:
+- 1. make sure you enter the same hostname into your browser as was passed into tls-toolkit (e.g the output of `hostname -f`)
+- 2. if that hostname is not resolvable from your laptop, create an entry in your local laptop's host file to point to that hostname
 
 ## Setup Identity mappings
 
