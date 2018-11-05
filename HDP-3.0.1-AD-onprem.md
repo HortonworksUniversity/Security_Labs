@@ -1364,7 +1364,7 @@ To add user:
   - Similarly, create a new /data/* policy as below
 ![Image](screenshots/hdp3/nifi-data-policy.png) 
 
-- 5- Read/write policy on /* for hadoopadmin identity (needed to make hadoopadmin a NiFi admin)
+- 5- Read/write policy on * for hadoopadmin identity (needed to make hadoopadmin a NiFi admin)
   - Edit the existing default NiFi policy (i.e. the first one) and add hadoopadmin as below
 ![Image](screenshots/hdp3/nifi-admin-policy.png) 
 
