@@ -1110,7 +1110,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 --->
 ------------------
 
-# Nifi Lab
+# Lab 6
 
 ## Install NiFi
 
@@ -1420,7 +1420,7 @@ tail -f  /var/log/nifi/nifi-user.log
 
 ------------------
 
-# Lab 6a
+# Lab 7a
 
 ## Ranger KMS/Data encryption setup
 
@@ -1487,7 +1487,7 @@ tail -f  /var/log/nifi/nifi-user.log
 
 ------------------
 
-# Lab 6b
+# Lab 7b
 
 ## Ranger KMS/Data encryption exercise
 
@@ -1697,7 +1697,7 @@ sudo -u sales1 kdestroy
 
 ------------------
 
-# Lab 7a
+# Lab 8
 
 ## Secured Hadoop exercises
 
@@ -2367,7 +2367,7 @@ logout
 
 ------------------
 
-# Lab 7b
+# Lab 9
 
 ## Tag-Based Policies (Atlas+Ranger Integration)
 
@@ -2603,7 +2603,7 @@ Notice how in the policies above, ones that deny access always take precedence o
 
 ------------------
 
-# Lab 8
+# Lab 10
 
 ## Knox 
 
@@ -3044,109 +3044,3 @@ beeline -u "jdbc:hive2://<KnoxserverInternalHostName>:8443/;ssl=true;transportMo
 
 ------------------
 
-# Lab 9 - Optional
-
-## Other Security features for Ambari
-
-### Ambari views
-
-- Goal: In this lab we will setup Ambari views on kerborized cluster. 
-
-- Change transport mode back to binary in Hive settings:
-  - In Ambari, under Hive > Configs > set the below and restart Hive component.
-    - hive.server2.transport.mode = binary
-
-- You may also need to change proxy user settings to be less restrictive
-
-- Option 1: Manual setup following [doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.1.0/bk_ambari_views_guide/content/ch_using_ambari_views.html)
- 
-- Restart HDFS and YARN via Ambari
-
-- Access the views:
-  - Files view
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Files-view.png)
-  - Hive view
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Hive-view.png)
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Hive-view-viz.png)
-  - Pig view
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Pig-view.png)
-  - Tez view
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Tez-view.png)  
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Tez-view-viz.png)
-    
-
-###### Enable users to log into Ambari views
-
-- In Ambari follow steps below:
-  - On top right of page, click "Manage Ambari"
-    - under 'Views': Navigate to Hive > Hive > Under 'Permissions' grant sales1 access to Hive view
-    - similarly you can give sales1 access to Files view   
-    - similarly you can give others users access to various views
-
-- At this point, you should be able to login to Ambari as sales1 user and navigate to the views
-
-- Test access as different users (hadoopadmin, sales1, hr1 etc). You can create Ranger policies as needed to grant access to particular groups to  particular resources
-
-    
------------------
-
-
-# Appendix
-
-###### Install SolrCloud
-
-###### Option 1: Install Solr manually
-
-- Manually install Solr *on each node where Zookeeper is running*
-```
-export JAVA_HOME=/usr/java/default   
-sudo yum -y install lucidworks-hdpsearch
-```
-
-###### Option 2: Use Ambari service for Solr
-
-- Install Ambari service for Solr
-```
-VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-sudo git clone https://github.com/HortonworksUniversity/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
-sudo ambari-server restart
-```
-- Login to Ambari as hadoopadmin and wait for all the services to turn green
-- Install Solr by starting the 'Add service' wizard (using 'Actions' dropdown) and choosing Solr. Pick the defaults in the wizard except:
-  - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-placement.png)
-  
-  - On the screen to Customize the Solr service
-    - under 'Advanced solr-config':
-      - set `solr.datadir` to `/opt/ranger_audit_server`    
-      - set `solr.download.location` to `HDPSEARCH`
-      - set `solr.znode` to `/ranger_audits`
-    - under 'Advanced solr-env':
-      - set `solr.port` to `6083`
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/solr-service-configs.png)  
-
-- Under Configure Identities page, you will have to enter your AD admin credentials:
-  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
-  - Admin password: BadPass#1
-
-- Then go through the rest of the install wizard by clicking Next to complete installation of Solr
-
-- (Optional) In case of failure, run below from Ambari node to delete the service so you can try again:
-```
-export SERVICE=SOLR
-export AMBARI_HOST=localhost
-export PASSWORD=BadPass#1
-output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
-CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
-
-#attempt to unregister the service
-curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
-#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-sudo service ambari-server restart
-
-#restart agents on all nodes
-sudo service ambari-agent restart
-```
