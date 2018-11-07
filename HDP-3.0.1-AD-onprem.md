@@ -21,26 +21,26 @@
 - [Lab 5](#lab-5)
   - Ranger install pre-reqs
   - Ranger install
-- [NiFi lab](#nifi-lab)
+- [Lab 6](#lab-6)
   - NiFi install
   - NiFi SSL/TLS
   - NiFi login via browser certificate
   - Nifi identity mappings
   - NiFi Ranger plugin
-- [Lab 6a](#lab-6a)
+- [Lab 7a](#lab-7a)
   - Ranger KMS install
   - Add a KMS on another node
-- [Lab 6b](#lab-6b) 
+- [Lab 7b](#lab-7b) 
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
-- [Lab 7a](#lab-7a)
+- [Lab 8](#lab-8)
   - Secured Hadoop exercises
     - HDFS
     - Hive
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
-- [Lab 7b](#lab-7b)
+- [Lab 9](#lab-9)
   - Tag-Based Policies (Atlas+Ranger Integration)
     - Tag-Based Access Control
     - Attribute-Based Access Control
@@ -48,14 +48,13 @@
 	- Location-Based Access Control
     - Time-Based Policies
   - Policy Evaluation and Precedence
-- [Lab 8](#lab-8)
+- [Lab 10](#lab-10)
   - Install Knox
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
     - WebHDFS
     - Hive
-- [Lab 9](#lab-9---optional)
-  - Configure Ambari views for kerberos
+
 
 ---------------
 
