@@ -2373,11 +2373,15 @@ logout
 
 Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data access and authorization through tags 
 
+#### Atlas Install
+
+Similar to how you installed other components, use Add Service wizard to install Atlas. For all passwords, use: BadPass#1
+
 #### Atlas Preparation
 
 To create Tag-Based Policies, we will first need to create tags in Atlas and associate them to entities
 
-- Go to https://localhost:21000 and login to the Atlas UI using admin/admin for the username and pass
+- Use Ambari quicklink login to the Atlas UI using admin/BadPass#1 for the username and pass
 ![Image](/screenshots/Atlas-login-page.png)
 
 - Select the "TAGS" tab and click on "Create Tag"
