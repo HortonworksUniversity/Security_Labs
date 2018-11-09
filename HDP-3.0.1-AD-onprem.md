@@ -1493,7 +1493,8 @@ tail -f  /var/log/nifi/nifi-user.log
   - policy for hadoopadmin access to HDFS
   - policy for hadoopadmin access to Hive  
   - policy for hadoopadmin access to the KMS keys we created
-
+  
+- Lets begin:
   - Add the user hadoopadmin to the Ranger HDFS global policies. 
     - Access Manager > HDFS > (clustername)_hdfs   
     - This will open the list of HDFS policies
