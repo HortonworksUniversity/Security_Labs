@@ -36,7 +36,7 @@
 - [Lab 8](#lab-8)
   - Secured Hadoop exercises
     - HDFS
-    - Hive
+    - Hive (including row filtering/masking)
     - HBase
     - Sqoop
     - Drop Encrypted Hive table
