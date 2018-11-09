@@ -277,7 +277,7 @@ We will run through a series of labs and step by step, achieve all of the above 
     - hadoopadmin: Admin user (for AD, Ambari, ...)
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-corpusers.png)
   
-  - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
+  - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. ambari etc)
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/AD-serviceusers.png)
   
   - HadoopServices OU: hadoop service principals (will be created by Ambari)
@@ -1940,7 +1940,6 @@ beeline> select code, description from sample_07;
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy.png)
   
 - Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
-  -  This was done using the rangeradmin principal we provided during Ranger install
 
 - Also, notice that permissions are only configurable for allowing access, and you are not able to explicitly deny a user/group access to a resource unless you have enabled Deny Conditions during your Ranger install (step 8).
 
