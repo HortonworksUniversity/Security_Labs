@@ -2002,6 +2002,7 @@ beeline> select code, description, total_emp from sample_07;
 ```
 
 - Go back to the Ranger Audits page and notice how the filter policy was applied to the query
+![Image](/screenshots/hdp3/Ranger-Hive-rowfilter-audit.png)
 
 
 - Suppose we would now like to mask `total_emp` column from sales1.  This is different from denying/dis-allowing access in that the user can query the column but cannot see the actual data 
