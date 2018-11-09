@@ -1704,7 +1704,7 @@ sudo -u sales1 hdfs dfs -ls /apps/hive/tmp
 
 - In Ambari > Hive > Configs > Advanced, change below to newly created dir
   - hive.exec.scratchdir = /apps/hive/tmp
-- Restart Hive
+- Restart Hive and any other components that need it
   
 
 - Destroy ticket for sales1
