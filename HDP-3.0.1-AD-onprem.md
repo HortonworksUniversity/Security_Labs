@@ -1511,7 +1511,7 @@ tail -f  /var/log/nifi/nifi-user.log
     - Edit the 'all - global' policy (the second one) and add hadoopadmin to global HIVE policy and Save  
     ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-table.png) 
     - Your policies now includes hadoopadmin
-     ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
+     ![Image](screenshots/hdp3/Ranger-KMS-HIVE-list-after.png) 
      
     
 - Logout of Ranger
@@ -1537,17 +1537,16 @@ tail -f  /var/log/nifi/nifi-user.log
 - Add user `hadoopadmin` to default KMS key policy
   - Click Access Manager tab
   - Click Service Manager > KMS > (clustername)_kms link
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy.png)
+  ![Image](screenshots/Ranger-KMS-policy.png)
 
   - Edit the default policy
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-policy.png)
+  ![Image](screenshots/Ranger-KMS-edit-policy.png)
   
   - Under 'Select User', Add `hadoopadmin` user and click Save
-   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy-add-nn.png)
+   ![Image](screenshots/hdp3/Ranger-KMS-policy-add-nn.png)
   
     - Note that:
-      - `hdfs` user  needs `GetMetaData` and `GenerateEEK` privilege - HDP 2.5
-      - `nn` user  needs `GetMetaData` and `GenerateEEK` privilege - HDP 2.4
+      - `hdfs` user  needs `GetMetaData` and `GenerateEEK` privilege
       - `hive` user needs `GetMetaData` and `DecryptEEK` privilege
 
   
