@@ -2033,6 +2033,7 @@ beeline> select code, description, total_emp from sample_07;
 ```
 
 - Go back to the Ranger Audits page and notice how the masking policy was applied to the query.
+![Image](/screenshots/hdp3/Ranger-Hive-colmasking-audit.png)
 
 - Exit beeline
 ```
