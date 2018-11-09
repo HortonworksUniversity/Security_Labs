@@ -1657,20 +1657,39 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 ##cat: Access is denied for hdfs since the superuser is not allowed to perform this operation.
 
 ```
+- Now lets move Hive warehouse dir to encrypted folder
 
-- Configure Hive for HDFS Encryption using testkey. [Reference](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/hive-access-encr.html)
+- First let's review contents of Hive warehouse dir before moving anything
 ```
-sudo -u hadoopadmin hdfs dfs -mv /apps/hive /apps/hive-old
-sudo -u hadoopadmin hdfs dfs -mkdir /apps/hive
-sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /apps/hive
-sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /apps/hive-old/warehouse /apps/hive/warehouse
+# sudo -u hadoopadmin hdfs dfs -ls /warehouse/tablespace/managed/hive
+Found 4 items
+drwxrwx---+  - hive hadoop          0 2018-10-26 18:31 /warehouse/tablespace/managed/hive/information_schema.db
+drwxrwx---+  - hive hadoop          0 2018-11-02 18:09 /warehouse/tablespace/managed/hive/sample_07
+drwxrwx---+  - hive hadoop          0 2018-11-02 18:09 /warehouse/tablespace/managed/hive/sample_08
+drwxrwx---+  - hive hadoop          0 2018-10-26 18:31 /warehouse/tablespace/managed/hive/sys.db
+
+
+
+# sudo -u hadoopadmin hdfs dfs -ls /warehouse/tablespace/external/hive
+Found 2 items
+drwxrwxrwx+  - hive hadoop          0 2018-10-26 18:31 /warehouse/tablespace/external/hive/information_schema.db
+drwxr-xr-t+  - hive hadoop          0 2018-10-26 18:32 /warehouse/tablespace/external/hive/sys.db
 ```
 
-- To configure the Hive scratch directory (hive.exec.scratchdir) so that it resides inside the encryption zone:
-  - Ambari > Hive > Configs > Advanced 
-    - hive.exec.scratchdir = /apps/hive/tmp
-  - Restart Hive
-  
+- Configure Hive for HDFS Encryption using testkey
+```
+sudo -u hadoopadmin hdfs dfs -mv /warehouse /warehouse-old
+sudo -u hadoopadmin hdfs dfs -mkdir /warehouse
+sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /warehouse
+sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /warehouse-old /warehouse
+```
+
+- To configure the Hive scratch directory (hive.exec.scratchdir) so that it resides inside an encryption zone:
+  - Create EZ for hive temp
+```
+sudo -u hadoopadmin hdfs dfs -mkdir /apps/hive/tmp
+sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /apps/hive/tmp
+```
 
 - Make sure that the permissions for /apps/hive/tmp are set to 1777
 ```
@@ -1682,6 +1701,11 @@ sudo -u hdfs hdfs dfs -chmod -R 1777 /apps/hive/tmp
 sudo -u sales1 hdfs dfs -ls /apps/hive/tmp
 ## this should provide listing
 ```
+
+- In Ambari > Hive > Configs > Advanced, change below to newly created dir
+  - hive.exec.scratchdir = /apps/hive/tmp
+- Restart Hive
+  
 
 - Destroy ticket for sales1
 ```
