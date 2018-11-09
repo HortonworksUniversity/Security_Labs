@@ -1523,14 +1523,14 @@ tail -f  /var/log/nifi/nifi-user.log
   - Click 'Test connection' and confirm it works
 
 - Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.0/bk_security/content/use_ranger_kms.html)
-  - Select Encryption > Key Management
+  - Select Encryption > Key Manager
   - Select KMS service > pick your kms > Add new Key
     - if an error is thrown, go back and test connection as described in previous step
   - Create a key called `testkey` > Save
   ![Image](screenshots/Ranger-KMS-createkey.png)
 
 - Similarly, create another key called `testkey2`
-  - Select Encryption > Key Management
+  - Select Encryption > Key Manager
   - Select KMS service > pick your kms > Add new Key
   - Create a key called `testkey2` > Save  
 
