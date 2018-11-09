@@ -38,7 +38,6 @@
     - HDFS
     - Hive (including row filtering/masking)
     - HBase
-    - Sqoop
     - Drop Encrypted Hive table
 - [Lab 9](#lab-9)
   - Tag-Based Policies (Atlas+Ranger Integration)
@@ -1721,7 +1720,7 @@ sudo -u sales1 kdestroy
 
 ## Secured Hadoop exercises
 
-In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbase, Sqoop) running on a kerborized cluster and create Ranger appropriate authorization policies for access. If you do not already have HBase installed, and would like to run the excercise, you can install it via Ambari 'Add service' wizard
+In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbase) running on a kerborized cluster and create Ranger appropriate authorization policies for access. If you do not already have HBase installed, and would like to run the excercise, you can install it via Ambari 'Add service' wizard
 
 - We will Configure Ranger policies to:
   - Protect /sales HDFS dir - so only sales group has access to it
@@ -2271,7 +2270,7 @@ mysql -u root -pBadPass#1
 create database people;
 use people;
 create table persons (people_id INT PRIMARY KEY, sex text, bdate DATE, firstname text, lastname text, addresslineone text, addresslinetwo text, city text, postalcode text, ssn text, id2 text, email text, id3 text);
-GRANT ALL PRIVILEGES ON people.* to 'sales1'@'%' IDENTIFIED BY 'BadPass#1';
+GRANT ALL PRIVILEGES ON people.* to 'mysqladmin'@'%' IDENTIFIED BY 'BadPass#1';
 LOAD DATA LOCAL INFILE '~/PII_data_small.csv' REPLACE INTO TABLE persons FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 
 select people_id, firstname, lastname, city from persons where lastname='SMITH';
@@ -2283,31 +2282,21 @@ exit
 logout
 ```
 
-- Create Ranger policy to allow `sales` group `all permissions` on `persons` table in Hive
-  - Access Manager > Hive > (cluster)_hive > Add new policy
-  - Create new policy as below and click Add:
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-create-policy-persons.png) 
+- Create Ranger policy to allow `hadoopadmin` group `all permissions` on `persons` table in Hive
+  - Access Manager > Hive > (cluster)_hive > Add new policy > Enter below info > Click Add
+    - Policy Name: persons
+    - Database: default
+    - table: persons
+    - hive col: *
+    - user: hadoopadmin
+    - permissions: select all
 
-- Create Ranger policy to allow `sales` group `all permissions` on `/ranger/audit/kms` dir in HDFS
-  - Access Manager > HDFS > (cluster)_hdfs > Add new policy
-  - Create new policy as below and click Add:
-  **TODO: add screenshot**
-
-  - Log out of Ranger
-  
-- Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. the key used to encrypt Hive warehouse directories)
-  - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/BadPass#1
-  - Access Manager > KMS > (cluster)_KMS > Add new policy
-  - Create new policy as below and click Add:
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-create-policy-testkey.png)  
-  - Log out of Ranger and re-login as admin/admin
-
-- Login as sales1
+- Login as hadoopadmin
 ```
-sudo su - sales1
+sudo su - hadoopadmin
 ```
 
-- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL. Below are the details of the arguments passed in:
+- As hadoopadmin user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL. Below are the details of the arguments passed in:
   - Table: MySQL table name
   - username: Mysql username
   - password: Mysql password
@@ -2320,7 +2309,14 @@ sudo su - sales1
 kinit
 ## enter BadPass#1 as password
 
-sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table persons --username sales1 --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
+##verify sqoop can connect using the connect info
+sqoop eval --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladmin --password BadPass#1 --query "SELECT * FROM persons limit 10"
+
+```
+
+- Import Mysql table to Hive
+```
+sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username sales1 --password BadPass#1 --table persons --hive-import --create-hive-table --hive-table default.persons
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
 
@@ -2329,7 +2325,7 @@ sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table pe
  java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 ```
 
-- Also note: if the mapreduce job fails saying sales user does not have write access to /apps/hive/warehouse, you will need to create HDFS policy allowing sales1 user and hive access on /apps/hive/warehouse dir 
+- Also note: if the mapreduce job fails saying hive user does not have write access to /warehouse, you will need to create HDFS policy allowing hive user and hive access on /warehouse dir 
 
 - Login to beeline
 ```
