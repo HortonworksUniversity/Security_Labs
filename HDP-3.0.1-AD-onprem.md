@@ -1496,7 +1496,7 @@ tail -f  /var/log/nifi/nifi-user.log
   
 - Lets begin:
   - Add the user hadoopadmin to the Ranger HDFS global policies. 
-    - Access Manager > HDFS > (clustername)_hdfs   
+    - Access Manager > HDFS > (clustername)_hadoop   
     - This will open the list of HDFS policies
    ![Image](screenshots/Ranger-KMS-HDFS-list.png) 
     - Edit the 'all - path' global policy (the first one) and add hadoopadmin to global HDFS policy and Save 
