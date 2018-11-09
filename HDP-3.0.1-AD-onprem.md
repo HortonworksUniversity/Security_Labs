@@ -1510,8 +1510,6 @@ tail -f  /var/log/nifi/nifi-user.log
     ![Image](screenshots/Ranger-KMS-HIVE-list.png) 
     - Edit the 'all - global' policy (the second one) and add hadoopadmin to global HIVE policy and Save  
     ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-table.png) 
-    - Edit the 'all - database, udf' global policy (the second one) and add hadoopadmin to global HIVE policy and Save 
-    ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-udf.png) 
     - Your policies now includes hadoopadmin
      ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
      
