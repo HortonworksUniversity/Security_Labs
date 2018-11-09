@@ -1482,8 +1482,6 @@ tail -f  /var/log/nifi/nifi-user.log
   - After it is installed, you can start it by:
     - Ambari > Ranger KMS > Service Actions > Start
     
-  - Once started you will see multiple KMS Servers running in Ambari:  
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-multiple-KMS.png) 
 
 ------------------
 
