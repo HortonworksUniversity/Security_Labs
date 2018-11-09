@@ -1513,18 +1513,10 @@ tail -f  /var/log/nifi/nifi-user.log
     - Your policies now includes hadoopadmin
      ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
      
-  - Give keyadmin permission to view Audits screen in Ranger:
-    - Settings tab > Permissions
-     ![Image](screenshots/Ranger-user-permissions.png)
-    - Click 'Audit' to change users who have access to Audit screen
-    - Under 'Select User', add 'keyadmin' user
-     ![Image](screenshots/Ranger-user-permissions-audits.png)
-    - Save
-  
     
 - Logout of Ranger
   - Top right > admin > Logout      
-- Login to Ranger as keyadmin/keyadmin
+- Login to Ranger as keyadmin/BadPass#1
 - Confirm the KMS repo was setup correctly
   - Under Service Manager > KMS > Click the Edit icon (next to the trash icon) to edit the KMS repo
   ![Image](screenshots/Ranger-KMS-edit-repo.png) 
@@ -2286,7 +2278,7 @@ logout
   - Log out of Ranger
   
 - Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. the key used to encrypt Hive warehouse directories)
-  - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/keyadmin
+  - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/BadPass#1
   - Access Manager > KMS > (cluster)_KMS > Add new policy
   - Create new policy as below and click Add:
   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-create-policy-testkey.png)  
