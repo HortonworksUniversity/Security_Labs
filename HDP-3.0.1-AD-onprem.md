@@ -1721,7 +1721,7 @@ sudo -u sales1 kdestroy
 
 ## Secured Hadoop exercises
 
-In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbase, Sqoop) running on a kerborized cluster and create Ranger appropriate authorization policies for access.
+In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbase, Sqoop) running on a kerborized cluster and create Ranger appropriate authorization policies for access. If you do not already have HBase installed, and would like to run the excercise, you can install it via Ambari 'Add service' wizard
 
 - We will Configure Ranger policies to:
   - Protect /sales HDFS dir - so only sales group has access to it
