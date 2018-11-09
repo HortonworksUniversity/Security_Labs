@@ -1771,8 +1771,6 @@ hdfs dfs -ls /sales
 - This time it fails with authorization error: 
   - `Permission denied: user=sales1, access=READ_EXECUTE, inode="/sales":hadoopadmin:hdfs:d---------`
 
-- Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
-
 - In Ranger, click on 'Audit' to open the Audits page and filter by below. 
   - Service Type: `HDFS`
   - User: `sales1`
