@@ -1507,8 +1507,8 @@ tail -f  /var/log/nifi/nifi-user.log
   - Add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
     - This will open the list of HIVE policies
-    [Image](screenshots/Ranger-KMS-HIVE-list.png) 
-    - Edit the 'all - database, table, column' global policy (the first one) and add hadoopadmin to global HIVE policy and Save  
+    ![Image](screenshots/Ranger-KMS-HIVE-list.png) 
+    - Edit the 'all - global' policy (the second one) and add hadoopadmin to global HIVE policy and Save  
     ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-table.png) 
     - Edit the 'all - database, udf' global policy (the second one) and add hadoopadmin to global HIVE policy and Save 
     ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-udf.png) 
