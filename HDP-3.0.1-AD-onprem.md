@@ -2316,7 +2316,7 @@ sqoop eval --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladmin
 
 - Import Mysql table to Hive
 ```
-sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username sales1 --password BadPass#1 --table persons --hive-import --create-hive-table --hive-table default.persons
+sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladmin --password BadPass#1 --table persons --hive-import --create-hive-table --hive-table default.persons
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
 
