@@ -263,6 +263,7 @@ Use case: Customer has an existing cluster which they would like you to secure f
   - Configure Ranger policies to:
     - Protect /sales HDFS dir - so only sales group has access to it
     - Protect sales hive table - so only sales group has access to it
+      - Fine grained access: sales users should only have access to code, description columns in default.sample_07, but only for rows where total_emp<5000. Also total_emp column should be masked
     - Protect sales HBase table - so only sales group has access to it
   - Install Knox and integrate with AD - for perimeter security and give clients access to APIs w/o dealing with kerberos
   - Enable Ambari views to work on secured cluster
@@ -2082,7 +2083,7 @@ logout
 
 
 
-- We have setup Hive authorization policies to ensure only sales users have access to code, description columns in default.sample_07
+- We have setup Hive authorization policies to ensure only sales users have access to code, description columns in default.sample_07, but only for rows where total_emp<5000. 
 
 
 #### Access secured HBase
