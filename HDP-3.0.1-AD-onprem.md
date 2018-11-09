@@ -1732,14 +1732,9 @@ In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbas
 - Goal: Create a /sales dir in HDFS and ensure only users belonging to sales group (and admins) have access
  
  
-- Login to Ranger (using admin/admin) and confirm the HDFS repo was setup correctly in Ranger
+- Login to Ranger (using admin/BadPass#1) and confirm the HDFS repo was setup correctly in Ranger
   - In Ranger > Under Service Manager > HDFS > Click the Edit icon (next to the trash icon) to edit the HDFS repo
   - Click 'Test connection' 
-  - if it fails re-enter below fields and re-try:
-    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
-    - Password: BadPass#1
-    - RPC Protection type: Authentication
-  - Once the test passes, click Save  
   
    
 - Create /sales dir in HDFS as hadoopadmin
@@ -1879,10 +1874,6 @@ logout
 - Confirm the HIVE repo was setup correctly in Ranger
   - In Ranger > Service Manager > HIVE > Click the Edit icon (next to the trash icon) to edit the HIVE repo
   - Click 'Test connection' 
-  - if it fails re-enter below fields and re-try:
-    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
-    - Password: BadPass#1
-  - Once the test passes, click Save  
 
 - Now run these steps from node where Hive (or client) is installed 
 
