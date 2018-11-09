@@ -1516,9 +1516,9 @@ tail -f  /var/log/nifi/nifi-user.log
   - Add the user hadoopadmin to the Ranger YARN global policies. 
     - Access Manager > YARN > (clustername)_yarn   
     - This will open the list of YARN policies
-    ![Image](screenshots/Ranger-KMS-YARN-list.png) 
-    - Edit the 'all - global' policy (the second one) and add hadoopadmin to global HIVE policy and Save  
-    ![Image](screenshots/Ranger-KMS-YARN-add-hadoopadmin.png) 
+    ![Image](screenshots/hdp3/Ranger-KMS-YARN-list.png) 
+    - Edit the 'all - global' policy (the second one) and add hadoopadmin to global YARN policy and Save  
+    ![Image](screenshots/hdp3/Ranger-KMS-YARN-add-hadoopadmin.png) 
    
     
 - Logout of Ranger
