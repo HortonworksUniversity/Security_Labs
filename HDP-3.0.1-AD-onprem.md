@@ -2449,22 +2449,22 @@ To create Tag-Based Policies, we will first need to create tags in Atlas and ass
 
 - Now, in the same manner, associate the "EXPIRES_ON" tag to the "sample_08" table
 	When prompted, select a date in the past for "expiry_date"
-![Image](/screenshots/Atlas-tag-item-expires-on.png)
+![Image](/screenshots/hdp3/Atlas-tag-item-expires-on.png)
 
 - In the search results panel, click on the "sample_08" link
-![Image](/screenshots/Atlas-search-table.png)
+![Image](/screenshots/hdp3/Atlas-search-table2.png)
 
 - Scroll down and select the "Schema" tab
-![Image](/screenshots/Atlas-select-table-schema.png)
+![Image](/screenshots/hdp3/Atlas-select-table-schema.png)
 
 - Select the "+" button under the Tag column for "salary" and associate the `Restricted` tag to it
 
 - Select the "+" button under the Tag column for "total_emp" and associate the `Sensitive` tag to it
 	- When prompted, input `5` for the "level"
-![Image](/screenshots/Atlas-tag-item-sensitive.png)
+![Image](/screenshots/hdp3/Atlas-tag-item-sensitive.png)
 
 - On the "sample_08" table schema page you should see the table columns with the associated tags
-![Image](/screenshots/Atlas-associated-column-tags.png)
+![Image](/screenshots/hdp3/Atlas-associated-column-tags.png)
 
 We have now completed our preparation work in Atlas and have created the following tags and associations:
 	- "Private" tag associated to "sample_08" table
