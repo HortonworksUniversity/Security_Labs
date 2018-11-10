@@ -2498,6 +2498,9 @@ We should now be able to create Tag-Based Policies for Hive
 #### Tag-Based Access Control
 Goal: Create a Tag-Based policy for sales to access all entities tagged as "Private"
 
+- Restart Tagsync once before creating tag based policies
+  - Ambari > Ranger > Actions > restart tagsyncs
+  
 - Select "Access Manager" and then "Tag Based Policies" from the upper left hand corner of the main Ranger UI page
 ![Image](/screenshots/Ranger-navigate-to-tag-based-policies.png)
 
@@ -2512,9 +2515,9 @@ Goal: Create a Tag-Based policy for sales to access all entities tagged as "Priv
 	- Under "Allow Conditions"
 		- Select Group: `sales`
 		- Component Permissions: (select `Hive` and enable all actions)
+		![Image](/screenshots/hdp3/Ranger-tagbased-hive-permissions.png)
 	- Add
-![Image](/screenshots/Ranger-Tags-create-tbac.png)
-![Image](/screenshots/Ranger-Tags-component-permissions.png)
+![Image](/screenshots/hdp3/Ranger-tagbased-private.png)
 
 - Run these steps from node where Hive (or client) is installed 
 
@@ -2527,10 +2530,26 @@ klist
 ```
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
 ```
-- Now try accessing table "sample_08" and notice how you have access to all the contents of the table
+- Now try accessing table "sample_08" and notice that the access fails:
 ```
 beeline> select * from sample_08;
 ```
+- From Ranger audits, and it should show that it is due to the EXPIRES_ON policy
+
+- Lets disable the policy for now
+  -  On the "tags Policies" page, select EXPIRES_ON and click disable
+![Image](/screenshots/hdp3/Ranger-disable-expireson.png)
+
+- Wait 30s
+
+- Now try accessing table "sample_08" and notice that access works:
+```
+beeline> select * from sample_08;
+```
+
+- Check Ranger audits to confirm this was due to the tag based policy
+![Image](/screenshots/hdp3/Ranger-audits-tagbasedaccess.png)
+
 
 #### Attribute-Based Access Control
 Goal: Disallow everybody's access to data tagged as "Sensitive" and has an attribute "level" 5 or above
