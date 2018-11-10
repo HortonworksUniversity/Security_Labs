@@ -2384,7 +2384,7 @@ Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data
 #### Ranger policies for Atlas
 
 - Open the Ranger policies for Atlas and edit the first one "all - entity-type, entity-classification, entity"
-  - Add "Read Entity" "Create Entity" permission for kafka on all Atlas entities
+  - Add "Read Entity" "Create Entity" permission for kafka on all Atlas entities (see last entry in screenshot below)
 ![Image](/screenshots/hdp3/Ranger-atlas-kafka.png)
 
 - Create two new Ranger policies for Kafka
@@ -2409,10 +2409,10 @@ To create Tag-Based Policies, we will first need to create tags in Atlas and ass
 - Use Ambari quicklink login to the Atlas UI using admin/BadPass#1 for the username and pass
 ![Image](/screenshots/Atlas-login-page.png)
 
-- Select the "TAGS" tab and click on "Create Tag"
+- Select the "Classification" tab and click on "Create Classification"
 ![Image](/screenshots/hdp3/atlas-classification-before.png)
 
-- Create a new tag by inputing
+- Create a new tag/classification by inputing
 	- Name: `Private`
 	- Create
 ![Image](/screenshots/hdp3/atlas-classification-private.png)
@@ -2429,7 +2429,7 @@ To create Tag-Based Policies, we will first need to create tags in Atlas and ass
 	- Type: `int`
 ![Image](/screenshots/hdp3/atlas-classification-expireson.png)
 
-- Under the "Tags" tab in the main screen you should see the list of newly created tags
+- Under the "Classification" tab in the main screen you should see the list of newly created tags
 ![Image](/screenshots/hdp3/atlas-classification-after.png)
 
 - In the search tab search using the following:
