@@ -2617,13 +2617,16 @@ Goal: Restrict access to data based on a user's physical location at the time.
 			- If you are outside of USA use `country_code!='USA'` instead
 		- Component Permissions: (select `Hive` and enable all actions)
 	- Add
-![Image](/screenshots/Ranger-Tags-create-lba-1.png)
-![Image](/screenshots/Ranger-Tags-create-lba-2.png)
+![Image](/screenshots/hdp3/Ranger-locationbased-policy.png)
 
-- Wait 30 seconds and try run the below query.  Notice how you are now denied access to the "salary" column because of your location
+- Wait 30 seconds and try run the below query and notice it fails
 ```
 beeline> select code, description, salary from sample_08;
 ```
+
+- Audits show how you are now denied access to the "salary" column because of your location
+![Image](/screenshots/hdp3/Ranger-locationbased-audit.png)
+
 
 #### Time-Based Policies
 Goal: To place an expiry date on sales' access policy to data tagged as "Private" after which access will be denied
