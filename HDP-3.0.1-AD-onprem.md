@@ -2409,27 +2409,27 @@ To create Tag-Based Policies, we will first need to create tags in Atlas and ass
 ![Image](/screenshots/Atlas-login-page.png)
 
 - Select the "TAGS" tab and click on "Create Tag"
-![Image](/screenshots/Atlas-select-create-tag.png)
+![Image](/screenshots/hdp3/atlas-classification-before.png)
 
 - Create a new tag by inputing
 	- Name: `Private`
 	- Create
-![Image](/screenshots/Atlas-create-tag.png)
+![Image](/screenshots/hdp3/atlas-classification-private.png)
 
 - Repeat the tag creation process above and create an additional tag named "Restricted" 
 
 - Create a third tag named "Sensitive", however, during creation, click on "Add New Attributes" and input:
 	- Attribute Name: `level`
 	- Type: `int`
-![Image](/screenshots/Atlas-sensitive-tag-creation.png)
+![Image](/screenshots/hdp3/atlas-classification-sensitive.png)
 
 - Create a fourth tag named "EXPIRES_ON", and during creation, click on "Add New Attributes" and input:
 	- Attribute Name: `expiry_date`
 	- Type: `int`
-![Image](/screenshots/Atlas-expires-on-tag-creation.png)
+![Image](/screenshots/hdp3/atlas-classification-expireson.png)
 
 - Under the "Tags" tab in the main screen you should see the list of newly created tags
-![Image](/screenshots/Atlas-created-tags.png)
+![Image](/screenshots/hdp3/atlas-classification-after.png)
 
 - In the search tab search using the following:
 	- Search By Type: `hive_table`
