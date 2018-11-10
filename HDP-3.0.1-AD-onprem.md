@@ -2672,12 +2672,10 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
     - Reason: in a later lab after we enable SSL for Ambari, it will run on port 8443
   - When prompted for the `Knox Master Secret`, set it to `knox`
   - Do *not* use password with special characters (like #, $ etc) here as seems beeline may have problem with it
-   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-Knox-install.png)
+   ![Image](/screenshots/hdp3/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 
-- We will use Knox further in a later exercise.
-  
-- After the install completed, Ambari will show that a number of services need to be restarted. Ignore this for now, we will restart them at a later stage.
+- Restart any that services need to be restarted
 
 ### Knox Configuration 
 
