@@ -2378,7 +2378,8 @@ Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data
 
 #### Atlas Install
 
-Similar to how you installed other components, use Add Service wizard to install Atlas. For all passwords, use: BadPass#1
+- Similar to how you installed other components, use Add Service wizard to install Atlas. For password, use: BadPass#1
+- Restart all components that require it
 
 #### Ranger policies for Atlas
 
