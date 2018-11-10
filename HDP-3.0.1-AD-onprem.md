@@ -2867,7 +2867,7 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
 
             <service>
                 <role>NAMENODE</role>
-                <url>hdfs://{{namenode_host}}:{{namenode_rpc_port}}</url>
+                <url>{{namenode_address}}</url>
             </service>
 
             <service>
@@ -2877,7 +2877,7 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
 
             <service>
                 <role>WEBHDFS</role>
-                <url>http://{{namenode_host}}:{{namenode_http_port}}/webhdfs</url>
+                {{webhdfs_service_urls}}
             </service>
 
             <service>
@@ -2889,6 +2889,12 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
                 <role>OOZIE</role>
                 <url>http://{{oozie_server_host}}:{{oozie_server_port}}/oozie</url>
             </service>
+
+            <service>
+                <role>OOZIEUI</role>
+                <url>http://{{oozie_server_host}}:{{oozie_server_port}}/oozie/</url>
+            </service>
+
 
             <service>
                 <role>WEBHBASE</role>
@@ -2904,6 +2910,47 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
                 <role>RESOURCEMANAGER</role>
                 <url>http://{{rm_host}}:{{rm_port}}/ws</url>
             </service>
+
+            <service>
+                <role>DRUID-COORDINATOR-UI</role>
+                {{druid_coordinator_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-COORDINATOR</role>
+                {{druid_coordinator_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-OVERLORD-UI</role>
+                {{druid_overlord_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-OVERLORD</role>
+                {{druid_overlord_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-ROUTER</role>
+                {{druid_router_urls}}
+            </service>
+
+            <service>
+                <role>DRUID-BROKER</role>
+                {{druid_broker_urls}}
+            </service>
+
+            <service>
+                <role>ZEPPELINUI</role>
+                {{zeppelin_ui_urls}}
+            </service>
+
+            <service>
+                <role>ZEPPELINWS</role>
+                {{zeppelin_ws_urls}}
+            </service>
+
         </topology>
 ```
 
