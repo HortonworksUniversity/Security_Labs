@@ -2380,6 +2380,27 @@ Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data
 
 Similar to how you installed other components, use Add Service wizard to install Atlas. For all passwords, use: BadPass#1
 
+#### Ranger policies for Atlas
+
+- Open the Ranger policies for Atlas and edit the first one "all - entity-type, entity-classification, entity"
+  - Add "Read Entity" "Create Entity" permission for kafka on all Atlas entities
+![Image](/screenshots/hdp3/Ranger-atlas-kafka.png)
+
+- Create two new Ranger policies for Kafka
+  - Allow atlas user Consume/Describe on ATLAS_HOOK topic
+![Image](/screenshots/hdp3/Ranger-kafka-atlashook.png)
+  - Allow atlas user Publish/Describe on ATLAS_ENTITIES topic plus rangertagsync user Consume/Describe ATLAS_ENTITIES topic
+![Image](/screenshots/hdp3/Ranger-kafka-atlasentities.png)
+
+#### Import Hive entities via bridge
+
+- How do we get Atlas to recognize the Hive tables we already created before installing Atlas?
+
+- Run import-hive.sh as root
+```
+/usr/hdp/current/atlas-server/hook-bin/import-hive.sh -Dsun.security.jgss.debug=true -Djavax.security.auth.useSubjectCredsOnly=false -Djava.security.krb5.conf=/etc/krb5.conf -Djava.security.auth.login.config=/etc/kafka/conf/kafka_jaas.conf
+```
+
 #### Atlas Preparation
 
 To create Tag-Based Policies, we will first need to create tags in Atlas and associate them to entities
