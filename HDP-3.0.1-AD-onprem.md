@@ -2563,18 +2563,23 @@ Goal: Disallow everybody's access to data tagged as "Sensitive" and has an attri
 			- Note: Boolean expressions are written in Javascript
 		- Component Permissions: (select `Hive` and enable all actions)
 	- Add
-![Image](/screenshots/Ranger-Tags-create-abac-1.png)
-![Image](/screenshots/Ranger-Tags-create-abac-2.png)
+![Image](/screenshots/hdp3/Ranger-Tags-create-abac-2.png)
 
 - Wait 30 seconds before trying to access the "total_emp" column in table "sample_08" and notice how you are denied access
 ```
 beeline> select total_emp from sample_08;
 ```
 
+- Audits show that the access was denied because the column is marked Sensitive data which no one is allowed access:
+![Image](/screenshots/hdp3/Ranger-abac-audit-sensitive.png)
+
 - Now try to access the other columns and notice how you are allowed access to them access
 ```
 beeline> select code, description, salary from sample_08;
 ```
+
+- Audits show that the access was allowed, which policy allowed access (policy ID0 as well as the query itself:
+![Image](/screenshots/hdp3/Ranger-abac-audit-sensitive.png)
 
 #### Tag-Based Masking 
 Goal: Mask data tagged as "Restricted"
