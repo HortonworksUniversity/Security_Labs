@@ -2675,7 +2675,7 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
    ![Image](/screenshots/hdp3/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 
-- Restart any that services need to be restarted
+- Do not restart affected services yet, because we need to change HDFS configs for Knox next
 
 - Troubleshooting Knox install
   - If Knox install fails with `JAR does not exist or is not a normal file: /var/lib/ambari-agent/lib/fast-hdfs-resource.jar`:
@@ -2684,6 +2684,20 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
     - Make sure you configured Knox to use a port that is not already in use
 
 ### Knox Configuration 
+
+#### HDFS Configuration for Knox
+
+-  Tell Hadoop to allow our users to access Knox from any node of the cluster. Modify the below properties under Ambari > HDFS > Config > Custom core-site  ('users' group should already part of the groups so just add the rest)
+  - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
+  - hadoop.proxyuser.knox.hosts=*
+    - (better would be to put a comma separated list of the FQDNs of the hosts)
+  - Now restart HDFS
+  - Without this step you will see an error like below when you run the WebHDFS request later on:
+  ```
+   org.apache.hadoop.security.authorize.AuthorizationException: User: knox is not allowed to impersonate sales1"
+  ```
+  
+  
 
 #### Knox Configuration for AD authentication
  
@@ -2893,19 +2907,8 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
         </topology>
 ```
 
-- Then restart Knox via Ambari
+- At this point, you can restart Knox and all other impacted servces via Ambari
 
-#### HDFS Configuration for Knox
-
--  Tell Hadoop to allow our users to access Knox from any node of the cluster. Modify the below properties under Ambari > HDFS > Config > Custom core-site  ('users' group should already part of the groups so just add the rest)
-  - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
-  - hadoop.proxyuser.knox.hosts=*
-    - (better would be to put a comma separated list of the FQDNs of the hosts)
-  - Now restart HDFS
-  - Without this step you will see an error like below when you run the WebHDFS request later on:
-  ```
-   org.apache.hadoop.security.authorize.AuthorizationException: User: knox is not allowed to impersonate sales1"
-  ```
 
 
 #### Ranger Configuration for WebHDFS over Knox
