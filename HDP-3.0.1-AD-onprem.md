@@ -2537,7 +2537,7 @@ beeline> select * from sample_08;
 - Check Ranger audits, and it should show that it is due to the EXPIRES_ON policy
 
 - Lets disable the policy for now
-  -  On the "tags Policies" page, select EXPIRES_ON and click disable
+  -  On the "tags Policies" page, select EXPIRES_ON and click disable and Save
 ![Image](/screenshots/hdp3/Ranger-disable-expireson.png)
 
 - Wait 30s
