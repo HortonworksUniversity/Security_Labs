@@ -2436,16 +2436,16 @@ To create Tag-Based Policies, we will first need to create tags in Atlas and ass
 	- Search By Type: `hive_table`
 	- Search By Text: `sample_08`
 	- Search
-![Image](/screenshots/Atlas-search-table.png)
+![Image](/screenshots/hdp3/Atlas-search-table.png)
 
 - To associate a tag to the "sample_08" table, click on the "+" under the Tags column in the search results for "sample_08"
-![Image](/screenshots/Atlas-search-result.png)
+![Image](/screenshots/hdp3/Atlas-search-result.png)
 
 - From the dropdown select `Private` and click `Add`
-![Image](/screenshots/Atlas-attach-tag.png)
+![Image](/screenshots/hdp3/Atlas-attach-tag.png)
 
 - You should see that the "Private" tag has been associated to the "sample_08" table
-![Image](/screenshots/Atlas-associated-table-tags.png)
+![Image](/screenshots/hdp3/Atlas-associated-table-tags.png)
 
 - Now, in the same manner, associate the "EXPIRES_ON" tag to the "sample_08" table
 	When prompted, select a date in the past for "expiry_date"
