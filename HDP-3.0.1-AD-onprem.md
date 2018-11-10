@@ -2922,7 +2922,7 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
   - Permission: check Allow
   - Add
 
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-knox-webhdfs-policy.png)
+![Image](/screenshots/hdp3/Ranger-knox-webhdfs-policy.png)
 
 #### WebHDFS over Knox exercises 
 
