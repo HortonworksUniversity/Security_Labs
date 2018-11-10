@@ -2631,21 +2631,16 @@ beeline> select code, description, salary from sample_08;
 #### Time-Based Policies
 Goal: To place an expiry date on sales' access policy to data tagged as "Private" after which access will be denied
 
-- Return to the Ranger "tags Policies" page ("Access" tab)and "Add New Policy" with the below parameters.  You may already have default policy named "EXPIRES_ON", if so, please delete it before clicking "Add New Policy" 
-	- Policy Name: `EXPIRES_ON`
-	- TAG: `EXPIRES_ON`
-	- Under "Deny Conditions" 
-		- Select Group: `public`
-		- Policy Conditions/Accessed after expiry_date: `yes`
-		- Component Permissions: (select `Hive` and enable all actions)
-	- Add
-![Image](/screenshots/Ranger-Tags-create-eo-1.png)
-![Image](/screenshots/Ranger-Tags-create-eo-2.png)
+- Return to the Ranger "tags Policies" page ("Access" tab) and re-enable the default policy named "EXPIRES_ON"
 
-- Wait 30 seconds and try run the below query.  Notice how you are now denied access to the entire "sample_08" table because it is accessed after the expiry date tagged in Atlas
+![Image](/screenshots/hdp3/Ranger-timebased-policy.png)
+
+- Wait 30 seconds and try run the below query. This will fail
 ```
 beeline> select code, description from sample_08;
 ```
+-  Audits show how you are now denied access to the entire "sample_08" table because it is accessed after the expiry date tagged in Atlas
+![Image](/screenshots/hdp3/Ranger-timebased-audit.png)
 
 - Exit beeline
 ```
