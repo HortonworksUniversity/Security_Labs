@@ -2438,7 +2438,7 @@ To create Tag-Based Policies, we will first need to create tags in Atlas and ass
 	- Search
 ![Image](/screenshots/hdp3/Atlas-search-table.png)
 
-- To associate a tag to the "sample_08" table, click on the "+" under the Tags column in the search results for "sample_08"
+- To associate a tag to the "sample_08" table, click on the "+" under the Classifications column in the search results for "sample_08"
 ![Image](/screenshots/hdp3/Atlas-search-result.png)
 
 - From the dropdown select `Private` and click `Add`
