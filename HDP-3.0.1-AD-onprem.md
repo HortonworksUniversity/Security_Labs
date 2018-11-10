@@ -2534,7 +2534,7 @@ beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@L
 ```
 beeline> select * from sample_08;
 ```
-- From Ranger audits, and it should show that it is due to the EXPIRES_ON policy
+- Check Ranger audits, and it should show that it is due to the EXPIRES_ON policy
 
 - Lets disable the policy for now
   -  On the "tags Policies" page, select EXPIRES_ON and click disable
