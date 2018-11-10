@@ -2932,15 +2932,15 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
   - -u (aka –user) is used to provide the credentials to be used when the client is challenged by the gateway.
   - Note that most of the samples do not use the cookie features of cURL for the sake of simplicity. Therefore we will pass in user credentials with each curl request to authenticate.
 
-- *From the host where Knox is running*, send the below curl request to 8443 port where Knox is running to run `ls` command on `/` dir in HDFS:
+- *From the host where Knox is running*, send the below curl request to the port where Knox is running to run `ls` command on `/` dir in HDFS:
 ```
-curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+curl -ik -u sales1:BadPass#1 https://localhost:8444/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
   - This should return json object containing list of dirs/files located in root dir and their attributes
 
 - To avoid passing password on command prompt you can pass in just the username (to avoid having the password captured in the shell history). In this case, you will be prompted for the password  
 ```
-curl -ik -u sales1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+curl -ik -u sales1 https://localhost:8444/gateway/default/webhdfs/v1/?op=LISTSTATUS
 
 ## enter BadPass#1
 ```
@@ -2950,7 +2950,7 @@ curl -ik -u sales1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTA
 - Try the same request as hr1 and notice it fails with `Error 403 Forbidden` :
   - This is expected since in the policy above, we only allowed sales group to access WebHDFS over Knox
 ```
-curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+curl -ik -u hr1:BadPass#1 https://localhost:8444/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
 
 - Notice that to make the requests over Knox, a kerberos ticket is not needed - the user authenticates by passing in AD/LDAP credentials
@@ -2969,13 +2969,13 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     - You can pass in the value from your setup and make the request without passing in credentials:
       - Make sure you copy the JSESSIONID from a request that worked (i.e the one from sales1 not hr1)
   ```
-  curl -ik --cookie "JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly" -X GET https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+  curl -ik --cookie "JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly" -X GET https://localhost:8444/gateway/default/webhdfs/v1/?op=LISTSTATUS
   ```
   
   - B. Open file via WebHDFS
     - Sample command to list files under /tmp:
     ```
-    curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
+    curl -ik -u sales1:BadPass#1 https://localhost:8444/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
     ```
       - You can run below command to create a test file into /tmp
       
@@ -2989,19 +2989,19 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
       
     - Open this file via WebHDFS 
     ```
-    curl -ik -u sales1:BadPass#1 -X GET https://localhost:8443/gateway/default/webhdfs/v1/tmp/testfile.txt?op=OPEN
+    curl -ik -u sales1:BadPass#1 -X GET https://localhost:8444/gateway/default/webhdfs/v1/tmp/testfile.txt?op=OPEN
     ```
       - Look at value of Location header. This will contain a long url 
       ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/knox-location.png)
             
     - Access contents of file /tmp/testfile.txt by passing the value from the above Location header
     ```
-    curl -ik -u sales1:BadPass#1 -X GET '{https://localhost:8443/gateway/default/webhdfs/data/v1/webhdfs/v1/tmp/testfile.txt?_=AAAACAAAABAAAAEwvyZNDLGGNwahMYZKvaHHaxymBy1YEoe4UCQOqLC7o8fg0z6845kTvMQN_uULGUYGoINYhH5qafY_HjozUseNfkxyrEo313-Fwq8ISt6MKEvLqas1VEwC07-ihmK65Uac8wT-Cmj2BDab5b7EZx9QXv29BONUuzStCGzBYCqD_OIgesHLkhAM6VNOlkgpumr6EBTuTnPTt2mYN6YqBSTX6cc6OhX73WWE6atHy-lv7aSCJ2I98z2btp8XLWWHQDmwKWSmEvtQW6Aj-JGInJQzoDAMnU2eNosdcXaiYH856zC16IfEucdb7SA_mqAymZuhm8lUCvL25hd-bd8p6mn1AZlOn92VySGp2TaaVYGwX-6L9by73bC6sIdi9iKPl3Iv13GEQZEKsTm1a96Bh6ilScmrctk3zmY4vBYp2SjHG9JRJvQgr2XzgA}'
+    curl -ik -u sales1:BadPass#1 -X GET '{https://localhost:8444/gateway/default/webhdfs/data/v1/webhdfs/v1/tmp/testfile.txt?_=AAAACAAAABAAAAEwvyZNDLGGNwahMYZKvaHHaxymBy1YEoe4UCQOqLC7o8fg0z6845kTvMQN_uULGUYGoINYhH5qafY_HjozUseNfkxyrEo313-Fwq8ISt6MKEvLqas1VEwC07-ihmK65Uac8wT-Cmj2BDab5b7EZx9QXv29BONUuzStCGzBYCqD_OIgesHLkhAM6VNOlkgpumr6EBTuTnPTt2mYN6YqBSTX6cc6OhX73WWE6atHy-lv7aSCJ2I98z2btp8XLWWHQDmwKWSmEvtQW6Aj-JGInJQzoDAMnU2eNosdcXaiYH856zC16IfEucdb7SA_mqAymZuhm8lUCvL25hd-bd8p6mn1AZlOn92VySGp2TaaVYGwX-6L9by73bC6sIdi9iKPl3Iv13GEQZEKsTm1a96Bh6ilScmrctk3zmY4vBYp2SjHG9JRJvQgr2XzgA}'
     ```
       
   - C. Use groovy scripts to access WebHDFS
     - Edit the groovy script to set:
-      - gateway = "https://localhost:8443/gateway/default"
+      - gateway = "https://localhost:8444/gateway/default"
     ```
     sudo vi /usr/hdp/current/knox-server/samples/ExampleWebHdfsLs.groovy
     ```
@@ -3015,7 +3015,7 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
     ```
     
   - D. Access via browser 
-    - Take the same url we have been hitting via curl and replace localhost with public IP of Knox node (remember to use https!) e.g. **https**://PUBLIC_IP_OF_KNOX_HOST:8443/gateway/default/webhdfs/v1?op=LISTSTATUS
+    - Take the same url we have been hitting via curl and replace localhost with public IP of Knox node (remember to use https!) e.g. **https**://PUBLIC_IP_OF_KNOX_HOST:8444/gateway/default/webhdfs/v1?op=LISTSTATUS
     - Open the URL via browser
     - Login as sales1/BadPass#1
     
@@ -3065,7 +3065,7 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
 
 ```
 knoxserver=$(hostname -f)
-openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox.crt
+openssl s_client -connect ${knoxserver}:8444 <<<'' | openssl x509 -out /tmp/knox.crt
 ```
   - On node where beeline will be run from (e.g. Hive node):
       - copy over the /tmp/knox.crt
@@ -3080,11 +3080,11 @@ sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass ch
   - Now connect via beeline, making sure to replace KnoxserverInternalHostName first below:
   
 ```
-beeline -u "jdbc:hive2://<KnoxserverInternalHostName>:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
+beeline -u "jdbc:hive2://<KnoxserverInternalHostName>:8444/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
 ```
 
 - Notice that in the JDBC connect string for connecting to an secured Hive running in http transport mode:
-  - *port changes to Knox's port 8443*
+  - *port changes to Knox's port*
   - *traffic between client and Knox is over HTTPS*
   - *a kerberos principal not longer needs to be passed in*
 
@@ -3094,7 +3094,7 @@ beeline -u "jdbc:hive2://<KnoxserverInternalHostName>:8443/;ssl=true;transportMo
   - hr1/BadPass#1 should *not* work
     - Will fail with:
     ```
-    Could not create http connection to jdbc:hive2://<hostname>:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
+    Could not create http connection to jdbc:hive2://<hostname>:8444/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
     ```
 
 - Check in Ranger Audits to confirm the requests were audited:
