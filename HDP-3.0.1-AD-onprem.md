@@ -2668,14 +2668,20 @@ Goal: In this lab we will configure Apache Knox for AD authentication and make W
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
 - Use the 'Add Service' Wizard (under 'Actions' dropdown) to install Knox *on a node other than the one running Ambari*
-  - **Make sure not to install Knox on same node as Ambari** (or if you must, change its port from 8443)
-    - Reason: in a later lab after we enable SSL for Ambari, it will run on port 8443
+  - **Make sure not to install Knox on same node as Ambari or if you are running single node setup, change Knox port from 8443 to 8444)
+    - Reason: Since we enabled SSL for Ambari, it will run on port 8443
   - When prompted for the `Knox Master Secret`, set it to `knox`
   - Do *not* use password with special characters (like #, $ etc) here as seems beeline may have problem with it
    ![Image](/screenshots/hdp3/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 
 - Restart any that services need to be restarted
+
+- Troubleshooting Knox install
+  - If Knox install fails with `JAR does not exist or is not a normal file: /var/lib/ambari-agent/lib/fast-hdfs-resource.jar`:
+    - `cp /var/lib/ambari-agent/cache/stack-hooks/before-START/files/fast-hdfs-resource.jar /var/lib/ambari-agent/lib/`
+  - If Knox install fails with `java.net.BindException: Address already in use`:
+    - Make sure you configured Knox to use a port that is not already in use
 
 ### Knox Configuration 
 
