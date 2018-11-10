@@ -3146,7 +3146,7 @@ beeline -u "jdbc:hive2://<KnoxserverInternalHostName>:8444/;ssl=true;transportMo
 
 - Check in Ranger Audits to confirm the requests were audited:
   - Ranger > Audit > Service type: KNOX
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audit-KNOX-hive-summary.png)
+  ![Image](screenshots/hdp3/Ranger-knox-hive-audit.png)
 
 
 - This shows how Knox helps end users access Hive securely over HTTPS using Ranger to set authorization policies and for audits
