@@ -2578,7 +2578,7 @@ beeline> select total_emp from sample_08;
 beeline> select code, description, salary from sample_08;
 ```
 
-- Audits show that the access was allowed, which policy allowed access (policy ID0 as well as the query itself:
+- Audits show that the access was allowed, which policy allowed access (policy ID) as well as the query itself:
 ![Image](/screenshots/hdp3/Ranger-abac-audit-nonsensitive.png)
 
 #### Tag-Based Masking 
@@ -2595,11 +2595,15 @@ Goal: Mask data tagged as "Restricted"
 		- Component Permissions: (select `Hive` and enable all actions)
 		- Select Masking Option: `Redact`	
 	- Add
+![Image](/screenshots/hdp3/Ranger-tagmasking-policy.png)
 
 - Wait 30 seconds and try run the below query.  Notice how salary data has been masked
 ```
 beeline> select code, description, salary from sample_08;
 ```
+
+- The audits confirm that the column was masked:
+![Image](/screenshots/hdp3/Ranger-tagmasking-audit.png)
 
 #### Location-Based Access Control
 Goal: Restrict access to data based on a user's physical location at the time.
