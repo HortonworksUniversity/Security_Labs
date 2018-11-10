@@ -2579,7 +2579,7 @@ beeline> select code, description, salary from sample_08;
 ```
 
 - Audits show that the access was allowed, which policy allowed access (policy ID0 as well as the query itself:
-![Image](/screenshots/hdp3/Ranger-abac-audit-sensitive.png)
+![Image](/screenshots/hdp3/Ranger-abac-audit-nonsensitive.png)
 
 #### Tag-Based Masking 
 Goal: Mask data tagged as "Restricted"
