@@ -2282,6 +2282,15 @@ exit
 logout
 ```
 
+- Create HDFS policy allowing all users to access their home dir in HDFS
+  - Access Manager > HDFS > (cluster)_hadoop > Add new policy > Enter below info
+![Image](screenshots/Ranger-hdfs-homedir-policy.png)
+
+- Create HDFS policy allowing hive user access on /warehouse dir in HDFS
+  - Access Manager > HDFS > (cluster)_hadoop > Add new policy > Enter below info
+![Image](screenshots/Ranger-hdfs-warehouse-policy.png)
+
+  
 - Create Ranger policy to allow `hadoopadmin` group `all permissions` on `persons` table in Hive
   - Access Manager > Hive > (cluster)_hive > Add new policy > Enter below info > Click Add
     - Policy Name: persons
@@ -2316,7 +2325,7 @@ sqoop eval --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladmin
 
 - Import Mysql table to Hive
 ```
-sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladmin --password BadPass#1 --table persons --hive-import --create-hive-table --hive-table default.persons
+sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladmin --password BadPass#1 --table persons --hive-import --create-hive-table --hive-table default.persons --target-dir /user/hive/person
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
 
@@ -2325,7 +2334,6 @@ sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladm
  java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 ```
 
-- Also note: if the mapreduce job fails saying hive user does not have write access to /warehouse, you will need to create HDFS policy allowing hive user and hive access on /warehouse dir 
 
 - Login to beeline
 ```
@@ -2341,7 +2349,7 @@ beeline> select * from persons;
 - Ranger audit should show the request was allowed:
   - Under Ranger > Audit > query for
     - Service type: HIVE
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-HIVE-audit-persons.png)
+![Image](screenshots/Ranger-HIVE-audit-persons.png)
 
 
 ##### Drop Encrypted Hive tables 
