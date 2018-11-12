@@ -2284,11 +2284,11 @@ logout
 
 - Create HDFS policy allowing all users to access their home dir in HDFS
   - Access Manager > HDFS > (cluster)_hadoop > Add new policy > Enter below info
-![Image](screenshots/Ranger-hdfs-homedir-policy.png)
+![Image](screenshots/hdp3/Ranger-hdfs-homedir-policy.png)
 
 - Create HDFS policy allowing hive user access on /warehouse dir in HDFS
   - Access Manager > HDFS > (cluster)_hadoop > Add new policy > Enter below info
-![Image](screenshots/Ranger-hdfs-warehouse-policy.png)
+![Image](screenshots/hdp3/Ranger-hdfs-warehouse-policy.png)
 
   
 - Create Ranger policy to allow `hadoopadmin` group `all permissions` on `persons` table in Hive
