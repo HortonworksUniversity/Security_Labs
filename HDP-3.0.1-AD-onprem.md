@@ -2299,6 +2299,8 @@ logout
     - hive col: *
     - user: hadoopadmin
     - permissions: select all
+![Image](screenshots/hdp3/Ranger-hive-persons-policy.png)
+
 
 - Login as hadoopadmin
 ```
