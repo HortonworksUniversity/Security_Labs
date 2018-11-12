@@ -2331,6 +2331,11 @@ sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username mysqladm
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
 
+- Note: in case of error and you need to re-run, it will complain about the table already existing. In ths case, run with --hive-overwrite instead:
+```
+sqoop import --connect "jdbc:mysql://$(hostname -f)/people"  --username sales1 --password BadPass#1 --table persons --hive-import --hive-overwrite  --hive-table default.persons --target-dir /user/hive/person
+```
+
 - Note: if the mapreduce job fails with below, most likely you have not given sales group all the permissions needed on the EK used to encrypt Hive directories 
 ```
  java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
