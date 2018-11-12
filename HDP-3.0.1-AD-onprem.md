@@ -2388,9 +2388,13 @@ Goal: In this lab we will explore how Atlas and Ranger integrate to enhance data
 ![Image](/screenshots/hdp3/Ranger-atlas-kafka.png)
 
 - Create two new Ranger policies for Kafka
+- 1. On ATLAS_HOOK topic:
   - Allow atlas user Consume/Describe on ATLAS_HOOK topic
+  - Allow hive and hadoopadmin users Publish/Describe on ATLAS_HOOK topic 
 ![Image](/screenshots/hdp3/Ranger-kafka-atlashook.png)
-  - Allow atlas user Publish/Describe on ATLAS_ENTITIES topic plus rangertagsync user Consume/Describe ATLAS_ENTITIES topic
+- 2. On ATLAS_ENTITIES topic
+  - Allow atlas user Publish/Describe on ATLAS_ENTITIES topic 
+  - Allow rangertagsync user Consume/Describe on ATLAS_ENTITIES topic
 ![Image](/screenshots/hdp3/Ranger-kafka-atlasentities.png)
 
 #### Import Hive entities via bridge
