@@ -28,7 +28,7 @@
 - [Lab 6b](#lab-6b) 
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
-- [Lab 7a](#lab-7a)
+- [Lab 7](#lab-7)
   - Secured Hadoop exercises
     - HDFS
     - Hive
