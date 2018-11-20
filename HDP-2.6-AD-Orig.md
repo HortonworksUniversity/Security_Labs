@@ -1459,7 +1459,7 @@ sudo -u sales1 kdestroy
 
 ------------------
 
-# Lab 7a
+# Lab 7
 
 ## Secured Hadoop exercises
 
