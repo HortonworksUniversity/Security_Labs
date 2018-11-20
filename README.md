@@ -14,9 +14,9 @@
 
 ## HDP 2.6.5.0
 
-[HDP 2.6.5.0 using Active Directory](./HDP-2.6-AD.md)
+[HDP 2.6.5.0 using Active Directory](./HDP-2.6-AD-Orig.md)
 
-[HDP 2.6.5.0 using MIT KDC](./HDP-2.6-MITKDC.md)
+[HDP 2.6.5.0 using MIT KDC](./HDP-2.6-MITKDC-Orig.md)
 
 
 # Hortonworks Data Flow
