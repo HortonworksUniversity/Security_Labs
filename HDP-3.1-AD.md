@@ -1,4 +1,4 @@
-# Contents  (HDP 3.0.1 using Active Directory)
+# Contents  (HDP 3.1.0 using Active Directory)
 
 - [Lab 1](#lab-1)
   - Access cluster
