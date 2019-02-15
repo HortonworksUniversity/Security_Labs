@@ -150,5 +150,3 @@ ipa passwd ivanna_eu_hr < tmp.txt
 ipa passwd scott_intern < tmp.txt
 
 rm -f tmp.txt
-
-```
