@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-## FreeIPA setup - Sample script to setup FreeIPA on CentOS 7.2 on AWS
+## FreeIPA setup - Sample script to setup FreeIPA on CentOS 7.2/7.3 on AWS
+## (seems there is issue with higher RHEL versions https://lists.fedorahosted.org/archives/list/freeipa-users@lists.fedorahosted.org/thread/SEJEDA2IVWFPFRAGHH4MRBO6CUSGX3ZN/)
 ## Based on steps at https://www.evernote.com/client/snv?noteGuid=f7eed2f9-5255-4f7c-b0d8-ecee1dba3c9f&noteKey=d2b6e968a783fd5e&var=b&sn=https%3A%2F%2Fwww.evernote.com%2Fshard%2Fs337%2Fsh%2Ff7eed2f9-5255-4f7c-b0d8-ecee1dba3c9f%2Fd2b6e968a783fd5e&exp=ENB3538
 ## official docs at https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html
 ## To run, first set the DOMAIN appropriately:
