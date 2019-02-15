@@ -68,27 +68,39 @@ Credentials will be provided for these services by the instructor:
 
 ## Use your Cluster
 
-### To connect from Windows 
+### To connect using Putty from Windows laptop
 
-- download and install Putty
-- SSH into the host as root using lab provided IP
+- Right click to download [this ppk key](https://github.com/HortonworksUniversity/Security_Labs/raw/master/training-keypair.ppk) > Save link as > save to Downloads folder
+- Use putty to connect to your node using the ppk key:
+  - Connection > SSH > Auth > Private key for authentication > Browse... > Select training-keypair.ppk
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/putty.png)
+
+- Make sure to click "Save" on the session page before logging in
+- When connecting, it will prompt you for username. Enter `centos`
 
 ### To connect from Linux/MacOSX laptop
 
 - SSH into Ambari node of your cluster using below steps:
-
+- Right click to download [this pem key](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/training-keypair.pem)  > Save link as > save to Downloads folder
+  - Copy pem key to ~/.ssh dir and correct permissions
+  ```
+  cp ~/Downloads/training-keypair.pem ~/.ssh/
+  chmod 400 ~/.ssh/training-keypair.pem
+  ```
  - Login to the Ambari node of the cluster you have been assigned by replacing IP_ADDRESS_OF_AMBARI_NODE below with Ambari node IP Address (your instructor will provide this)   
   ```
-  ssh root@IP_ADDRESS_OF_AMBARI_NODE
+  ssh -i  ~/.ssh/training-keypair.pem centos@IP_ADDRESS_OF_AMBARI_NODE
   ```
-  
-### Get root access  
-
   - To change user to root you can:
   ```
   sudo su -
   ```
 
+- Similarly login via SSH to each of the other nodes in your cluster as you will need to run commands on each node in a future lab
+
+- Tip: Since in the next labs you will be required to run *the same set of commands* on each of the cluster hosts, now would be a good time to setup your favorite tool to do so: examples [here](https://www.reddit.com/r/sysadmin/comments/3d8aou/running_linux_commands_on_multiple_servers/)
+  - On OSX, an easy way to do this is to use [iTerm](https://www.iterm2.com/): open multiple tabs/splits and then use 'Broadcast input' feature (under Shell -> Broadcast input)
+  - If you are not already familiar with such a tool, you can also just run the commands on the cluster, one host at a time
 
 #### Login to Ambari
 
