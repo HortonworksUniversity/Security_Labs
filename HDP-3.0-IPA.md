@@ -6,11 +6,237 @@
 - Access to an IPA server that has been setup as descibed in [Hortonworks documentation](https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html). See sample [script](https://github.com/HortonworksUniversity/Security_Labs/blob/master/extras/ipa.md) to set up
 
 **Lab Topics**<br>
-
+0. Accessing your Cluster
 1. [Register cluster nodes as IPA Clients](#section-1)
 2. [Secure Ambari via ambari-server setup-security](#section-2)
 3. [Enable Kerberos for cluster services](#section-3)
 4. [Enable LDAP for ambari](#section-4)
+
+
+# Lab 1
+
+## Accessing your Cluster
+
+Credentials will be provided for these services by the instructor:
+
+* SSH
+* Ambari
+
+## Use your Cluster
+
+### To connect using Putty from Windows laptop
+
+- Right click to download [this ppk key](https://github.com/HortonworksUniversity/Security_Labs/raw/master/training-keypair.ppk) > Save link as > save to Downloads folder
+- Use putty to connect to your node using the ppk key:
+  - Connection > SSH > Auth > Private key for authentication > Browse... > Select training-keypair.ppk
+![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/putty.png)
+
+- Make sure to click "Save" on the session page before logging in
+- When connecting, it will prompt you for username. Enter `centos`
+
+### To connect from Linux/MacOSX laptop
+
+- SSH into Ambari node of your cluster using below steps:
+- Right click to download [this pem key](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/training-keypair.pem)  > Save link as > save to Downloads folder
+  - Copy pem key to ~/.ssh dir and correct permissions
+  ```
+  cp ~/Downloads/training-keypair.pem ~/.ssh/
+  chmod 400 ~/.ssh/training-keypair.pem
+  ```
+ - Login to the Ambari node of the cluster you have been assigned by replacing IP_ADDRESS_OF_AMBARI_NODE below with Ambari node IP Address (your instructor will provide this)   
+  ```
+  ssh -i  ~/.ssh/training-keypair.pem centos@IP_ADDRESS_OF_AMBARI_NODE
+  ```
+  - To change user to root you can:
+  ```
+  sudo su -
+  ```
+
+- Similarly login via SSH to each of the other nodes in your cluster as you will need to run commands on each node in a future lab
+
+- Tip: Since in the next labs you will be required to run *the same set of commands* on each of the cluster hosts, now would be a good time to setup your favorite tool to do so: examples [here](https://www.reddit.com/r/sysadmin/comments/3d8aou/running_linux_commands_on_multiple_servers/)
+  - On OSX, an easy way to do this is to use [iTerm](https://www.iterm2.com/): open multiple tabs/splits and then use 'Broadcast input' feature (under Shell -> Broadcast input)
+  - If you are not already familiar with such a tool, you can also just run the commands on the cluster, one host at a time
+
+#### Login to Ambari
+
+- Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
+
+- You will see a list of Hadoop components running on your cluster on the left side of the page
+  - They should all show green (ie started) status. If not, start them by Ambari via 'Service Actions' menu for that service
+
+#### Finding internal/external hosts
+
+- Following are useful techniques you can use in future labs to find your cluster specific details:
+
+  - From SSH terminal, how can I find the cluster name?
+  ```
+  #run on ambari node to fetch cluster name via Ambari API
+  PASSWORD=BadPass#1
+  output=`curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+  cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+  echo $cluster
+  ```
+  - From SSH terminal, how can I find internal hostname (aka FQDN) of the node I'm logged into?
+  ```
+  $ hostname -f
+  ip-172-30-0-186.us-west-2.compute.internal  
+  ```
+  
+  - From Ambari how do I check the cluster name?
+    - It is displayed on the top left of the Ambari dashboard, next to the Ambari logo. If the name appears truncated, you can hover over it to produce a helptext dialog with the full name
+    ![Image](screenshots/hdp3/hdp3-clustername.png)
+  
+  - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager or Hive) is installed?
+    - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
+    ![Image](screenshots/hdp3/hdp3-hostname.png)
+
+  - From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager or Hive) is installed?
+    - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
+    ![Image](screenshots/hdp3/hdp3-internalhostname.png)  
+  
+  - In future labs you may need to provide private or public hostname of nodes running a particular component (e.g. YARN RM or Mysql or HiveServer)
+  
+  
+#### Import sample data into Hive 
+
+
+- Run below *on the node where HiveServer2 is installed* to download data and import it into a Hive table for later labs
+  - You can either find the node using Ambari as outlined in Lab 1
+  - Download and import data
+  ```
+  cd /tmp
+  wget https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/labdata/sample_07.csv
+  wget https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/labdata/sample_08.csv
+  ```
+  - Create user dir for admin, sales1 and hr1
+  ```
+   sudo -u hdfs hdfs dfs  -mkdir /user/admin
+   sudo -u hdfs hdfs dfs  -chown admin:hadoop /user/admin
+
+   sudo -u hdfs hdfs dfs  -mkdir /user/sales1
+   sudo -u hdfs hdfs dfs  -chown sales1:hadoop /user/sales1
+   
+   sudo -u hdfs hdfs dfs  -mkdir /user/hr1
+   sudo -u hdfs hdfs dfs  -chown hr1:hadoop /user/hr1   
+  ```
+    
+  - Now create Hive table in default database by 
+    - Start beeline shell from the node where Hive is installed: 
+```
+beeline -n hive -u "jdbc:hive2://localhost:10000/default"
+```
+
+  - At beeline prompt, run below:
+    
+```
+CREATE TABLE `sample_07` (
+`code` string ,
+`description` string ,  
+`total_emp` int ,  
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+```
+```
+load data local inpath '/tmp/sample_07.csv' into table sample_07;
+```
+```
+CREATE TABLE `sample_08` (
+`code` string ,
+`description` string ,  
+`total_emp` int ,  
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+```
+```
+load data local inpath '/tmp/sample_08.csv' into table sample_08;
+```
+```
+!q
+```
+
+- Notice that in the JDBC connect string for connecting to an unsecured Hive while its running in default (ie binary) transport mode :
+  - port is 10000
+  - no kerberos principal was needed 
+
+- This will change after we:
+  - enable kerberos
+  - configure Hive for http transport mode (to go through Knox)
+    
+### Why is security needed?
+
+
+##### HDFS access on unsecured cluster
+
+- On your unsecured cluster try to access a restricted dir in HDFS
+```
+hdfs dfs -ls /tmp/hive   
+## this should fail with Permission Denied
+```
+
+- Now try again after setting HADOOP_USER_NAME env var
+```
+export HADOOP_USER_NAME=hdfs
+hdfs dfs -ls /tmp/hive   
+## this shows the file listing!
+```
+- Unset the env var and it will fail again
+```
+unset HADOOP_USER_NAME
+hdfs dfs -ls /tmp/hive  
+```
+
+##### WebHDFS access on unsecured cluster
+
+- From *node running NameNode*, make a WebHDFS request using below command:
+```
+curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
+```
+
+- In the absence of Knox, notice it goes over HTTP (not HTTPS) on port 50070 and no credentials were needed
+
+##### Web UI access on unsecured cluster
+
+- From Ambari notice you can open the WebUIs without any authentication
+  - HDFS > Quicklinks > NameNode UI
+  - Mapreduce > Quicklinks > JobHistory UI
+  - YARN > Quicklinks > ResourceManager UI
+    
+- This should tell you why kerberos (and other security) is needed on Hadoop :)
+
+
+-----------------------------
+
+# Lab 2
+
+### Review use case
+
+Use case: Customer has an existing cluster which they would like you to secure for them
+
+- Current setup:
+  - The customer has multiple organizational groups (i.e. sales, hr, legal) which contain business users (sales1, hr1, legal1 etc) and hadoopadmin
+  - These groups and users are defined in Active Directory (AD) under its own Organizational Unit (OU) called CorpUsers 
+  - There are empty OUs created in AD to store hadoop principals/hadoop nodes (HadoopServices, HadoopNodes)
+  - Hadoopadmin user has administrative credentials with delegated control of "Create, delete, and manage user accounts" on above OUs
+  - Hadoop cluster running HDP has already been setup using Ambari (including HDFS, YARN, Hive, Hbase, Solr, Zookeeper)
+  
+- Goals:
+  - Integrate Ambari with AD - so that hadoopadmin can administer the cluster
+  - Integrate Hadoop nodes OS with AD - so business users are recognized and can submit Hadoop jobs
+  - Enable kerberos - to secured the cluster and enable authentication
+  - Install Ranger and enable Hadoop plugins - to allow admin to setup authorization policies and review audits across Hadoop components
+  - Install Ranger KMS and enable HDFS encryption - to be able to create encryption zones
+  - Encrypt Hive backing dirs - to protect hive tables
+  - Configure Ranger policies to:
+    - Protect /sales HDFS dir - so only sales group has access to it
+    - Protect sales hive table - so only sales group has access to it
+      - Fine grained access: sales users should only have access to code, description columns in default.sample_07, but only for rows where total_emp<5000. Also total_emp column should be masked
+    - Protect sales HBase table - so only sales group has access to it
+  - Install Knox and integrate with AD - for perimeter security and give clients access to APIs w/o dealing with kerberos
+  - Enable Ambari views to work on secured cluster
+
+We will run through a series of labs and step by step, achieve all of the above goals
+  
 
 
 ## <a name="section-1"></a>1. Register cluster nodes as IPA clients
