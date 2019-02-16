@@ -120,7 +120,12 @@ Credentials will be provided for these services by the instructor:
    sudo -u hdfs hdfs dfs  -mkdir /user/hr1
    sudo -u hdfs hdfs dfs  -chown hr1:hadoop /user/hr1   
   ```
-    
+  - Copy csv's into HDFS
+  ```
+  sudo -u hdfs hdfs dfs -mkdir -p /hive_data/salary
+  sudo -u hdfs hdfs dfs -put /tmp/sample*  /hive_data/salary
+  sudo -u hdfs hdfs dfs -chown -R hive:hive /hive_data/
+  ```    
   - Now create Hive table in default database by 
     - Start beeline shell from the node where Hive is installed: 
 ```
@@ -130,26 +135,22 @@ beeline -n hive -u "jdbc:hive2://localhost:10000/default"
   - At beeline prompt, run below:
     
 ```
-CREATE TABLE `sample_07` (
-`code` string ,
-`description` string ,  
-`total_emp` int ,  
-`salary` int )
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+CREATE EXTERNAL TABLE sample_07 (
+code string ,
+description string ,  
+total_emp int ,  
+salary int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile
+LOCATION '/hive_data/salary';
 ```
 ```
-load data local inpath '/tmp/sample_07.csv' into table sample_07;
-```
-```
-CREATE TABLE `sample_08` (
-`code` string ,
-`description` string ,  
-`total_emp` int ,  
-`salary` int )
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
-```
-```
-load data local inpath '/tmp/sample_08.csv' into table sample_08;
+CREATE EXTERNAL TABLE sample_08 (
+code string ,
+description string ,  
+total_emp int ,  
+salary int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile
+LOCATION '/hive_data/salary';
 ```
 ```
 !q
