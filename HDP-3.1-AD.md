@@ -351,6 +351,13 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
 
 **Make sure to repeat the above steps on all nodes**
 
+4. **On Ambari node** create a symlink from JDK cacerts dir to newly updated cacerts file (to ensure Ambari picks up the cert) and restart Ambari
+```
+ ln -s -f /etc/pki/java/cacerts /usr/jdk64/jdk1.8*/jre/lib/security/cacerts
+ sudo ambari-server restart
+```
+
+
 # Lab 3
 
 ## Security options for Ambari
