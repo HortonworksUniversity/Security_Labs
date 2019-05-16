@@ -738,10 +738,10 @@ KVNO Timestamp           Principal
   - Currently your hadoop nodes do not recognize users/groups defined in AD.
   - You can check this by running below:
   ```
-  id it1
-  groups it1
-  hdfs groups it1
-  ## groups: it1: no such user
+  id hr1
+  groups hr1
+  hdfs groups hr1
+  ## groups: hr1: no such user
   ```
 - Pre-req for below steps: Your AD admin/instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
 
